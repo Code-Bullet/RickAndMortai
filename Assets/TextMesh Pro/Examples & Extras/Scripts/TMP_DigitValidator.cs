@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 
-
 namespace TMPro
 {
     /// <summary>
@@ -14,7 +13,7 @@ namespace TMPro
         // Custom text input validation function
         public override char Validate(ref string text, ref int pos, char ch)
         {
-            if (ch >= '0' && ch <= '9')
+            if (ch is >= '0' and <= '9')
             {
                 text += ch;
                 pos += 1;

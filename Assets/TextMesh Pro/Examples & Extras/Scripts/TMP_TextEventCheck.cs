@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-
 namespace TMPro.Examples
 {
     public class TMP_TextEventCheck : MonoBehaviour
@@ -25,7 +24,6 @@ namespace TMPro.Examples
             }
         }
 
-
         void OnDisable()
         {
             if (TextEventHandler != null)
@@ -37,7 +35,6 @@ namespace TMPro.Examples
                 TextEventHandler.onLinkSelection.RemoveListener(OnLinkSelection);
             }
         }
-
 
         void OnCharacterSelection(char c, int index)
         {
@@ -68,6 +65,5 @@ namespace TMPro.Examples
             
             Debug.Log("Link Index: " + linkIndex + " with ID [" + linkID + "] and Text \"" + linkText + "\" has been selected.");
         }
-
     }
 }

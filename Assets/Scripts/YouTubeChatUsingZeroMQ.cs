@@ -15,17 +15,15 @@ using NetMQ.Sockets;
 public class YouTubeChatUsingZeroMQ : MonoBehaviour
 {
 
-
-
     private int maxListSize = 1000;
 
-    public List<string> topicSuggestions = new List<string>();
+    public List<string> topicSuggestions = new();
 
-    public List<string> voteSuggestions = new List<string>();
+    public List<string> voteSuggestions = new();
 
-    List<string> alreadyTakenTopics = new List<string>();
+    List<string> alreadyTakenTopics = new();
 
-    List<string> wordBlacklist = new List<string> { "knee", "nick", "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "september", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
+    List<string> wordBlacklist = new() { "knee", "nick", "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "september", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
 
     private bool connected = false;
 
@@ -36,14 +34,12 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
     void Start()
     {
 
-
         if (usingYoutubeChatStuff)
         {
 
             // Initialize NetMQ (required)
             AsyncIO.ForceDotNet.Force();
             PollChat();
-
 
             // CallPythonSocketCommunicationRepeatedly();
         }
@@ -52,7 +48,7 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
     {
         while (true)
         {
-            using (RequestSocket client = new RequestSocket())
+            using (RequestSocket client = new())
             {
                 // Connect to the Python server
                 client.Connect("tcp://127.0.0.1:5555");
@@ -63,7 +59,7 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
                 // Receive chat messages from Python
                 string chatMessages = client.ReceiveFrameString();
                 string[] messages = chatMessages.Split('\n');
-                string[] messagesFiltered = System.Array.FindAll(messages, s => !string.IsNullOrEmpty(s));
+                string[] messagesFiltered = Array.FindAll(messages, s => !string.IsNullOrEmpty(s));
 
                 foreach (string message in messagesFiltered)
                 {
@@ -82,7 +78,6 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
                     {
                         continue;
                     }
-
 
                     if (message.ToLower().StartsWith("topic:"))
                     {
@@ -105,7 +100,6 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
                                 // Remove oldest message text
                                 topicSuggestions.RemoveAt(0);
                             }
-
                         }
                     }
                     else if (message.ToLower().StartsWith("vote:"))
@@ -148,7 +142,6 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
         voteSuggestions = new List<string>();
     }
 
-
     // counts votes and retuns a int array, which will look like [5,12,123] this means 5 votes for topic 1 ect.
     public int[] CountVotes()
     {
@@ -179,7 +172,7 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
     public List<string> GetRandomTopics()
     {
         int n = 3;
-        List<string> randomTopics = new List<string>();
+        List<string> randomTopics = new();
 
         if (topicSuggestions.Count < n)
         {
@@ -189,7 +182,6 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
 
         for (int i = 0; i < n; i++)
         {
-
 
             int randomIndex = UnityEngine.Random.Range(0, topicSuggestions.Count);
             string selectedTopic = topicSuggestions[randomIndex];
@@ -217,8 +209,5 @@ public class YouTubeChatUsingZeroMQ : MonoBehaviour
 
         return randomTopics;
     }
-
-
-
 }
 

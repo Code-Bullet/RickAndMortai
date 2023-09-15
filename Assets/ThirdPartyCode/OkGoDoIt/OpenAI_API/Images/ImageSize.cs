@@ -36,8 +36,6 @@ namespace OpenAI_API.Images
 			return Value;
 		}
 
-
-
 		/// <summary>
 		/// Gets the string value for this size to pass to the API
 		/// </summary>
@@ -57,5 +55,4 @@ namespace OpenAI_API.Images
 			}
 		}
 	}
-
 }

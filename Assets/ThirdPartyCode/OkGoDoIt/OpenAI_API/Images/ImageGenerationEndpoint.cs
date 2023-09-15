@@ -29,7 +29,7 @@ namespace OpenAI_API.Images
 		/// <returns>Asynchronously returns the image result. Look in its <see cref="Data.Url"/> </returns>
 		public async Task<ImageResult> CreateImageAsync(string input)
 		{
-			ImageGenerationRequest req = new ImageGenerationRequest(prompt: input);
+			ImageGenerationRequest req = new(prompt: input);
 			return await CreateImageAsync(req);
 		}
 

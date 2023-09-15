@@ -34,7 +34,7 @@ namespace OpenAI_API.Moderation
 		/// <returns>Asynchronously returns the classification result</returns>
 		public async Task<ModerationResult> CallModerationAsync(string input)
 		{
-			ModerationRequest req = new ModerationRequest(DefaultModerationRequestArgs.Model, input);
+			ModerationRequest req = new(DefaultModerationRequestArgs.Model, input);
 			return await CallModerationAsync(req);
 		}
 

@@ -56,10 +56,12 @@ namespace OpenAI_API
 		/// <returns></returns>
 		public static OpenAIAPI ForAzure(string YourResourceName, string deploymentId, APIAuthentication apiKey = null)
 		{
-			OpenAIAPI api = new OpenAIAPI(apiKey);
-			api.ApiVersion = "2022-12-01";
-			api.ApiUrlFormat = $"https://{YourResourceName}.openai.azure.com/openai/deployments/{deploymentId}/" + "{1}?api-version={0}";
-			return api;
+            OpenAIAPI api = new(apiKey)
+            {
+                ApiVersion = "2022-12-01",
+                ApiUrlFormat = $"https://{YourResourceName}.openai.azure.com/openai/deployments/{deploymentId}/" + "{1}?api-version={0}"
+            };
+            return api;
 		}
 
 		/// <summary>
@@ -96,6 +98,5 @@ namespace OpenAI_API
 		/// The API lets you do operations with images. You can Given a prompt and/or an input image, the model will generate a new image.
 		/// </summary>
 		public ImageGenerationEndpoint ImageGenerations { get; }
-
 	}
 }

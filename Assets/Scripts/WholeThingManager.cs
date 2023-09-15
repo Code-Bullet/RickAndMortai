@@ -9,7 +9,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 // this is the big daddy script that controls everything
 // basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
 public class WholeThingManager : MonoBehaviour
@@ -27,10 +26,8 @@ public class WholeThingManager : MonoBehaviour
     public TMP_Text textField;
     public TMP_Text dialogBox;
 
-
     private RickAndMortyScene nextScene = null;
     private bool stillGeneratingScene = false;
-
 
     public TMP_Text topicOption1;
     public TMP_Text topic1Votes;
@@ -51,7 +48,6 @@ public class WholeThingManager : MonoBehaviour
 
     public bool runMainLoop = true;
 
-
     void Start()
     {
         ToggleDiscordPlugEvery10Seconds();
@@ -67,9 +63,6 @@ public class WholeThingManager : MonoBehaviour
 
         // TestingShit();
 
-
-
-
     }
 
     private async Task TestingShit()
@@ -77,7 +70,6 @@ public class WholeThingManager : MonoBehaviour
 
         // chill for a bit to give time to setup everything
         await Task.Delay(2000);
-
 
         string response = await slurDetector.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
         Debug.Log("response " + response);
@@ -92,15 +84,11 @@ public class WholeThingManager : MonoBehaviour
             topBarDiscordPluf.SetActive(!topBarDiscordPluf.activeSelf);
 
         }
-
-
-
     }
 
     // turns on or off all the voting ui 
     private void enableOrDisableVotingUI(bool enable)
     {
-
 
         // topicTitleThing.enabled = enable;
 
@@ -118,7 +106,6 @@ public class WholeThingManager : MonoBehaviour
 
         bottomBarVotingInfoText.SetActive(enable);
     }
-
 
     // this is the big daddy
     private async Task MainLoop()
@@ -146,22 +133,17 @@ public class WholeThingManager : MonoBehaviour
             Debug.Log("scene done");
             dialogBox.text = "";
 
-
             // ok lets get the list of topics
             enableOrDisableVotingUI(true);
             List<string> randomTopics = youTubeChat.GetRandomTopics();
 
-            if (randomTopics == null)
-            {
-                randomTopics = new List<string> {"Morty fucks shrek\nme",
+            randomTopics ??= new List<string> {"Morty fucks shrek\nme",
                 "Rick and morty fight batman\nme",
                   "Rick and morty go to Australia\nme" };
-            }
-
 
             // the topics are stored like "name of topic \nauthor name \n"
             // so lets extract the topic and author 
-            List<string> randomTopicAuthors = new List<string>();
+            List<string> randomTopicAuthors = new();
 
             for (int j = 0; j < randomTopics.Count; j++)
             {
@@ -170,7 +152,6 @@ public class WholeThingManager : MonoBehaviour
                 randomTopics[j] = topic;
                 randomTopicAuthors.Add(author);
             }
-
 
             //display the topics
             topicOption1.text = randomTopics[0];
@@ -196,12 +177,10 @@ public class WholeThingManager : MonoBehaviour
                 //get the votes
                 voteNumbers = youTubeChat.CountVotes();
 
-
                 // this is for testing
                 // voteNumbers[0] = UnityEngine.Random.Range(1, 101);
                 // voteNumbers[1] = UnityEngine.Random.Range(1, 101);
                 // voteNumbers[2] = UnityEngine.Random.Range(1, 101);
-
 
                 // all this shit is for having the vote text move smoothly, dont worry about it
                 initialTopic1Votes = targetTopic1Votes;
@@ -217,7 +196,6 @@ public class WholeThingManager : MonoBehaviour
                 StopCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
                 StartCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
 
-
                 //calculate the highest votes so we can fill the vote bars relative to it.
                 int maxvotes = 0;
                 foreach (int voteNumber in voteNumbers)
@@ -227,6 +205,7 @@ public class WholeThingManager : MonoBehaviour
                         maxvotes = voteNumber;
                     }
                 }
+
                 if (maxvotes == 0)
                 {
                     topic1Bar.SetFillPercentage(0);
@@ -235,9 +214,9 @@ public class WholeThingManager : MonoBehaviour
                 }
                 else
                 {
-                    topic1Bar.SetFillPercentage((float)voteNumbers[0] / (float)maxvotes);
-                    topic2Bar.SetFillPercentage((float)voteNumbers[1] / (float)maxvotes);
-                    topic3Bar.SetFillPercentage((float)voteNumbers[2] / (float)maxvotes);
+                    topic1Bar.SetFillPercentage(voteNumbers[0] / (float)maxvotes);
+                    topic2Bar.SetFillPercentage(voteNumbers[1] / (float)maxvotes);
+                    topic3Bar.SetFillPercentage(voteNumbers[2] / (float)maxvotes);
                 }
 
                 // wait for a little bit.
@@ -260,7 +239,6 @@ public class WholeThingManager : MonoBehaviour
                 backupTopic = 1;
             }
 
-
             currentScene = nextScene;
             enableOrDisableVotingUI(false);
 
@@ -271,9 +249,7 @@ public class WholeThingManager : MonoBehaviour
             RunScene(currentScene);
             CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
 
-
         }
-
     }
 
     // this bad boy displays the title then runs the scene 
@@ -289,7 +265,6 @@ public class WholeThingManager : MonoBehaviour
         // scene done
         currentlyRunningScene = false;
     }
-
 
     // this is the main bitch of the program. a bunch of calling other scripts to get each element of the scene.
     // basically this turns an input prompt into a list of lines of dialog + stage directions, and a list of audio files for the tts.
@@ -313,7 +288,6 @@ public class WholeThingManager : MonoBehaviour
             prompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
             // prompt += ". Rick and Morty are currently in " + sceneDirector.currentDimension.name + ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
 
-
             // chuck the prompt into chatgpt
             chatGPTOutput = await openAIController.EnterPromptAndGetResponse(prompt);
 
@@ -321,19 +295,14 @@ public class WholeThingManager : MonoBehaviour
             chatGPTOutput = "Narrator: " + initialPrompt + "\n" +
                             "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
 
-
             // this errases chatgpts memorty so it doesnt overload the max tokens cap
             // dont worry about it
             openAIController.ClearMessages();
-
 
             textField.text = creatingScene + " --- " + "Processing script...";
 
             // process the message into indavidual lines
             chatGPTOutputLines = openAIController.ProcessOutputIntoStringArray(chatGPTOutput);
-
-
-
 
             // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
             if (chatGPTOutputLines.Length < 10)
@@ -357,8 +326,6 @@ public class WholeThingManager : MonoBehaviour
                 // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]
                 string detectedSlurs = await slurDetector.EnterPromptAndGetResponse(deslurredChatgptOutput);
 
-
-
                 if (detectedSlurs.ToLower().Contains("no slurs detected"))
                 {
 
@@ -368,10 +335,9 @@ public class WholeThingManager : MonoBehaviour
                 else
                 {
 
-
                     // get the slurs into an array
                     string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
-                    string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
+                    string[] detectedSlurArrayFiltered = Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
 
                     // if the shit is empty then that means something fucked up. 
                     // go to the backup prompt 
@@ -403,20 +369,18 @@ public class WholeThingManager : MonoBehaviour
                             string pattern = Regex.Escape(slur);
                             deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
                         }
+
                         chatGPTOutput = deslurredChatgptOutput;
 
                         chatGPTOutputLines = openAIController.ProcessOutputIntoStringArray(chatGPTOutput);
                     }
-
 
                     //we good i think, we should be slur free. yay
                 }
 
                 foundGoodPrompt = true;
             }
-
         }
-
 
         // save a text file
         try
@@ -439,12 +403,11 @@ public class WholeThingManager : MonoBehaviour
             // Log success
             Debug.Log("Data saved successfully to: " + path);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             // Log any exceptions that occur
             Debug.LogError("An error occurred while saving data: " + e.Message);
         }
-
 
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
 
@@ -454,7 +417,6 @@ public class WholeThingManager : MonoBehaviour
         List<string> voiceModelUUIDs = dialogInfo[0];
         List<string> characterNames = dialogInfo[1];
         List<string> textsToSpeak = dialogInfo[2];
-
 
         textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
 
@@ -471,7 +433,6 @@ public class WholeThingManager : MonoBehaviour
         stillGeneratingScene = false;
         nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLines, ttsVoiceActingOrdered);
     }
-
 
     // this shit is so the vote text changes smoothly over time
     private int initialTopic1Votes = 0;
@@ -501,11 +462,7 @@ public class WholeThingManager : MonoBehaviour
         // Make sure the final value is set accurately
         targetTextObject.text = "VOTES: " + targetVotes.ToString();
     }
-
-
-
 }
-
 
 public class RickAndMortyScene
 {

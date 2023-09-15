@@ -27,7 +27,7 @@ namespace OpenAI_API.Chat
 		/// <summary>
 		/// Specifies the model to use for ChatGPT requests.  This is just a shorthand to access <see cref="RequestParameters"/>.Model
 		/// </summary>
-		public OpenAI_API.Models.Model Model
+		public Models.Model Model
 		{
 			get
 			{
@@ -44,13 +44,13 @@ namespace OpenAI_API.Chat
 		/// </summary>
 		public ChatResult MostResentAPIResult { get; private set; }
 
-		/// <summary>
-		/// Creates a new conversation with ChatGPT chat
-		/// </summary>
-		/// <param name="endpoint">A reference to the API endpoint, needed for API requests.  Generally should be <see cref="OpenAIAPI.Chat"/>.</param>
-		/// <param name="model">Optionally specify the model to use for ChatGPT requests.  If not specified, used <paramref name="defaultChatRequestArgs"/>.Model or falls back to <see cref="OpenAI_API.Models.Model.ChatGPTTurbo"/></param>
-		/// <param name="defaultChatRequestArgs">Allows setting the parameters to use when calling the ChatGPT API.  Can be useful for setting temperature, presence_penalty, and more.  <see href="https://platform.openai.com/docs/api-reference/chat/create">Se  OpenAI documentation for a list of possible parameters to tweak.</see></param>
-		public Conversation(ChatEndpoint endpoint, OpenAI_API.Models.Model model = null, ChatRequest defaultChatRequestArgs = null)
+        /// <summary>
+        /// Creates a new conversation with ChatGPT chat
+        /// </summary>
+        /// <param name="endpoint">A reference to the API endpoint, needed for API requests.  Generally should be <see cref="OpenAIAPI.Chat"/>.</param>
+        /// <param name="model">Optionally specify the model to use for ChatGPT requests.  If not specified, used <paramref name="defaultChatRequestArgs"/>.Model or falls back to <see cref="Models.Model.ChatGPTTurbo"/></param>
+        /// <param name="defaultChatRequestArgs">Allows setting the parameters to use when calling the ChatGPT API.  Can be useful for setting temperature, presence_penalty, and more.  <see href="https://platform.openai.com/docs/api-reference/chat/create">Se  OpenAI documentation for a list of possible parameters to tweak.</see></param>
+        public Conversation(ChatEndpoint endpoint, Models.Model model = null, ChatRequest defaultChatRequestArgs = null)
 		{
 			RequestParameters = new ChatRequest(defaultChatRequestArgs);
 			if (model != null)
@@ -108,18 +108,21 @@ namespace OpenAI_API.Chat
 		/// <returns>The string of the response from the chatbot API</returns>
 		public async Task<string> GetResponseFromChatbot()
 		{
-			ChatRequest req = new ChatRequest(RequestParameters);
-			req.Messages = _Messages.ToList();
+            ChatRequest req = new(RequestParameters)
+            {
+                Messages = _Messages.ToList()
+            };
 
-			var res = await _endpoint.CreateChatCompletionAsync(req);
+            ChatResult res = await _endpoint.CreateChatCompletionAsync(req);
 			MostResentAPIResult = res;
 
 			if (res.Choices.Count > 0)
 			{
-				var newMsg = res.Choices[0].Message;
+                ChatMessage newMsg = res.Choices[0].Message;
 				AppendMessage(res.Choices[0].Message);
 				return res.Choices[0].Message.Content;
 			}
+
 			return null;
 		}
 	}

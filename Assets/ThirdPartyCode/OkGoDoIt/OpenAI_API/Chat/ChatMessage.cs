@@ -61,7 +61,6 @@ namespace OpenAI_API.Chat
 		public object Function_Call { get; set; }
 	}
 
-
 	public class ChatMessageFunctionCall
 	{
 		/// <summary>
@@ -72,21 +71,13 @@ namespace OpenAI_API.Chat
 			
 		}
 
-
 		[JsonProperty("name")]
 		internal string Name { get; set; }
-
 
 		/// <summary>
 		/// The content of the message
 		/// </summary>
 		[JsonProperty("arguments")]
 		public object Arguments { get; set; }
-
-
 	}
-
-
-
-
 }

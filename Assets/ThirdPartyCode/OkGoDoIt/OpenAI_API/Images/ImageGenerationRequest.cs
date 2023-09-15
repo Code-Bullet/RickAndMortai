@@ -71,6 +71,5 @@ namespace OpenAI_API.Images
 			this.Size = size ?? ImageSize._1024;
 			this.ResponseFormat = responseFormat ?? ImageResponseFormat.Url;
 		}
-
 	}
 }

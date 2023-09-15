@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
     
@@ -45,10 +44,8 @@ namespace TMPro.Examples
         // Controls for Touches on Mobile devices
         //private float prev_ZoomDelta;
 
-
         private const string event_SmoothingValue = "Slider - Smoothing Value";
         private const string event_FollowDistance = "Slider - Camera Zoom";
-
 
         void Awake()
         {
@@ -57,13 +54,12 @@ namespace TMPro.Examples
             else
                 Application.targetFrameRate = -1;
 
-            if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android)
+            if (Application.platform is RuntimePlatform.IPhonePlayer or RuntimePlatform.Android)
                 Input.simulateMouseWithTouches = false;
 
             cameraTransform = transform;
             previousSmoothing = MovementSmoothing;
         }
-
 
         // Use this for initialization
         void Start()
@@ -81,13 +77,12 @@ namespace TMPro.Examples
         {
             GetPlayerInput();
 
-
             // Check if we still have a valid target
             if (CameraTarget != null)
             {
                 if (CameraMode == CameraModes.Isometric)
                 {
-                    desiredPosition = CameraTarget.position + Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * new Vector3(0, 0, -FollowDistance);
+                    desiredPosition = CameraTarget.position + (Quaternion.Euler(ElevationAngle, OrbitalAngle, 0f) * new Vector3(0, 0, -FollowDistance));
                 }
                 else if (CameraMode == CameraModes.Follow)
                 {
@@ -116,12 +111,8 @@ namespace TMPro.Examples
                 {
                     cameraTransform.LookAt(CameraTarget);
                 }
-
             }
-
         }
-
-
 
         void GetPlayerInput()
         {
@@ -145,21 +136,20 @@ namespace TMPro.Examples
                 if (Input.GetKeyDown(KeyCode.S))
                     MovementSmoothing = !MovementSmoothing;
 
-
                 // Check for right mouse button to change camera follow and elevation angle
                 if (Input.GetMouseButton(1))
                 {
                     mouseY = Input.GetAxis("Mouse Y");
                     mouseX = Input.GetAxis("Mouse X");
 
-                    if (mouseY > 0.01f || mouseY < -0.01f)
+                    if (mouseY is > 0.01f or < (-0.01f))
                     {
                         ElevationAngle -= mouseY * MoveSensitivity;
                         // Limit Elevation angle between min & max values.
                         ElevationAngle = Mathf.Clamp(ElevationAngle, MinElevationAngle, MaxElevationAngle);
                     }
 
-                    if (mouseX > 0.01f || mouseX < -0.01f)
+                    if (mouseX is > 0.01f or < (-0.01f))
                     {
                         OrbitalAngle += mouseX * MoveSensitivity;
                         if (OrbitalAngle > 360)
@@ -175,16 +165,15 @@ namespace TMPro.Examples
                     Vector2 deltaPosition = Input.GetTouch(0).deltaPosition;
 
                     // Handle elevation changes
-                    if (deltaPosition.y > 0.01f || deltaPosition.y < -0.01f)
+                    if (deltaPosition.y is > 0.01f or < (-0.01f))
                     {
                         ElevationAngle -= deltaPosition.y * 0.1f;
                         // Limit Elevation angle between min & max values.
                         ElevationAngle = Mathf.Clamp(ElevationAngle, MinElevationAngle, MaxElevationAngle);
                     }
 
-
                     // Handle left & right 
-                    if (deltaPosition.x > 0.01f || deltaPosition.x < -0.01f)
+                    if (deltaPosition.x is > 0.01f or < (-0.01f))
                     {
                         OrbitalAngle += deltaPosition.x * 0.1f;
                         if (OrbitalAngle > 360)
@@ -192,7 +181,6 @@ namespace TMPro.Examples
                         if (OrbitalAngle < 0)
                             OrbitalAngle += 360;
                     }
-
                 }
 
                 // Check for left mouse button to select a new CameraTarget or to reset Follow position
@@ -201,7 +189,7 @@ namespace TMPro.Examples
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
-                    if (Physics.Raycast(ray, out hit, 300, 1 << 10 | 1 << 11 | 1 << 12 | 1 << 14))
+                    if (Physics.Raycast(ray, out hit, 300, (1 << 10) | (1 << 11) | (1 << 12) | (1 << 14)))
                     {
                         if (hit.transform == CameraTarget)
                         {
@@ -214,10 +202,8 @@ namespace TMPro.Examples
                             OrbitalAngle = 0;
                             MovementSmoothing = previousSmoothing;
                         }
-
                     }
                 }
-
 
                 if (Input.GetMouseButton(2))
                 {
@@ -241,7 +227,6 @@ namespace TMPro.Examples
                         MovementSmoothing = false;
                     }
 
-
                     mouseY = Input.GetAxis("Mouse Y");
                     mouseX = Input.GetAxis("Mouse X");
 
@@ -250,7 +235,6 @@ namespace TMPro.Examples
                     dummyTarget.Translate(-moveVector, Space.World);
 
                 }
-
             }
 
             // Check Pinching to Zoom in - out on Mobile device
@@ -267,26 +251,22 @@ namespace TMPro.Examples
 
                 float zoomDelta = prevTouchDelta - touchDelta;
 
-                if (zoomDelta > 0.01f || zoomDelta < -0.01f)
+                if (zoomDelta is > 0.01f or < (-0.01f))
                 {
                     FollowDistance += zoomDelta * 0.25f;
                     // Limit FollowDistance between min & max values.
                     FollowDistance = Mathf.Clamp(FollowDistance, MinFollowDistance, MaxFollowDistance);
                 }
-
-
             }
 
             // Check MouseWheel to Zoom in-out
-            if (mouseWheel < -0.01f || mouseWheel > 0.01f)
+            if (mouseWheel is < (-0.01f) or > 0.01f)
             {
 
                 FollowDistance -= mouseWheel * 5.0f;
                 // Limit FollowDistance between min & max values.
                 FollowDistance = Mathf.Clamp(FollowDistance, MinFollowDistance, MaxFollowDistance);
             }
-
-
         }
     }
 }

@@ -10,8 +10,6 @@ public class MyCharacterController : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
 
-
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -47,9 +45,9 @@ public class MyCharacterController : MonoBehaviour
             Debug.LogError("NavMeshAgent component missing from this game object");
             return;
         }
+
         agent.stoppingDistance = stoppingDistance;
         agent.SetDestination(targetPosition);
-
 
     }
 
@@ -67,7 +65,6 @@ public class MyCharacterController : MonoBehaviour
         {
             Debug.LogWarning("Failed to teleport NavMeshAgent");
         }
-
     }
 
     public async Task MoveTowardsPositionAsync(Vector3 targetPosition, float stoppingDistance)
@@ -77,6 +74,7 @@ public class MyCharacterController : MonoBehaviour
             Debug.LogError("NavMeshAgent component missing from this game object");
             return;
         }
+
         agent.stoppingDistance = stoppingDistance;
         agent.SetDestination(targetPosition);
 
@@ -89,7 +87,6 @@ public class MyCharacterController : MonoBehaviour
                 break;
             }
         }
-
     }
 
     public void StartTalking()

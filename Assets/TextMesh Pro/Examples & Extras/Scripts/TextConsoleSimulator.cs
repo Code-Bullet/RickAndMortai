@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
     public class TextConsoleSimulator : MonoBehaviour
@@ -14,13 +13,11 @@ namespace TMPro.Examples
             m_TextComponent = gameObject.GetComponent<TMP_Text>();
         }
 
-
         void Start()
         {
             StartCoroutine(RevealCharacters(m_TextComponent));
             //StartCoroutine(RevealWords(m_TextComponent));
         }
-
 
         void OnEnable()
         {
@@ -33,13 +30,11 @@ namespace TMPro.Examples
             TMPro_EventManager.TEXT_CHANGED_EVENT.Remove(ON_TEXT_CHANGED);
         }
 
-
         // Event received when the text object has changed.
         void ON_TEXT_CHANGED(Object obj)
         {
             hasTextChanged = true;
         }
-
 
         /// <summary>
         /// Method revealing the text one character at a time.
@@ -75,7 +70,6 @@ namespace TMPro.Examples
                 yield return null;
             }
         }
-
 
         /// <summary>
         /// Method revealing the text one word at a time.
@@ -116,6 +110,5 @@ namespace TMPro.Examples
                 yield return new WaitForSeconds(0.1f);
             }
         }
-
     }
 }

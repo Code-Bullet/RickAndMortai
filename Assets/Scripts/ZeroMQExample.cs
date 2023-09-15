@@ -16,7 +16,7 @@ public class ZeroMQExample : MonoBehaviour
     {
         while (true)
         {
-            using (RequestSocket client = new RequestSocket())
+            using (RequestSocket client = new())
             {
                 // Connect to the Python server
                 client.Connect("tcp://127.0.0.1:5555");

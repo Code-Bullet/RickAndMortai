@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-
 namespace TMPro.Examples
 {
 
@@ -30,7 +29,6 @@ namespace TMPro.Examples
 
         private float m_ScaleMultiplier;
         private float m_HandleSize;
-
 
         void OnDrawGizmos()
         {
@@ -92,7 +90,6 @@ namespace TMPro.Examples
             #endregion
         }
 
-
         /// <summary>
         /// Method to draw a rectangle around each character.
         /// </summary>
@@ -134,7 +131,7 @@ namespace TMPro.Examples
                 {
                     Color color = Color.grey;
 
-                    float whiteSpaceAdvance = Math.Abs(characterInfo.origin - characterInfo.xAdvance) > 0.01f ? characterInfo.xAdvance : characterInfo.origin + (characterInfo.ascender - characterInfo.descender) * 0.03f;
+                    float whiteSpaceAdvance = Math.Abs(characterInfo.origin - characterInfo.xAdvance) > 0.01f ? characterInfo.xAdvance : characterInfo.origin + ((characterInfo.ascender - characterInfo.descender) * 0.03f);
                     DrawDottedRectangle(m_Transform.TransformPoint(new Vector3(characterInfo.origin, characterInfo.descender, 0)), m_Transform.TransformPoint(new Vector3(whiteSpaceAdvance, characterInfo.ascender, 0)), color, 4);
                 }
 
@@ -152,13 +149,13 @@ namespace TMPro.Examples
                 Handles.DrawDottedLine(ascentlineStart, ascentlineEnd, dottedLineSize);
 
                 // Draw Cap Height & Mean line
-                float capline = characterInfo.fontAsset == null ? 0 : baseline + characterInfo.fontAsset.faceInfo.capLine * characterInfo.scale;
-                Vector3 capHeightStart = new Vector3(topLeft.x, m_Transform.TransformPoint(new Vector3(0, capline, 0)).y, 0);
-                Vector3 capHeightEnd = new Vector3(topRight.x, m_Transform.TransformPoint(new Vector3(0, capline, 0)).y, 0);
+                float capline = characterInfo.fontAsset == null ? 0 : baseline + (characterInfo.fontAsset.faceInfo.capLine * characterInfo.scale);
+                Vector3 capHeightStart = new(topLeft.x, m_Transform.TransformPoint(new Vector3(0, capline, 0)).y, 0);
+                Vector3 capHeightEnd = new(topRight.x, m_Transform.TransformPoint(new Vector3(0, capline, 0)).y, 0);
 
-                float meanline = characterInfo.fontAsset == null ? 0 : baseline + characterInfo.fontAsset.faceInfo.meanLine * characterInfo.scale;
-                Vector3 meanlineStart = new Vector3(topLeft.x, m_Transform.TransformPoint(new Vector3(0, meanline, 0)).y, 0);
-                Vector3 meanlineEnd = new Vector3(topRight.x, m_Transform.TransformPoint(new Vector3(0, meanline, 0)).y, 0);
+                float meanline = characterInfo.fontAsset == null ? 0 : baseline + (characterInfo.fontAsset.faceInfo.meanLine * characterInfo.scale);
+                Vector3 meanlineStart = new(topLeft.x, m_Transform.TransformPoint(new Vector3(0, meanline, 0)).y, 0);
+                Vector3 meanlineEnd = new(topRight.x, m_Transform.TransformPoint(new Vector3(0, meanline, 0)).y, 0);
 
                 if (characterInfo.isVisible)
                 {
@@ -197,7 +194,7 @@ namespace TMPro.Examples
                 // Draw text labels for metrics
                if (m_HandleSize < 0.5f)
                {
-                   GUIStyle style = new GUIStyle(GUI.skin.GetStyle("Label"));
+                   GUIStyle style = new(GUI.skin.GetStyle("Label"));
                    style.normal.textColor = new Color(0.6f, 0.6f, 0.6f, 1.0f);
                    style.fontSize = 12;
                    style.fixedWidth = 200;
@@ -255,7 +252,6 @@ namespace TMPro.Examples
                }
             }
         }
-
 
         /// <summary>
         /// Method to draw rectangles around each word of the text.
@@ -356,10 +352,7 @@ namespace TMPro.Examples
 
                 //Debug.Log(wInfo.GetWord(m_TextMeshPro.textInfo.characterInfo));
             }
-
-
         }
-
 
         /// <summary>
         /// Draw rectangle around each of the links contained in the text.
@@ -464,7 +457,6 @@ namespace TMPro.Examples
             }
         }
 
-
         /// <summary>
         /// Draw Rectangles around each lines of the text.
         /// </summary>
@@ -521,7 +513,7 @@ namespace TMPro.Examples
                 // Draw text labels for metrics
                 if (m_HandleSize < 1.0f)
                 {
-                    GUIStyle style = new GUIStyle();
+                    GUIStyle style = new();
                     style.normal.textColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
                     style.fontSize = 12;
                     style.fixedWidth = 200;
@@ -545,7 +537,6 @@ namespace TMPro.Examples
             }
         }
 
-
         /// <summary>
         /// Draw Rectangle around the bounds of the text object.
         /// </summary>
@@ -560,7 +551,6 @@ namespace TMPro.Examples
             DrawRectangle(bottomLeft, topRight, new Color(1, 0.5f, 0));
         }
 
-
         void DrawTextBounds()
         {
             Bounds textBounds = m_TextComponent.textBounds;
@@ -570,7 +560,6 @@ namespace TMPro.Examples
 
             DrawRectangle(bottomLeft, topRight, new Color(0f, 0.5f, 0.5f));
         }
-
 
         // Draw Rectangles
         void DrawRectangle(Vector3 BL, Vector3 TR, Color color)
@@ -595,17 +584,17 @@ namespace TMPro.Examples
         void DrawSolidRectangle(Vector3 bottomLeft, Vector3 topRight, Color color, float size = 5.0f)
         {
             Handles.color = color;
-            Rect rect = new Rect(bottomLeft, topRight - bottomLeft);
+            Rect rect = new(bottomLeft, topRight - bottomLeft);
             Handles.DrawSolidRectangleWithOutline(rect, color, Color.black);
         }
 
         void DrawSquare(Vector3 position, float size, Color color)
         {
             Handles.color = color;
-            Vector3 bottomLeft = new Vector3(position.x - size, position.y - size, position.z);
-            Vector3 topLeft = new Vector3(position.x - size, position.y + size, position.z);
-            Vector3 topRight = new Vector3(position.x + size, position.y + size, position.z);
-            Vector3 bottomRight = new Vector3(position.x + size, position.y - size, position.z);
+            Vector3 bottomLeft = new(position.x - size, position.y - size, position.z);
+            Vector3 topLeft = new(position.x - size, position.y + size, position.z);
+            Vector3 topRight = new(position.x + size, position.y + size, position.z);
+            Vector3 bottomRight = new(position.x + size, position.y - size, position.z);
 
             Handles.DrawLine(bottomLeft, topLeft);
             Handles.DrawLine(topLeft, topRight);
@@ -621,7 +610,6 @@ namespace TMPro.Examples
             Handles.DrawLine(new Vector3(position.x, position.y - size, position.z), new Vector3(position.x, position.y + size, position.z));
         }
 
-
         // Draw Rectangles
         void DrawRectangle(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br, Color color)
         {
@@ -633,18 +621,17 @@ namespace TMPro.Examples
             Gizmos.DrawLine(br, bl);
         }
 
-
         // Draw Rectangles
         void DrawDottedRectangle(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br, Color color)
         {
-            var cam = Camera.current;
+            Camera cam = Camera.current;
             float dotSpacing = (cam.WorldToScreenPoint(br).x - cam.WorldToScreenPoint(bl).x) / 75f;
-            UnityEditor.Handles.color = color;
+            Handles.color = color;
 
-            UnityEditor.Handles.DrawDottedLine(bl, tl, dotSpacing);
-            UnityEditor.Handles.DrawDottedLine(tl, tr, dotSpacing);
-            UnityEditor.Handles.DrawDottedLine(tr, br, dotSpacing);
-            UnityEditor.Handles.DrawDottedLine(br, bl, dotSpacing);
+            Handles.DrawDottedLine(bl, tl, dotSpacing);
+            Handles.DrawDottedLine(tl, tr, dotSpacing);
+            Handles.DrawDottedLine(tr, br, dotSpacing);
+            Handles.DrawDottedLine(br, bl, dotSpacing);
         }
         #endif
     }

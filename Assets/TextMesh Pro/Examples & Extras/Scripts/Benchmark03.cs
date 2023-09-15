@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.TextCore.LowLevel;
 
-
 namespace TMPro.Examples
 {
 
@@ -15,12 +14,10 @@ namespace TMPro.Examples
 
         public Font SourceFont;
 
-
         void Awake()
         {
 
         }
-
 
         void Start()
         {
@@ -54,7 +51,7 @@ namespace TMPro.Examples
                     case BenchmarkType.TMP_SDF:
                     case BenchmarkType.TMP_BITMAP_MOBILE:
                         {
-                            GameObject go = new GameObject();
+                            GameObject go = new();
                             go.transform.position = new Vector3(0, 1.2f, 0);
 
                             TextMeshPro textComponent = go.AddComponent<TextMeshPro>();
@@ -68,10 +65,11 @@ namespace TMPro.Examples
                                 textComponent.fontSize = 132;
 
                         }
+
                         break;
                     case BenchmarkType.TEXTMESH_BITMAP:
                         {
-                            GameObject go = new GameObject();
+                            GameObject go = new();
                             go.transform.position = new Vector3(0, 1.2f, 0);
 
                             TextMesh textMesh = go.AddComponent<TextMesh>();
@@ -83,10 +81,10 @@ namespace TMPro.Examples
                             textMesh.color = new Color32(255, 255, 0, 255);
                             textMesh.text = "@";
                         }
+
                         break;
                 }
             }
         }
-
     }
 }

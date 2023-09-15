@@ -11,7 +11,6 @@ using UnityEngine.UI;
 using System.Threading.Tasks;
 using System.Net.Http;
 
-
 // this script is used to get responses from chatgpt.
 public class OpenAIController : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class OpenAIController : MonoBehaviour
     public SceneDirector director;
 
     private string systemMessage = "";
-
 
     public List<TextAsset> examples;
 
@@ -84,9 +82,7 @@ public class OpenAIController : MonoBehaviour
         systemMessage += " Do NOT add any other directions to define tone or anything, only dialog and the specific stage directions I gave you";
         systemMessage += " Try not to go to too many dimensions in a single script, 2 - 3 max unless specifically asked by the prompt. Doing a tour of all the dimensions just becomes boring";
 
-
         systemMessage += " Here are some example scripts: \n";
-
 
         // there are example scripts defined in the inspector, and we add these to the system message.
         string nextLine = "";
@@ -167,7 +163,6 @@ public class OpenAIController : MonoBehaviour
         string[] outputLinesProcessed = outputString.Split(Environment.NewLine,
                     StringSplitOptions.RemoveEmptyEntries);
 
-
         char[] delims = new[] { '\r', '\n' };
         outputLinesProcessed = outputString.Split(delims, StringSplitOptions.RemoveEmptyEntries);
         return outputLinesProcessed;
@@ -183,10 +178,11 @@ public class OpenAIController : MonoBehaviour
             return null;
         }
 
-
-        ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
-        userMessage.Content = inputPrompt;
+        ChatMessage userMessage = new()
+        {
+            Role = ChatMessageRole.User,
+            Content = inputPrompt
+        };
 
         Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
 
@@ -201,7 +197,7 @@ public class OpenAIController : MonoBehaviour
             try
             {
                 // Send the entire chat to OpenAI to get the next message
-                var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
+                ChatResult chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
                 {
 
                     Model = useChatGPT4 ? Model.ChatGPT4_8k : Model.ChatGPTTurbo16k,
@@ -213,9 +209,11 @@ public class OpenAIController : MonoBehaviour
                 });
 
                 // Get the response message and store it in a response message variable 
-                ChatMessage responseMessage = new ChatMessage();
-                responseMessage.Role = chatResult.Choices[0].Message.Role;
-                responseMessage.Content = chatResult.Choices[0].Message.Content;
+                ChatMessage responseMessage = new()
+                {
+                    Role = chatResult.Choices[0].Message.Role,
+                    Content = chatResult.Choices[0].Message.Content
+                };
                 Debug.Log(string.Format("{0}: {1}", responseMessage.rawRole, responseMessage.Content));
 
                 // Add the response to the list of messages
@@ -249,14 +247,10 @@ public class OpenAIController : MonoBehaviour
                 Debug.LogError($"Error: {ex}");
                 break;
             }
-
-
-
         }
 
         //return the message
-        return messages[messages.Count - 1].Content;
+        return messages[^1].Content;
 
     }
-
 }

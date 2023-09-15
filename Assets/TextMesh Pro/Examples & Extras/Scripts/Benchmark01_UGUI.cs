@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-
 namespace TMPro.Examples
 {
     
@@ -31,18 +30,13 @@ namespace TMPro.Examples
         private Material m_material01;
         private Material m_material02;
 
-
-
         IEnumerator Start()
         {
-
-
 
             if (BenchmarkType == 0) // TextMesh Pro Component
             {
                 m_textMeshPro = gameObject.AddComponent<TextMeshProUGUI>();
                 //m_textContainer = GetComponent<TextContainer>();
-
 
                 //m_textMeshPro.anchorDampening = true;
 
@@ -68,7 +62,6 @@ namespace TMPro.Examples
                 m_material01 = m_textMeshPro.font.material;
                 m_material02 = Resources.Load<Material>("Fonts & Materials/LiberationSans SDF - BEVEL"); // Make sure the LiberationSans SDF exists before calling this...  
 
-
             }
             else if (BenchmarkType == 1) // TextMesh
             {
@@ -91,8 +84,6 @@ namespace TMPro.Examples
                 //m_textMesh.color = new Color32(255, 255, 0, 255);    
             }
 
-
-
             for (int i = 0; i <= 1000000; i++)
             {
                 if (BenchmarkType == 0)
@@ -101,8 +92,6 @@ namespace TMPro.Examples
                     if (i % 1000 == 999)
                         m_textMeshPro.fontSharedMaterial = m_textMeshPro.fontSharedMaterial == m_material01 ? m_textMeshPro.fontSharedMaterial = m_material02 : m_textMeshPro.fontSharedMaterial = m_material01;
 
-
-
                 }
                 else if (BenchmarkType == 1)
                     m_textMesh.text = label02 + (i % 1000).ToString();
@@ -110,10 +99,8 @@ namespace TMPro.Examples
                 yield return null;
             }
 
-
             yield return null;
         }
-
 
         /*
         void Update()
@@ -131,5 +118,4 @@ namespace TMPro.Examples
         }
         */
     }
-
 }

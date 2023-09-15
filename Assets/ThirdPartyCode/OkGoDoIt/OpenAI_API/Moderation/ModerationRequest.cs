@@ -50,7 +50,7 @@ namespace OpenAI_API.Moderation
 		/// <param name="input">The prompt to classify</param>
 		public ModerationRequest(string input)
 		{
-			Model = OpenAI_API.Models.Model.TextModerationLatest;
+			Model = Models.Model.TextModerationLatest;
 			this.Input = input;
 		}
 	}

@@ -146,7 +146,8 @@ public class CustomizableGridShaderGUI : ShaderGUI
 
             if (EditorGUI.EndChangeCheck())
             {
-                var keywords = new List<string> { _worldPos ? "WPOS_ON" : "WPOS_OFF" };
+                List<string> keywords = new()
+                { _worldPos ? "WPOS_ON" : "WPOS_OFF" };
                 material.shaderKeywords = keywords.ToArray();
                 EditorUtility.SetDirty(material);
             }
@@ -296,7 +297,6 @@ public class CustomizableGridShaderGUI : ShaderGUI
 
             EditorGUILayout.EndVertical();
 
-
         }// End else
 
         EditorGUILayout.BeginVertical("Box");
@@ -304,8 +304,5 @@ public class CustomizableGridShaderGUI : ShaderGUI
         EditorGUILayout.EndVertical();
        
     }
-
 }
-
-
 
