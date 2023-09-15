@@ -18,7 +18,7 @@ public class WholeThingManager : MonoBehaviour
     public OpenAISlurDetector slurDetector;
     public SceneDirector sceneDirector;
     public FakeYouAPIManager fakeYouAPIManager;
-    public YouTubeChat youTubeChat;
+    public YouTubeChatFromSteven youTubeChat;
 
     public bool usingVoiceActing = true;
 
@@ -49,6 +49,8 @@ public class WholeThingManager : MonoBehaviour
 
     public string firstPrompt = "Banana";
 
+    public bool runMainLoop = true;
+
 
     void Start()
     {
@@ -56,7 +58,12 @@ public class WholeThingManager : MonoBehaviour
         titleText.gameObject.SetActive(false);
         enableOrDisableVotingUI(false);
 
-        MainLoop();
+        
+        if (runMainLoop)
+        {
+
+            MainLoop();
+        }
 
         // TestingShit();
 
@@ -73,7 +80,7 @@ public class WholeThingManager : MonoBehaviour
 
 
         string response = await slurDetector.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
-        Debug.Log("response "  + response);
+        Debug.Log("response " + response);
     }
 
     async void ToggleDiscordPlugEvery10Seconds()
