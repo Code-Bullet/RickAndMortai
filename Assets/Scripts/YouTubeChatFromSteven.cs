@@ -73,7 +73,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
         Task.Run(() =>
         {
-            while (listener.IsListening)
+            while (listener.IsListening && Application.isPlaying)
             {
                 HttpListenerContext ctx = listener.GetContext();
 
