@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cinemachine;
 using TMPro;
-using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -78,7 +77,7 @@ public class SceneDirector : MonoBehaviour
         {
             Debug.Log("Running " + line);
             string lowerLine = line.ToLower();
-
+            int numWords = line.Split(' ').Length;
 
 
             // if its an action instruction
@@ -150,14 +149,16 @@ public class SceneDirector : MonoBehaviour
                             // await ProcessDialogFromLines(outputLines);
                             titleText.text = line.Substring(talkingCharacter.name.Length + 2);
                             titleText.gameObject.SetActive(true);
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                             titleText.gameObject.SetActive(false);
 
                         }
                         else
                         {
                             textField.text = line;
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                         }
 
                         continue;
@@ -202,7 +203,8 @@ public class SceneDirector : MonoBehaviour
 
                     //actually play the audio
                     textField.text = line;
-                    audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
 
                     //we done
                     talkingCharacter.characterController.StopTalking();
@@ -412,7 +414,11 @@ public class SceneDirector : MonoBehaviour
                 {
                     voiceModelUUIDs.Add(talkingCharacter.fakeYouUUID);
                     characterNames.Add(talkingCharacter.name);
-                    textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    // Ensures the character's name isn't the only thing on the line, prevents a potential error
+                    if (talkingCharacter.name.Length + 2 <= line.Length)
+                    {
+                        textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    }
 
                 }
 
@@ -577,7 +583,6 @@ public class SceneDirector : MonoBehaviour
         await Task.Delay(TimeSpan.FromSeconds(0.7f));
         RickRenderer.SetActive(true);
         MortyRenderer.SetActive(true);
-
 
         rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 0f);
         rick.LookAtTarget(currentDimension.actualCamera.gameObject);

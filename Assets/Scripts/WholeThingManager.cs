@@ -1,3 +1,4 @@
+using Assets.Scripts.AIControllers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,22 +6,24 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 // this is the big daddy script that controls everything
 // basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
 public class WholeThingManager : MonoBehaviour
 {
-    public OpenAIController openAIController;
+    public static WholeThingManager Singleton;
     public OpenAISlurDetector slurDetector;
+    public AIController AIController;
     public SceneDirector sceneDirector;
     public FakeYouAPIManager fakeYouAPIManager;
     public YouTubeChatFromSteven youTubeChat;
 
     public bool usingVoiceActing = true;
+
+    public float wordsPerMinute = 250;
 
     public bool currentlyRunningScene = false;
 
@@ -46,55 +49,45 @@ public class WholeThingManager : MonoBehaviour
 
     public GameObject bottomBarVotingInfoText;
     public GameObject topBarDiscordPluf;
-
     public string firstPrompt = "Banana";
-
     public bool runMainLoop = true;
 
 
     void Start()
     {
+        Singleton = this;
         ToggleDiscordPlugEvery10Seconds();
         titleText.gameObject.SetActive(false);
         enableOrDisableVotingUI(false);
 
-        
+        AIController.Init();
         if (runMainLoop)
         {
-
             MainLoop();
         }
-
-        // TestingShit();
-
-
-
+        // TestingShit();	
 
     }
 
     private async Task TestingShit()
     {
-
-        // chill for a bit to give time to setup everything
+        // chill for a bit to give time to setup everything	
         await Task.Delay(2000);
-
-
         string response = await slurDetector.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
         Debug.Log("response " + response);
     }
-
     async void ToggleDiscordPlugEvery10Seconds()
     {
-
         while (true)
         {
             await Task.Delay(10000);
             topBarDiscordPluf.SetActive(!topBarDiscordPluf.activeSelf);
-
         }
+    }
 
-
-
+    void OnDestroy()
+    {
+        Singleton = null;
     }
 
     // turns on or off all the voting ui 
@@ -271,7 +264,6 @@ public class WholeThingManager : MonoBehaviour
             RunScene(currentScene);
             CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
 
-
         }
 
     }
@@ -310,12 +302,12 @@ public class WholeThingManager : MonoBehaviour
             textField.text = creatingScene + " --- " + "Generating script...";
 
             // add some shit to the prompt
-            prompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
+            //prompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
             // prompt += ". Rick and Morty are currently in " + sceneDirector.currentDimension.name + ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
 
 
             // chuck the prompt into chatgpt
-            chatGPTOutput = await openAIController.EnterPromptAndGetResponse(prompt);
+            chatGPTOutput = await AIController.EnterPromptAndGetResponse(prompt);
 
             // add the title and author to the scene so the narrator speaks them
             chatGPTOutput = "Narrator: " + initialPrompt + "\n" +
@@ -324,16 +316,45 @@ public class WholeThingManager : MonoBehaviour
 
             // this errases chatgpts memorty so it doesnt overload the max tokens cap
             // dont worry about it
-            openAIController.ClearMessages();
+            AIController.Clear();
 
 
             textField.text = creatingScene + " --- " + "Processing script...";
 
             // process the message into indavidual lines
-            chatGPTOutputLines = openAIController.ProcessOutputIntoStringArray(chatGPTOutput);
+            string str = AIController.OutputString;
+            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+            AIController.OutputString = str;
+
+            // save a text file
+            try
+            {
+                // Get the current date and time
+                string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+                // Create the full path for the file
+                string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
+
+                // Create an empty file and close it immediately
+                using (FileStream fs = File.Create(path))
+                {
+                    // Close the file immediately to allow subsequent write operations
+                }
+
+                // Write the string to the file
+                File.WriteAllText(path, chatGPTOutput);
+
+                // Log success
+                Debug.Log("Data saved successfully to: " + path);
+            }
+            catch (System.Exception e)
+            {
+                // Log any exceptions that occur
+                Debug.LogError("An error occurred while saving data: " + e.Message);
+            }
 
 
-
+            Debug.Log("3");
 
             // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
             if (chatGPTOutputLines.Length < 10)
@@ -350,124 +371,94 @@ public class WholeThingManager : MonoBehaviour
             else
             {
                 textField.text = creatingScene + " --- " + "Detecting Slurs...";
-
-                // ok lets detect some slurs baby
+                // ok lets detect some slurs baby	
                 string deslurredChatgptOutput = slurDetector.RemoveDirectSlurs(chatGPTOutput);
-                // ask chatgpt to remove slurs because you guys are too creative
-                // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]
+                // ask chatgpt to remove slurs because you guys are too creative	
+                // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]	
                 string detectedSlurs = await slurDetector.EnterPromptAndGetResponse(deslurredChatgptOutput);
-
-
-
                 if (detectedSlurs.ToLower().Contains("no slurs detected"))
                 {
-
                     Debug.Log("Slur free yay " + deslurredChatgptOutput);
-                    // ok we good
+                    // ok we good	
                 }
                 else
                 {
-
-
-                    // get the slurs into an array
+                    // get the slurs into an array	
                     string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
                     string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
-
-                    // if the shit is empty then that means something fucked up. 
-                    // go to the backup prompt 
+                    // if the shit is empty then that means something fucked up. 	
+                    // go to the backup prompt 	
                     if (detectedSlurArrayFiltered.Length == 0)
                     {
-
                         Debug.Log("probably slurs so im not gonna risk it");
                         prompt = backupPrompt;
                         promptAuthor = backupPromptAuthor;
                         initialPrompt = prompt;
                         youTubeChat.AddToBlacklist(backupPrompt);
-                        // in the case of a double fail this be the chosen story
+                        // in the case of a double fail this be the chosen story	
                         backupPrompt = "Generate a Random story";
                         backupPromptAuthor = "Me because you guys are nasty";
                         continue;
-
                     }
                     else
                     {
                         Debug.Log("here be the slurs vvvvvv");
-
-                        foreach (string str in detectedSlurArrayFiltered)
+                        foreach (string s in detectedSlurArrayFiltered)
                         {
-                            Debug.Log(str);
+                            Debug.Log(s);
                         }
-
                         foreach (string slur in detectedSlurArrayFiltered)
                         {
                             string pattern = Regex.Escape(slur);
                             deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
                         }
                         chatGPTOutput = deslurredChatgptOutput;
-
-                        chatGPTOutputLines = openAIController.ProcessOutputIntoStringArray(chatGPTOutput);
+                        str = AIController.OutputString;
+                        chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+                        AIController.OutputString = str;
                     }
-
-
-                    //we good i think, we should be slur free. yay
+                    //we good i think, we should be slur free. yay	
                 }
-
                 foundGoodPrompt = true;
             }
-
         }
 
-
-        // save a text file
         try
         {
-            // Get the current date and time
+            // Get the current date and time	
             string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-            // Create the full path for the file
+            // Create the full path for the file	
             string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
-
-            // Create an empty file and close it immediately
+            // Create an empty file and close it immediately	
             using (FileStream fs = File.Create(path))
             {
-                // Close the file immediately to allow subsequent write operations
+                // Close the file immediately to allow subsequent write operations	
             }
-
-            // Write the string to the file
+            // Write the string to the file	
             File.WriteAllText(path, chatGPTOutput);
-
-            // Log success
+            // Log success	
             Debug.Log("Data saved successfully to: " + path);
         }
         catch (System.Exception e)
         {
-            // Log any exceptions that occur
+            // Log any exceptions that occur	
             Debug.LogError("An error occurred while saving data: " + e.Message);
         }
-
-
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
-
-        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.
+        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
         List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines);
-
         List<string> voiceModelUUIDs = dialogInfo[0];
         List<string> characterNames = dialogInfo[1];
         List<string> textsToSpeak = dialogInfo[2];
-
-
         textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
-
-        // generate text to speech voice acting based on dialog
+        // generate text to speech voice acting based on dialog	
         List<AudioClip> ttsVoiceActingOrdered = null;
         if (isThisSceneUsingVoiceActing)
         {
             ttsVoiceActingOrdered = await fakeYouAPIManager.GenerateTTS(textsToSpeak, voiceModelUUIDs, characterNames, textField, creatingScene);
         }
-
         textField.text = creatingScene + " --- " + "Done :)";
-
-        // we done
+        // we done	
         stillGeneratingScene = false;
         nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLines, ttsVoiceActingOrdered);
     }
@@ -522,3 +513,38 @@ public class RickAndMortyScene
         ttsVoiceActingLines = voiceActing;
     }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(WholeThingManager))]
+public class RandomScript_Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        WholeThingManager script = (WholeThingManager)target;
+        EditorGUI.BeginChangeCheck();
+        serializedObject.UpdateIfRequiredOrScript();
+        SerializedProperty iterator = serializedObject.GetIterator();
+        bool enterChildren = true;
+        while (iterator.NextVisible(enterChildren))
+        {
+            using (new EditorGUI.DisabledScope("m_Script" == iterator.propertyPath))
+            {
+                if (iterator.name == "wordsPerMinute")
+                {
+                    if (!script.usingVoiceActing) script.wordsPerMinute = EditorGUILayout.FloatField("Words Per Minute", script.wordsPerMinute);
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField(iterator, true);
+                }
+            }
+
+            enterChildren = false;
+        }
+
+        serializedObject.ApplyModifiedProperties();
+        EditorGUI.EndChangeCheck();
+    }
+}
+#endif
