@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Grid_003
+  m_Shader: {fileID: 4800000, guid: 837f6aa02eec1de42b4738b884be19f7, type: 3}
+  m_ValidKeywords:
+  - WPOS_OFF
+  m_InvalidKeywords: []
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BasePatternTex:
+        m_Texture: {fileID: 2800000, guid: caa8117c9947f71439fd6cfd193b6096, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CenterGridEdgeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CenterGridTex:
+        m_Texture: {fileID: 2800000, guid: eb17463f1042f924e9107baa7df30815, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CenterLineEdgeTex:
+        m_Texture: {fileID: 2800000, guid: c6ae27785281071438b4c7c5d39996b2, type: 3}
+        m_Scale: {x: 4, y: 4}
+        m_Offset: {x: 0, y: 0}
+    - _CenterLineTex:
+        m_Texture: {fileID: 2800000, guid: 18c7e79fe2dfb1045bb425405b722378, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EdgeTex:
+        m_Texture: {fileID: 2800000, guid: d712bbd3b24dacf438ad10878da3c125, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: caa8117c9947f71439fd6cfd193b6096, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextTex:
+        m_Texture: {fileID: 2800000, guid: eb44b2e7de3ead348b1901639861334a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BasePatternEmi: 0
+    - _BasePatternMet: 0
+    - _BasePatternSmo: 0.15
+    - _BumpScale: 1
+    - _CenterGridEmi: 0
+    - _CenterGridMet: 0
+    - _CenterGridSmo: 0
+    - _CenterLineEmi: 0
+    - _CenterLineMet: 0
+    - _CenterLineSmo: 0
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EdgeEmi: 0
+    - _EdgeMet: 0
+    - _EdgeSmo: 0.3
+    - _GlobalEmi: 1
+    - _GlobalMet: 1
+    - _GlobalSmo: 1
+    - _Glossiness: 0
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SrcBlend: 1
+    - _TextEmi: 0
+    - _TextMet: 0
+    - _TextSmo: 0.3
+    - _TilingX: 1
+    - _TilingY: 1
+    - _UVSec: 0
+    - _WorldPosition: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 0.7137255, g: 0.33885062, b: 0, a: 1}
+    - _BasePatternColor: {r: 0.8000001, g: 0.434023, b: 0, a: 1}
+    - _CenterGridColor: {r: 0.64705884, g: 0.60709345, b: 0.54714537, a: 1}
+    - _CenterLineColor: {r: 0.7794118, g: 0.7794118, b: 0.7794118, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 0.85294116, g: 0.85294116, b: 0.85294116, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TextColor: {r: 0.8897059, g: 0.8897059, b: 0.8897059, a: 1}
+    - _WolrdBpattTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdCgridTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdClineTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdEdgeTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdTextTiling: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []

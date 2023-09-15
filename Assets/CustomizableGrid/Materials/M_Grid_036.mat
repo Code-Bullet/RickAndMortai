@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Grid_036
+  m_Shader: {fileID: 4800000, guid: 837f6aa02eec1de42b4738b884be19f7, type: 3}
+  m_ValidKeywords:
+  - WPOS_OFF
+  m_InvalidKeywords: []
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BasePatternTex:
+        m_Texture: {fileID: 2800000, guid: b2b729ed953c36a4ab16102d241614cb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CenterGridTex:
+        m_Texture: {fileID: 2800000, guid: 1814e7172aaa6004bb851bded1dfee87, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CenterLineTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EdgeTex:
+        m_Texture: {fileID: 2800000, guid: f2cf69d1ccbbb904f8b2aac6dd1444e3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BasePatternEmi: 0
+    - _BasePatternMet: 0
+    - _BasePatternSmo: 0.3
+    - _CenterGridEmi: 0
+    - _CenterGridMet: 0
+    - _CenterGridSmo: 0.3
+    - _CenterLineEmi: 0
+    - _CenterLineMet: -0.42
+    - _CenterLineSmo: 0.17
+    - _EdgeEmi: 0
+    - _EdgeMet: -0.2
+    - _EdgeSmo: 0.577
+    - _GlobalEmi: 1
+    - _GlobalMet: 1
+    - _GlobalSmo: 1
+    - _TextEmi: 0
+    - _TextMet: 0
+    - _TextSmo: 0.3
+    - _TilingX: 0.5
+    - _TilingY: 0.5
+    - _WorldPosition: 0
+    m_Colors:
+    - _BaseColor: {r: 0.69803923, g: 0.50980395, b: 0.07450981, a: 1}
+    - _BasePatternColor: {r: 1, g: 0.79215693, b: 0.30588236, a: 1}
+    - _CenterGridColor: {r: 0.3372549, g: 0.45098042, b: 0.69803923, a: 1}
+    - _CenterLineColor: {r: 1, g: 0.79215693, b: 0.30588236, a: 1}
+    - _EdgeColor: {r: 1, g: 0.79215693, b: 0.30588236, a: 1}
+    - _TextColor: {r: 0.48627454, g: 0.8980393, b: 0.5137255, a: 1}
+    - _WolrdBpattTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdCgridTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdClineTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdEdgeTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _WolrdTextTiling: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []

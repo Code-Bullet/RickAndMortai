@@ -1,0 +1,99 @@
+Narrator: Rick and Morty talk to all available characters, but are only able to communicate in Java Script.
+Narrator: Prompt By: LORD ZORP
+Rick: Morty, get over here! I've got a new experiment for us.
+
+[Morty walks to Rick]
+
+Morty: Aww jeez, Rick. What kind of experiment is it this time?
+
+Rick: Morty, we're going to communicate with all the available characters, but only in JavaScript!
+
+[Morty walks to Workbench]
+
+Morty: JavaScript, Rick? Are you serious? I barely know how to use a computer.
+
+Rick: Don't worry, Morty. I'll guide you through it. It's just a programming language. Simple stuff.
+
+[Morty walks to Rick]
+
+Morty: Okay, Rick. I'll give it a shot. But if I mess up, it's on you.
+
+Rick: Alright, let's start with Jerry. Hey, Jerry, can you hear me?
+
+Jerry: Uh, yeah. What's going on? Why are you talking like that?
+
+Rick: Morty and I are communicating using JavaScript. It's a programming language.
+
+Jerry: Oh, great. More of your crazy science stuff. Can't we just have a normal conversation?
+
+Rick: Nope, sorry Jerry. JavaScript is the way to go. Now, let's move on to the Simpsons.
+
+[Rick and Morty enter the portal to SimpsonsHouse]
+
+Rick: Hey, Homer! How's it going, buddy?
+
+Homer: D'oh! Who are you? And why are you talking in code?
+
+Rick: Relax, Homer. We're just having some fun with JavaScript. It's a way to communicate.
+
+Homer: Well, I don't understand any of it. Just give me a Duff beer, and we'll call it even.
+
+[Morty walks to Bart]
+
+Morty: Hey, Bart. Wanna join us in this JavaScript adventure?
+
+Bart: Cool, man! I've hacked into the school's computer system using JavaScript before. Count me in!
+
+[Morty walks to Marge]
+
+Morty: Hi, Marge. Do you know anything about JavaScript?
+
+Marge: Well, I've heard of it, but I can't say I'm an expert. I'm more into baking cookies and taking care of my family.
+
+Rick: That's okay, Marge. JavaScript isn't for everyone. Now, let's head to Shrek's Swamp.
+
+[Rick and Morty enter the portal to ShreksSwamp]
+
+Rick: Hey, Shrek! How's life in the swamp?
+
+Shrek: Donkey, what's going on? Why are these weirdos talking like they're coding?
+
+Rick: It's called JavaScript, Shrek. We're just having some fun. Donkey, you wanna join in?
+
+Donkey: Oh, I don't know, Rick. I'm more of a talker than a coder. But I'll give it a shot.
+
+[Morty walks to Shrek]
+
+Morty: Shrek, do you know any JavaScript?
+
+Shrek: Donkey and I have been living in the swamp, Morty. We're not exactly up to date on the latest coding trends.
+
+Rick: No worries, Shrek. It's all in good fun. Now, let's head to the Star Wars Cantina.
+
+[Rick and Morty enter the portal to Starwars Cantina]
+
+Rick: Hey, Yoda! We're using JavaScript to communicate. Care to join us?
+
+Yoda: Hmmm, the force I sense in this JavaScript. But, speak normally, you should.
+
+Rick: Sorry, Yoda. Just trying something different. Jar Jar, you wanna give it a try?
+
+Jar Jar: Uh, meesa not so good with the computer stuff. But meesa will try.
+
+[Morty walks to Yoda]
+
+Morty: Yoda, any tips on using JavaScript?
+
+Yoda: Patience, young one. JavaScript requires. Practice, you must.
+
+Rick: Thanks, Yoda. Now, let's head to a dodgy back alley.
+
+[Rick and Morty enter the portal to Back Alley]
+
+Rick: Well, Morty, it seems we're alone in this back alley. No characters to communicate with using JavaScript.
+
+Morty: Thank frick for that, Rick. I don't think I can handle any more coding talk.
+
+Rick: Don't worry, Morty. We can always find new adventures in other dimensions. JavaScript or not.
+
+Morty: Yeah, I guess you're right, Rick. Let's see what else is out there.

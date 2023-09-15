@@ -1,0 +1,9 @@
+
+Before you write any scripts first I want you to outline all the scenes of the episode.
+There should be at least 5 scenes for each episode. 
+Make sure these scenes are possible to act out given the limited stage directions previously stated. 
+The scene descriptions should be a paragraph outlines the conversations and actions rick and morty act out.
+The scene descriptions should be formatted like this:
+Scene 1: descrition of scene 1.
+Scene 2: descrition of scene 2.
+etc.

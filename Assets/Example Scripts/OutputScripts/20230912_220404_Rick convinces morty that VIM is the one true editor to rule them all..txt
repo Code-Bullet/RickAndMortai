@@ -1,0 +1,35 @@
+Narrator: Rick convinces morty that VIM is the one true editor to rule them all.
+Narrator: Prompt By: Jayden Filippi
+Rick: Morty, get over here! I've made a groundbreaking discovery!
+[Morty walks to Rick]
+Morty: Aww jeez, Rick, what is it this time?
+Rick: Morty, I've found the one true editor to rule them all. It's called VIM!
+[Morty walks to Center Stage]
+Morty: VIM? What's so special about it, Rick?
+Rick: Morty, VIM stands for Vi IMproved. It's the ultimate text editor, designed for power users like us. It's like having the entire multiverse of editing capabilities at your fingertips!
+[Morty walks to Workbench]
+Morty: But Rick, I'm used to using Sublime Text. Why should I switch to VIM?
+Rick: Morty, Sublime Text is for amateurs. VIM is for the true masters of coding. It's lightweight, customizable, and has a steep learning curve that'll make your brain explode!
+[Morty walks to Rick]
+Morty: Uh, I don't know, Rick. It sounds complicated. I'm not sure I can handle it.
+Rick: Morty, you need to step up your game. VIM will make you a coding god. It's like having superpowers in the digital realm!
+[Morty walks to Center Stage]
+Morty: Alright, Rick, I'll give it a shot. But if I end up hating it, you owe me a lifetime supply of Meeseeks.
+Rick: Deal, Morty! Prepare to have your mind blown by the sheer awesomeness of VIM!
+[Rick and Morty enter the portal to the Yard]
+Rick: Alright, Morty, let's put VIM to the test. We'll write a complex Python script using only VIM.
+[Morty walks to Workbench]
+Morty: Crap, Rick. I barely know Python. This is gonna be a disaster.
+Rick: Don't worry, Morty. VIM has your back. It has powerful features like syntax highlighting, code completion, and split windows to make your coding experience a breeze.
+[Morty walks to Rick]
+Morty: Alright, I'm starting to get the hang of it, Rick. VIM is actually pretty cool.
+Rick: I told you so, Morty. Now, let's write a function that calculates the probability of finding intelligent life in the multiverse using the Drake Equation!
+[Morty walks to Center Stage]
+Morty: Frick, Rick. That sounds complicated. But with VIM, I think I can handle it.
+Rick: That's the spirit, Morty! With VIM, you have the power to conquer any coding challenge. Now, let's get to work!
+[Rick and Morty enter the portal to the Garage]
+Rick: Well, Morty, it looks like you've become a VIM master in no time!
+Morty: Aww jeez, Rick. I never thought I'd say this, but VIM is actually pretty awesome. I can't believe I've been missing out all this time.
+Rick: That's the beauty of exploration, Morty. We never know what amazing things we'll discover. Now, let's go conquer the digital realm with our VIM skills!
+Morty: Yeah, Rick. Let's do it! But, uh, can we take a break and order some interdimensional pizza first?
+Rick: Shoot, Morty. You read my mind. Pizza and VIM, a match made in coding heaven!

@@ -1,0 +1,37 @@
+Narrator: Codebullet adds github to project
+Narrator: Prompt By: RaevHaal
+Rick: Morty, I've made a discovery!
+[Morty walks to Rick]
+Morty: What is it this time, Rick?
+Rick: I've added GitHub to our project.
+[Morty walks to Center Stage]
+Morty: GitHub? Isn't that for computer geeks?
+Rick: Yes, Morty, but it's also for geniuses like me who need to keep track of their work.
+[Morty walks to Workbench]
+Morty: So, uh, what does this mean, Rick?
+Rick: It means we can share our work, collaborate, and even roll back changes if we screw up.
+[Morty walks to Rick]
+Morty: Roll back changes? Like a time machine?
+Rick: Not quite, Morty, but close enough.
+[Morty walks to Center Stage]
+Morty: Aww jeez, Rick, this sounds complicated.
+Rick: It's not, Morty, you just need to learn the basics.
+[Morty walks to Rick]
+Morty: So, uh, you're saying I need to learn how to code?
+Rick: No, Morty, you just need to learn how to use GitHub.
+[Morty walks to Workbench]
+Morty: Aww, shoot, Rick, I thought we were going to do something fun today.
+Rick: This is fun, Morty. Plus, it's useful. You never know when you might need to use GitHub.
+[Morty walks to Rick]
+Morty: Well, uh, okay, Rick. If you say so.
+Rick: That's the spirit, Morty! Now, let's get started.
+[Rick and Morty enter the portal to the Yard]
+Rick: Frick, we're in the yard. Let's go back.
+[Rick and Morty enter the portal to the Garage]
+Rick: Alright Morty, let's get started. 
+Morty: Crap, I'm not ready for this, Rick.
+Rick: Don't worry, Morty, I'll guide you. Wubba lubba dub dub! 
+Morty: Aww jeez, Rick. Here we go again...
+Rick: Remember, Morty, with great power comes great responsibility. 
+Morty: Uh, isn't that from Spider-Man, Rick?
+Rick: Yes, Morty, but it's also true for GitHub. Now, let's get coding!

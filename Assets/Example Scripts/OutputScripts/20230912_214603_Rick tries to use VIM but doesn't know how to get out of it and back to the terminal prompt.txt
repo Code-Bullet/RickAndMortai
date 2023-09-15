@@ -1,0 +1,75 @@
+Narrator: Rick tries to use VIM but doesn't know how to get out of it and back to the terminal prompt
+Narrator: Prompt By: vodka
+Rick: Morty, I've got this new programming tool called VIM. It's supposed to be the best for editing code. Check it out!
+
+[Morty walks to Rick]
+
+Morty: Uh, Rick, are you sure you know what you're doing? You always get stuck in these things.
+
+Rick: Morty, I'm a genius. I can handle anything. Now watch and learn.
+
+[Rick walks to Workbench]
+
+Rick: Alright, Morty, let's see... I'll just open this Python script here.
+
+[Morty walks to Workbench]
+
+Morty: Python script? What are you gonna do with that?
+
+Rick: I'm gonna show you the power of VIM, Morty. Now, let me just make some changes to this code... 
+
+[Rick walks to Center Stage]
+
+Rick: Shoot, Morty, I think I accidentally deleted a line. How do I undo in this thing?
+
+Morty: Uh, Rick, I think you need to press the Escape key and then type ":q!" to exit VIM.
+
+Rick: Escape key? Type ":q!"? What kind of frickin' interface is this? I just want to go back to the terminal!
+
+[Morty walks to Rick]
+
+Morty: Rick, calm down. Just press Escape and then type ":q!" to quit.
+
+Rick: Alright, alright. Let me try... Escape... ":q!"... crap, it's not working!
+
+[Morty walks to Workbench]
+
+Morty: Rick, maybe you should try pressing Escape, then type ":wq" to save and quit.
+
+Rick: Save and quit? Morty, I didn't even make any changes! This is ridiculous!
+
+[Morty walks to Rick]
+
+Morty: Rick, just try it. Maybe it'll work.
+
+[Rick walks to Workbench]
+
+Rick: Alright, Escape... ":wq"... frick yeah, Morty! It worked!
+
+Morty: See, Rick? I told you it would work. Now, can we please get back to our regular adventures?
+
+Rick: Fine, Morty. Let's go. But mark my words, VIM, we will meet again!
+
+[Rick and Morty enter the portal to the Yard]
+
+Rick: Alright, Morty, let's go on an adventure and forget about this VIM nonsense.
+
+Morty: Thank goodness, Rick. I don't think my brain can handle any more code editing.
+
+Rick: Don't worry, Morty. We'll stick to what we're good at - interdimensional chaos and mayhem!
+
+Morty: Aww jeez, Rick. Can't we just have a normal day for once?
+
+Rick: Morty, normal is overrated. Adventure is where it's at! Now, let's go find some trouble!
+
+[Morty walks to Center Stage]
+
+Morty: Alright, Rick. But this time, let's try not to get stuck in any more weird software, okay?
+
+Rick: No promises, Morty. No promises. But hey, at least we'll have some fun along the way!
+
+Morty: Yeah, I guess you're right, Rick. As long as we're together, it's always an adventure.
+
+Rick: That's the spirit, Morty! Now, let's go explore the multiverse and see what trouble we can find!
+
+[Rick and Morty enter the portal to the Garage]
