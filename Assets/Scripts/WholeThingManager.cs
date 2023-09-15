@@ -76,16 +76,13 @@ public class WholeThingManager : MonoBehaviour
         string response = await slurDetector.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
         Debug.Log("response " + response);
     }
-    void ToggleDiscordPlugEvery10Seconds()
+    async void ToggleDiscordPlugEvery10Seconds()
     {
-        Task.Run(async () =>
+        while (true)
         {
-            while (Application.isPlaying)
-            {
-                await Task.Delay(10000);
-                topBarDiscordPluf.SetActive(!topBarDiscordPluf.activeSelf);
-            }
-        });
+            await Task.Delay(10000);
+            topBarDiscordPluf.SetActive(!topBarDiscordPluf.activeSelf);
+        }
     }
 
     void OnDestroy()
