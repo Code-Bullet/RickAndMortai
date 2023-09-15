@@ -129,6 +129,7 @@ namespace Assets.Scripts.AIControllers
         {
             History.Add(new Message(AuthorRole.User, inputPrompt));
             using HttpClient client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(5);
             HttpResponseMessage m = await client.PostAsync($"http://localhost:{Port}", new StringContent(JsonConvert.SerializeObject(History), Encoding.UTF8, "application/json"));
             return await m.Content.ReadAsStringAsync();
         }
