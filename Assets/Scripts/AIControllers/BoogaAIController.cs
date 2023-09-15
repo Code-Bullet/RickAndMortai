@@ -123,6 +123,7 @@ namespace Assets.Scripts.AIControllers
         public int NBatch = 512;
 
         [SerializeField]
+        [Tooltip("llamacpp must be compiled with cuBLAS to take advantage of GPU layers. See https://github.com/ggerganov/llama.cpp#cublas")]
         public int NGpuLayers = 0;
 
         [SerializeField]
