@@ -3359,9 +3359,6 @@ MonoBehaviour:
   outputString: 
   outputLines: []
   director: {fileID: 456539815}
-  examples:
-  - {fileID: 4900000, guid: 0ddd670a48222b942b430793aac07fc2, type: 3}
-  - {fileID: 4900000, guid: 16bbee1c7ac17ed4889bae9be985f75f, type: 3}
   systemMessage: {fileID: 4900000, guid: dd0e7e7c71f01b34e844a77cfe889863, type: 3}
   port: 9998
 --- !u!1 &248355810
@@ -5218,7 +5215,6 @@ MonoBehaviour:
   morty: {fileID: 755216917010408213}
   Garage: {fileID: 919132149386147683}
   FrontYard: {fileID: 3469287837724332591}
-  BikiniBottom: {fileID: 0}
   SimpsonsHouse: {fileID: 661521558}
   ShreksSwamp: {fileID: 1557269434}
   StarWars: {fileID: 1207076487}
@@ -9874,9 +9870,6 @@ MonoBehaviour:
   outputString: 
   outputLines: []
   director: {fileID: 456539815}
-  examples:
-  - {fileID: 4900000, guid: 0ddd670a48222b942b430793aac07fc2, type: 3}
-  - {fileID: 4900000, guid: 16bbee1c7ac17ed4889bae9be985f75f, type: 3}
   systemMessage: {fileID: 4900000, guid: dd0e7e7c71f01b34e844a77cfe889863, type: 3}
   port: 5000
   model: 
