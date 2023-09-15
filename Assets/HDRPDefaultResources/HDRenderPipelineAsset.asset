@@ -23,7 +23,7 @@ MonoBehaviour:
       m_Values: 140000002800000050000000
       m_SchemaId:
         m_Id: With3Levels
-    supportVolumetrics: 1
+    supportVolumetrics: 0
     supportVolumetricClouds: 0
     supportLightLayers: 0
     supportWater: 0
