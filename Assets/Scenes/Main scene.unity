@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 287.87167, g: 265.11502, b: 235.51907, a: 1}
+  m_IndirectSpecularColor: {r: 287.8021, g: 265.0446, b: 235.45047, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6315,7 +6315,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 459864728}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.06902151, y: 0.91444755, z: -0.17650808, w: 0.35758442}
+  m_LocalRotation: {x: 0.069021486, y: 0.91444755, z: -0.17650808, w: 0.3575844}
   m_LocalPosition: {x: -6.179698, y: 2.4192123, z: 5.3224554}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13751,7 +13751,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.06902151, y: 0.91444755, z: -0.17650808, w: 0.35758442}
+  m_LocalRotation: {x: 0.069021486, y: 0.91444755, z: -0.17650808, w: 0.3575844}
   m_LocalPosition: {x: -4.3474913, y: 2.4192123, z: 5.3224554}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -25692,7 +25692,7 @@ MonoBehaviour:
   sceneDirector: {fileID: 456539815}
   fakeYouAPIManager: {fileID: 269999809}
   youTubeChat: {fileID: 1779123656}
-  usingVoiceActing: 0
+  usingVoiceActing: 1
   currentlyRunningScene: 0
   textField: {fileID: 1715971542}
   dialogBox: {fileID: 1125991442}
