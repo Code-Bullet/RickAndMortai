@@ -42,7 +42,15 @@ public class OpenAISlurDetector : MonoBehaviour
 
 
         // This line gets your API key (and could be slightly different on Mac/Linux)
-        api = new OpenAIAPI(Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User));
+
+        string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.LogError("OPEN AI KEY NOT FOUND");
+            return;
+        }
+
+        api = new OpenAIAPI(key);
 
         // add the system message to the messages history.
         messages = new List<ChatMessage> {

@@ -96,7 +96,13 @@ public class OpenAIController : AIController
 
 
         // This line gets your API key (and could be slightly different on Mac/Linux)
-        api = new OpenAIAPI(Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User));
+        string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.LogError("OPEN AI KEY NOT FOUND");
+            return;
+        }
+        api = new OpenAIAPI(key);
 
         string text = systemMessage.text;
 
