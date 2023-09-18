@@ -23,6 +23,8 @@ public class OpenAISlurDetector : MonoBehaviour
 
     private bool isEnabled = true;
 
+    public bool useChatGPT4 = true;
+
     void Start()
     {
         // this is the system message. its probably shit but it kinda works
@@ -169,9 +171,9 @@ public class OpenAISlurDetector : MonoBehaviour
                 var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
                 {
 
-                    // Model = useChatGPT4 ? Model.ChatGPT4_8k : Model.ChatGPTTurbo16k,
+                    Model = useChatGPT4 ? Model.ChatGPT4_8k : Model.ChatGPTTurbo16k,
                     // Model = Model.ChatGPTTurbo16k,
-                    Model = Model.ChatGPT4_8k,
+                    //Model = Model.ChatGPT4_8k,
                     // Model = Model.ChatGPT4_8k_functions,
                     // Functions = GetFunctionList(),
                     // Function_Call = "auto",
