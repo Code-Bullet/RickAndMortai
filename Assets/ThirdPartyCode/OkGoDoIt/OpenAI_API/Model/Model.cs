@@ -123,6 +123,11 @@ namespace OpenAI_API.Models
 		/// </summary>
 		public static Model CushmanCode => new Model("code-cushman-001") { OwnedBy = "openai" };
 
+        /// <summary>
+        /// Similar capabilities to text-davinci-003 but trained with supervised fine-tuning instead of reinforcement learning
+        /// </summary>
+        public static Model DavinciText002 => new Model("text-davinci-002") { OwnedBy = "openai" };
+
 		/// <summary>
 		/// Most capable Codex model. Particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code.
 		/// </summary>
@@ -132,6 +137,17 @@ namespace OpenAI_API.Models
 		/// OpenAI offers one second-generation embedding model for use with the embeddings API endpoint.
 		/// </summary>
 		public static Model AdaTextEmbedding => new Model("text-embedding-ada-002") { OwnedBy = "openai" };
+
+        /// <summary>
+        /// Similar capabilities as text-davinci-003 but compatible with legacy Completions endpoint and not Chat Completions.
+        /// </summary>
+        public static Model GPTTurboInstruct => new Model("gpt-3.5-turbo-instruct") { OwnedBy = "openai" };
+
+        /// <summary>
+		/// Snapshot of gpt-3.5-turbo-instruct from September 14th 2023. Unlike gpt-3.5-turbo-instruct, this model will not receive updates, and will be deprecated 3 months after a new version is released.
+        /// Similar capabilities as text-davinci-003 but compatible with legacy Completions endpoint and not Chat Completions.
+        /// </summary>
+        public static Model GPTTurboInstruct0914 => new Model("gpt-3.5-turbo-instruct-0914") { OwnedBy = "openai" };
 
 		/// <summary>
 		/// Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of text-davinci-003. Will be updated with the latest model iteration.
