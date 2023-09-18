@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "youtube-chat": "^2.2.0"
+    "youtube-chat": "git://github.com/steven4547466/youtube-chat.git"
   }
 }
