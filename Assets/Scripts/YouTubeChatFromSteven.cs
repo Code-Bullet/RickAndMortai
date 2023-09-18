@@ -24,20 +24,22 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
     public class ChatMessage
     {
+        public string id { get; set; }
         public string author { get; set; }
         public string text { get; set; }
 
-        public ChatMessage(string author, string text)
+        public ChatMessage(string id, string author, string text)
         {
             this.author = author;
             this.text = text;
+            this.id = id;
         }
 
         public ChatMessage() { }
 
         public override string ToString()
         {
-            return $"Author: {author} | Message: {text}";
+            return $"Author: {author} ({id}) | Message: {text}";
         }
     }
 
@@ -80,58 +82,55 @@ public class YouTubeChatFromSteven : MonoBehaviour
                 HttpListenerRequest req = ctx.Request;
                 HttpListenerResponse resp = ctx.Response;
 
-                List<ChatMessage> messages = JsonConvert.DeserializeObject<List<ChatMessage>>(new StreamReader(req.InputStream).ReadToEnd());
+                ChatMessage chatMessage = JsonConvert.DeserializeObject<ChatMessage>(new StreamReader(req.InputStream).ReadToEnd());
 
-                foreach (ChatMessage chatMessage in messages)
+                string message = chatMessage.text;
+                string author = chatMessage.author;
+
+                if (string.IsNullOrWhiteSpace(message))
                 {
-                    string message = chatMessage.text;
-                    string author = chatMessage.author;
+                    continue;
+                }
 
-                    if (string.IsNullOrWhiteSpace(message))
+                Debug.Log("recieved: " + chatMessage);
+
+
+                if (message.ToLower().StartsWith("topic:"))
+                {
+
+                    string topicMessage = message.Substring("topic:".Length).Trim();
+
+                    // Check if the topicMessage contains any word from the wordBlacklist
+                    bool containsBlacklistedWord = wordBlacklist.Any(blackWord => topicMessage.ToLower().Contains(blackWord.ToLower()));
+                    bool haveAlreadyDoneTopic = alreadyTakenTopics.Contains(topicMessage);
+                    // Check if the message after "topic:" is not empty or only spaces
+                    if (!string.IsNullOrWhiteSpace(topicMessage) && !haveAlreadyDoneTopic && !containsBlacklistedWord)
                     {
-                        continue;
-                    }
 
-                    Debug.Log("recieved: " + message );
+                        // Add new message text to message texts
+                        topicSuggestions.Add(topicMessage + "\n" + author);
 
+                        Debug.Log(topicMessage + "\n" + author);
 
-                    if (message.ToLower().StartsWith("topic:"))
-                    {
-
-                        string topicMessage = message.Substring("topic:".Length).Trim();
-
-                        // Check if the topicMessage contains any word from the wordBlacklist
-                        bool containsBlacklistedWord = wordBlacklist.Any(blackWord => topicMessage.ToLower().Contains(blackWord.ToLower()));
-                        bool haveAlreadyDoneTopic = alreadyTakenTopics.Contains(topicMessage);
-                        // Check if the message after "topic:" is not empty or only spaces
-                        if (!string.IsNullOrWhiteSpace(topicMessage) && !haveAlreadyDoneTopic && !containsBlacklistedWord)
+                        // Limit the size of messageTexts
+                        if (topicSuggestions.Count > maxListSize)
                         {
-
-                            // Add new message text to message texts
-                            topicSuggestions.Add(topicMessage + "\n" + author);
-
-                            Debug.Log(topicMessage + "\n" + author);
-
-                            // Limit the size of messageTexts
-                            if (topicSuggestions.Count > maxListSize)
-                            {
-                                // Remove oldest message text
-                                topicSuggestions.RemoveAt(0);
-                            }
-
+                            // Remove oldest message text
+                            topicSuggestions.RemoveAt(0);
                         }
+
                     }
-                    else if (message.ToLower().StartsWith("vote:"))
+                }
+                else if (message.ToLower().StartsWith("vote:"))
+                {
+
+                    string voteMessage = message.Substring("vote:".Length).Trim();
+
+                    // Check if the message after "topic:" is not empty or only spaces
+                    if (!string.IsNullOrWhiteSpace(voteMessage))
                     {
-
-                        string voteMessage = message.Substring("vote:".Length).Trim();
-
-                        // Check if the message after "topic:" is not empty or only spaces
-                        if (!string.IsNullOrWhiteSpace(voteMessage))
-                        {
-                            // Add new message text to message texts
-                            voteSuggestions.Add(voteMessage);
-                        }
+                        // Add new message text to message texts
+                        voteSuggestions.Add(voteMessage);
                     }
                 }
 
@@ -231,4 +230,3 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
 
 }
-
