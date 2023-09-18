@@ -11,9 +11,10 @@ const { LiveChat } = require("youtube-chat");
 // Gets the author and content from a node
 async function getAuthorAndContents(message) {
   if (!message) return null
+  let id = message.author.channelId
   let author = message.author.name || "User"
   let text = message.message[0].text || "Not Found"
-  return { author, text }
+  return { id, author, text }
 }
 
 // Main entry point
@@ -49,7 +50,7 @@ async function getAuthorAndContents(message) {
       
       fetch(`http://localhost:${PORT}`, { // Send it off to localhost:PORT
         method: "POST",
-        body: JSON.stringify([authorAndContents]), // Stringify it in an array, so that the stream has the correct format.
+        body: JSON.stringify(authorAndContents), // Stringify it in an array, so that the stream has the correct format.
         headers: {
           "Content-Type": "application/json"
         }
