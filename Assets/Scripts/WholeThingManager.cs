@@ -146,7 +146,7 @@ public class WholeThingManager : MonoBehaviour
 
             if (randomTopics == null)
             {
-                randomTopics = new List<string> {"Morty fucks shrek\nme",
+                randomTopics = new List<string> {"Morty flirts with code bullet\nme",
                 "Rick and morty fight batman\nme",
                   "Rick and morty go to Australia\nme" };
             }

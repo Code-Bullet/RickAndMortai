@@ -24,6 +24,8 @@ public class SceneDirector : MonoBehaviour
     public DimensionGameObjects ShreksSwamp;
     public DimensionGameObjects StarWars;
     public DimensionGameObjects BackAlley;
+    public DimensionGameObjects CodeBulletsVoid;
+    public GameObject reflectionProbe;
 
     public DimensionGameObjects currentDimension;
     public DimensionGameObjects previousDimension;
@@ -505,6 +507,13 @@ public class SceneDirector : MonoBehaviour
     public async Task RickAndMortyEnterPortal(string lowerLine)
     {
 
+        // if going into the void set the reflection probe to active so it looks all cool
+         if (lowerLine.Contains("void")){
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(true);
+
+         }
+
         // currentPortalController.OpenPortal();
         currentDimension.portalController.OpenPortal();
 
@@ -565,6 +574,10 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = BackAlley;
         }
+        else if (lowerLine.Contains("void"))
+        {
+            currentDimension = CodeBulletsVoid;
+        }
 
 
 
@@ -588,6 +601,12 @@ public class SceneDirector : MonoBehaviour
         rick.LookAtTarget(currentDimension.actualCamera.gameObject);
         await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 0f);
         morty.LookAtTarget(currentDimension.actualCamera.gameObject);
+        // if going into the void set the reflection probe to active so it looks all cool
+         if (!lowerLine.Contains("void")){
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(false);
+
+         }
     }
 
 
