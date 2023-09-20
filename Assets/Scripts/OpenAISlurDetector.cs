@@ -20,6 +20,8 @@ public class OpenAISlurDetector : MonoBehaviour
 
     private string systemMessage = "";
 
+    private bool isEnabled = true;
+
     void Start()
     {
         // this is the system message. its probably shit but it kinda works
@@ -39,7 +41,16 @@ public class OpenAISlurDetector : MonoBehaviour
         Debug.Log("system message: \n" + systemMessage);
 
         // This line gets your API key (and could be slightly different on Mac/Linux)
-        api = new OpenAIAPI(Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User));
+
+        string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
+        if (string.IsNullOrEmpty(key))
+        {
+            isEnabled = false;
+            Debug.LogError("OPEN AI KEY NOT FOUND");
+            return;
+        }
+
+        api = new OpenAIAPI(key);
 
         // add the system message to the messages history.
         messages = new List<ChatMessage> {
@@ -121,6 +132,11 @@ public class OpenAISlurDetector : MonoBehaviour
     // ok this is the actual interaction with chatgpt.
     public async Task<string> EnterPromptAndGetResponse(string inputPrompt)
     {
+        if (!isEnabled)
+        {
+            return string.Empty;
+        }
+
         ClearMessages();
         // Don't submit empty messages
         if (inputPrompt.Length < 1)
