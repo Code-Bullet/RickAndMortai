@@ -400,6 +400,7 @@ public class FakeYouAPIManager : MonoBehaviour
 
     private async Task DownloadDialogFromFakeYou(Dialogue d, int callNumber)
     {
+        Debug.Log("Getting stuff from fake you, Attempt " + callNumber + ": " + d.text);
         var content = await _client.GetAsync($"https://api.fakeyou.com/tts/job/{d.uuid}");
         Debug.Log("Attempt " + callNumber + ": " + d.text);
         var responseContent = await content.Content.ReadAsStringAsync();

@@ -2318,7 +2318,7 @@ MonoBehaviour:
   - {fileID: 4900000, guid: 0ddd670a48222b942b430793aac07fc2, type: 3}
   - {fileID: 4900000, guid: 16bbee1c7ac17ed4889bae9be985f75f, type: 3}
   systemMessage: {fileID: 4900000, guid: 1679b83724c4cdd468864a6ac26d2a37, type: 3}
-  useChatGPT4: 1
+  useChatGPT4: 0
 --- !u!4 &183103166
 Transform:
   m_ObjectHideFlags: 0
@@ -3040,6 +3040,7 @@ Transform:
   - {fileID: 456539814}
   - {fileID: 837487285}
   - {fileID: 247817182}
+  - {fileID: 706225072}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5705,7 +5706,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 459864728}
-  m_LocalRotation: {x: 0.06902149, y: 0.9144476, z: -0.1765082, w: 0.3575842}
+  m_LocalRotation: {x: 0.069021486, y: 0.9144476, z: -0.17650819, w: 0.3575842}
   m_LocalPosition: {x: -6.179698, y: 2.4192123, z: 5.3224554}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9013,6 +9014,53 @@ Transform:
   m_Father: {fileID: 1618788212}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &706225071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 706225072}
+  - component: {fileID: 706225073}
+  m_Layer: 0
+  m_Name: SlurDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &706225072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706225071}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 240433591}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &706225073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706225071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9959e312080f524da28809333d5797a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RemoveFromWhitelistTextFile: {fileID: 4900000, guid: f190b20d9f468ec46b540b3f5dd05159, type: 3}
+  debuggingSlurDetector: 0
+  slurReports: []
 --- !u!1 &714104698
 GameObject:
   m_ObjectHideFlags: 0
@@ -12132,7 +12180,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.06902149, y: 0.9144476, z: -0.1765082, w: 0.3575842}
+  m_LocalRotation: {x: 0.069021486, y: 0.9144476, z: -0.17650819, w: 0.3575842}
   m_LocalPosition: {x: -4.3474913, y: 2.4192123, z: 5.3224554}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -21882,13 +21930,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771d976a132ad56459bdf3af81949d28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slurDetector: {fileID: 183103168}
+  slurDetectorChatGPT: {fileID: 183103168}
+  slurDetectorPhonic: {fileID: 706225073}
   AIController: {fileID: 183103165}
   sceneDirector: {fileID: 456539815}
   fakeYouAPIManager: {fileID: 269999809}
   youTubeChat: {fileID: 1779123656}
   usingVoiceActing: 1
-  wordsPerMinute: 750
+  wordsPerMinute: 500
   currentlyRunningScene: 0
   textField: {fileID: 1715971542}
   dialogBox: {fileID: 1125991442}
@@ -21905,8 +21954,10 @@ MonoBehaviour:
   titleText: {fileID: 1012183744}
   bottomBarVotingInfoText: {fileID: 1728784869}
   topBarDiscordPluf: {fileID: 1545386177}
-  firstPrompt: Rick and morty insult code bullet
+  firstPrompt: rick talks about the difference between niger and nigeria
   runMainLoop: 1
+  useChatgptSlurDetection: 0
+  usePhonicSlurDetection: 1
 --- !u!4 &1523994369
 Transform:
   m_ObjectHideFlags: 0

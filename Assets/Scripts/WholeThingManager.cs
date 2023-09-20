@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 // this is the big daddy script that controls everything
@@ -15,7 +16,8 @@ using UnityEngine;
 public class WholeThingManager : MonoBehaviour
 {
     public static WholeThingManager Singleton;
-    public OpenAISlurDetector slurDetector;
+    public OpenAISlurDetector slurDetectorChatGPT;
+    public SlurDetectorEvan slurDetectorPhonic;
     public AIController AIController;
     public SceneDirector sceneDirector;
     public FakeYouAPIManager fakeYouAPIManager;
@@ -53,6 +55,10 @@ public class WholeThingManager : MonoBehaviour
     public bool runMainLoop = true;
 
 
+    public bool useChatgptSlurDetection = false;
+    public bool usePhonicSlurDetection = true;
+
+
     void Start()
     {
         Singleton = this;
@@ -73,7 +79,7 @@ public class WholeThingManager : MonoBehaviour
     {
         // chill for a bit to give time to setup everything	
         await Task.Delay(2000);
-        string response = await slurDetector.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
+        string response = await slurDetectorChatGPT.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
         Debug.Log("response " + response);
     }
     async void ToggleDiscordPlugEvery10Seconds()
@@ -122,6 +128,8 @@ public class WholeThingManager : MonoBehaviour
 
         RickAndMortyScene currentScene = null;
 
+        bool firstRunThrough = true;
+
         // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         // start creating a scene while the first round of voting happens
         CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
@@ -129,10 +137,19 @@ public class WholeThingManager : MonoBehaviour
         for (int i = 0; i < 1000; i++)
         {
 
+            float waitingCounter = 0;
             // if we're currently running a scene wait 
             while (currentlyRunningScene)
             {
                 await Task.Delay(1000);
+
+                // if we have waited for more that 8 minutes restart everything.
+                waitingCounter += 1;
+                if (waitingCounter > 8 * 60)
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    return;
+                }
             }
 
             // so scene has finished playing
@@ -146,7 +163,7 @@ public class WholeThingManager : MonoBehaviour
 
             if (randomTopics == null)
             {
-                randomTopics = new List<string> {"Morty flirts with code bullet\nme",
+                randomTopics = new List<string> {"morty keeps repeating Gar knee\nme",
                 "Rick and morty fight batman\nme",
                   "Rick and morty go to Australia\nme" };
             }
@@ -236,6 +253,15 @@ public class WholeThingManager : MonoBehaviour
                 // wait for a little bit.
                 await Task.Delay(500);
                 voteTime += 0.5f;
+
+                // if we have been voting for more than 5 minutes (10 minutes if this is the first loop) then restart everything 
+                float timeBeforeRestarting = 5 * 60;
+                if (firstRunThrough) timeBeforeRestarting += 5 * 60;
+                if (voteTime > timeBeforeRestarting)
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    return;
+                }
             }
 
             // ok voting is done 
@@ -263,7 +289,7 @@ public class WholeThingManager : MonoBehaviour
             // both of these are async functions, so they will run in the backgound, this means we are running a scene and generating a scene at the same time. 
             RunScene(currentScene);
             CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
-
+            firstRunThrough = false;
         }
 
     }
@@ -354,8 +380,6 @@ public class WholeThingManager : MonoBehaviour
             }
 
 
-            Debug.Log("3");
-
             // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
             if (chatGPTOutputLines.Length < 10)
             {
@@ -371,54 +395,75 @@ public class WholeThingManager : MonoBehaviour
             else
             {
                 textField.text = creatingScene + " --- " + "Detecting Slurs...";
-                // ok lets detect some slurs baby	
-                string deslurredChatgptOutput = slurDetector.RemoveDirectSlurs(chatGPTOutput);
-                // ask chatgpt to remove slurs because you guys are too creative	
-                // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]	
-                string detectedSlurs = await slurDetector.EnterPromptAndGetResponse(deslurredChatgptOutput);
-                if (detectedSlurs.ToLower().Contains("no slurs detected"))
+
+
+
+                if (useChatgptSlurDetection)
                 {
-                    Debug.Log("Slur free yay " + deslurredChatgptOutput);
-                    // ok we good	
-                }
-                else
-                {
-                    // get the slurs into an array	
-                    string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
-                    string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
-                    // if the shit is empty then that means something fucked up. 	
-                    // go to the backup prompt 	
-                    if (detectedSlurArrayFiltered.Length == 0)
+                    string deslurredChatgptOutput = slurDetectorChatGPT.RemoveDirectSlurs(chatGPTOutput);
+                    // ask chatgpt to remove slurs because you guys are too creative	
+                    // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]	
+                    string detectedSlurs = await slurDetectorChatGPT.EnterPromptAndGetResponse(deslurredChatgptOutput);
+                    if (detectedSlurs.ToLower().Contains("no slurs detected"))
                     {
-                        Debug.Log("probably slurs so im not gonna risk it");
-                        prompt = backupPrompt;
-                        promptAuthor = backupPromptAuthor;
-                        initialPrompt = prompt;
-                        youTubeChat.AddToBlacklist(backupPrompt);
-                        // in the case of a double fail this be the chosen story	
-                        backupPrompt = "Generate a Random story";
-                        backupPromptAuthor = "Me because you guys are nasty";
-                        continue;
+                        Debug.Log("Slur free yay " + deslurredChatgptOutput);
+                        // ok we good	
                     }
                     else
                     {
-                        Debug.Log("here be the slurs vvvvvv");
-                        foreach (string s in detectedSlurArrayFiltered)
+                        // get the slurs into an array	
+                        string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
+                        string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
+                        // if the shit is empty then that means something fucked up. 	
+                        // go to the backup prompt 	
+                        if (detectedSlurArrayFiltered.Length == 0)
                         {
-                            Debug.Log(s);
+                            Debug.Log("probably slurs so im not gonna risk it");
+                            prompt = backupPrompt;
+                            promptAuthor = backupPromptAuthor;
+                            initialPrompt = prompt;
+                            youTubeChat.AddToBlacklist(backupPrompt);
+                            // in the case of a double fail this be the chosen story	
+                            backupPrompt = "Generate a Random story";
+                            backupPromptAuthor = "Me because you guys are nasty";
+                            continue;
                         }
-                        foreach (string slur in detectedSlurArrayFiltered)
+                        else
                         {
-                            string pattern = Regex.Escape(slur);
-                            deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
+                            Debug.Log("here be the slurs vvvvvv");
+                            foreach (string s in detectedSlurArrayFiltered)
+                            {
+                                Debug.Log(s);
+                            }
+                            foreach (string slur in detectedSlurArrayFiltered)
+                            {
+                                string pattern = Regex.Escape(slur);
+                                deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
+                            }
+                            chatGPTOutput = deslurredChatgptOutput;
+                            str = AIController.OutputString;
+                            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+                            AIController.OutputString = str;
                         }
-                        chatGPTOutput = deslurredChatgptOutput;
-                        str = AIController.OutputString;
-                        chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
-                        AIController.OutputString = str;
+                        //we good i think, we should be slur free. yay	
                     }
-                    //we good i think, we should be slur free. yay	
+
+
+
                 }
+                Debug.Log("ah");
+                if (usePhonicSlurDetection)
+                {
+                    Debug.Log("get detecting boy");
+                    for (int i = 0; i < chatGPTOutputLines.Length; i++)
+                    {
+                        Debug.Log(i);
+                        chatGPTOutputLines[i] = slurDetectorPhonic.RemoveSlurs(chatGPTOutputLines[i]);
+                    }
+                    Debug.Log("yay");
+
+                }
+
                 foundGoodPrompt = true;
             }
         }
@@ -427,8 +472,11 @@ public class WholeThingManager : MonoBehaviour
         {
             // Get the current date and time	
             string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+            // remove the special characters because this fucks with file saving
+            string initialPromptWithNoSpecialCharacters = Regex.Replace(initialPrompt, @"[^a-zA-Z0-9\s]", "");
             // Create the full path for the file	
-            string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
+            string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPromptWithNoSpecialCharacters}.txt";
             // Create an empty file and close it immediately	
             using (FileStream fs = File.Create(path))
             {

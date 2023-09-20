@@ -1,0 +1,6 @@
+Slur found: ungl	Phonicated: ANKAL   	Context: in' jungle out
+Slur found: n cr	Phonicated: NKR   	Context: e seen crazy s
+Slur found: ni, Gr	Phonicated: NAKR   	Context: Grow-ni, Grow-ni
+Slur found: nee cr	Phonicated: NAKR   	Context: Gar knee creatur
+Slur found: ny Ga	Phonicated: NAKA   	Context:  on any Gar kne
+Slur found: nee ge	Phonicated: NAKA   	Context: Gar knee genius.
