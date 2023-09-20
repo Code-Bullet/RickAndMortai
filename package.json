@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "puppeteer": "^21.1.1"
+    "youtube-chat": "git://github.com/steven4547466/youtube-chat.git"
   }
 }
