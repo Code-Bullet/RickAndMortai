@@ -25,8 +25,8 @@ MonoBehaviour:
         m_Id: With3Levels
     supportVolumetrics: 0
     supportVolumetricClouds: 0
-    supportLightLayers: 0
-    supportWater: 0
+    supportLightLayers: 1
+    supportWater: 1
     waterSimulationResolution: 128
     waterCPUSimulation: 0
     supportDistortion: 1
@@ -46,7 +46,7 @@ MonoBehaviour:
       m_SchemaId:
         m_Id: With3Levels
     supportDecals: 1
-    supportDecalLayers: 0
+    supportDecalLayers: 1
     supportSurfaceGradient: 1
     decalNormalBufferHP: 0
     msaaSampleCount: 1
