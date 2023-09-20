@@ -23,6 +23,7 @@ namespace OpenAI_API.Images
 		/// </summary>
 		public static ImageResponseFormat B64_json { get { return new ImageResponseFormat("b64_json"); } }
 
+
 		/// <summary>
 		/// Gets the string value for this response format to pass to the API
 		/// </summary>
@@ -51,4 +52,5 @@ namespace OpenAI_API.Images
 			}
 		}
 	}
+
 }

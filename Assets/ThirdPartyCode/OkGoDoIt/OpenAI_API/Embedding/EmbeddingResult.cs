@@ -54,5 +54,7 @@ namespace OpenAI_API.Embedding
 		/// </summary>
 		[JsonProperty("index")]
 		public int Index { get; set; }
+
 	}
+
 }

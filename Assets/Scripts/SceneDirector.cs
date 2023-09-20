@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cinemachine;
 using TMPro;
-using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +12,7 @@ public class SceneDirector : MonoBehaviour
 {
     public List<CharacterInfo> characterList;
     public CharacterInfo defaultGuy;
+
 
     public MyCharacterController rick;
     public MyCharacterController morty;
@@ -24,6 +24,8 @@ public class SceneDirector : MonoBehaviour
     public DimensionGameObjects ShreksSwamp;
     public DimensionGameObjects StarWars;
     public DimensionGameObjects BackAlley;
+    public DimensionGameObjects CodeBulletsVoid;
+    public GameObject reflectionProbe;
 
     public DimensionGameObjects currentDimension;
     public DimensionGameObjects previousDimension;
@@ -36,6 +38,7 @@ public class SceneDirector : MonoBehaviour
     public GameObject RickRenderer;
     public GameObject MortyRenderer;
 
+
     public bool useVoiceActing = false;
 
     public TMP_Text textField;
@@ -44,6 +47,8 @@ public class SceneDirector : MonoBehaviour
     public Burpifier burpifier;
 
     public CinemachineTargetGroup targetGroup;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -59,16 +64,23 @@ public class SceneDirector : MonoBehaviour
 
     }
 
+
+
     // this function actually plas the scene
     public async Task PlayScene(string[] outputLines, List<AudioClip> voiceActingClips)
     {
 
         int audioClipIndex = 0;
 
+
+
+
         foreach (string line in outputLines)
         {
             Debug.Log("Running " + line);
             string lowerLine = line.ToLower();
+            int numWords = line.Split(' ').Length;
+
 
             // if its an action instruction
             if (line.Contains('[') && !line.Contains(":"))
@@ -88,6 +100,9 @@ public class SceneDirector : MonoBehaviour
                 GameObject lookAt = null;
 
                 GetLocation(lowerLine, ref location, ref lookAt);
+
+
+
 
                 //line is a stage direction like [rick walks to morty] or [spongebob walks to center stage]
                 if (lowerLine.Contains("walks to "))
@@ -112,6 +127,7 @@ public class SceneDirector : MonoBehaviour
                     Debug.Log("Invalid action");
                     continue;
                 }
+
             }
             else
             {
@@ -135,14 +151,16 @@ public class SceneDirector : MonoBehaviour
                             // await ProcessDialogFromLines(outputLines);
                             titleText.text = line.Substring(talkingCharacter.name.Length + 2);
                             titleText.gameObject.SetActive(true);
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                             titleText.gameObject.SetActive(false);
 
                         }
                         else
                         {
                             textField.text = line;
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                         }
 
                         continue;
@@ -160,10 +178,12 @@ public class SceneDirector : MonoBehaviour
                             // have them walk to rick
                             await CharacterWalksToCharacter(talkingCharacter.characterController, rick);
                         }
-
                         AddCharacterTargetGroup(talkingCharacter);
                         talkingCharacter.hasTalkedThisDimension = true;
                     }
+
+
+
 
                     talkingCharacter.characterController.StartTalking();
 
@@ -182,28 +202,33 @@ public class SceneDirector : MonoBehaviour
                         voiceActingClips[audioClipIndex] = burpifier.Burpify(voiceActingClips[audioClipIndex]);
                     }
 
+
                     //actually play the audio
                     textField.text = line;
-                    audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
 
                     //we done
                     talkingCharacter.characterController.StopTalking();
 
                 }
+
             }
         }
+
     }
+
 
     void AddCharacterTargetGroup(CharacterInfo characterInfo)
     {
         // Create a new Target with the GameObject, weight, and radius
-        CinemachineTargetGroup.Target newTarget = new()
+        CinemachineTargetGroup.Target newTarget = new CinemachineTargetGroup.Target
         {
             target = characterInfo.cameraTarget.transform,
             weight = 1,
             radius = 1
         };
-        CinemachineTargetGroup.Target newTarget2 = new()
+        CinemachineTargetGroup.Target newTarget2 = new CinemachineTargetGroup.Target
         {
             target = characterInfo.gameObject.transform,
             weight = 1,
@@ -230,10 +255,13 @@ public class SceneDirector : MonoBehaviour
         targetGroup.m_Targets = newTargets;
     }
 
+
     void ResetTargetGroup()
     {
         targetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
     }
+
+
 
     private void GetLocation(string lowerLine, ref GameObject location, ref GameObject lookAt)
     {
@@ -247,6 +275,7 @@ public class SceneDirector : MonoBehaviour
             location = currentDimension.centerStage1;
             lookAt = currentDimension.actualCamera;
         }
+
     }
 
     // returns the charcter that is talking in the dialog, so Rick: fuck you will return rick. 
@@ -268,6 +297,7 @@ public class SceneDirector : MonoBehaviour
                 // found the speaker. 
                 return character;
             }
+
         }
 
         // if the processed dialog contains a colon but no character then just default to the default character
@@ -303,6 +333,7 @@ public class SceneDirector : MonoBehaviour
         foreach (CharacterInfo character in characterList)
         {
 
+
             if (lowerLine.Contains(character.name.ToLower())) // if the character is in the instruction
             {
 
@@ -330,6 +361,9 @@ public class SceneDirector : MonoBehaviour
                 }
             }
         }
+
+
+
     }
 
     // plays the audio clip and returns the new audioclip index.
@@ -361,9 +395,11 @@ public class SceneDirector : MonoBehaviour
     public List<string>[] ProcessDialogFromLines(ref string[] outputLines)
     {
 
-        List<string> voiceModelUUIDs = new();
-        List<string> characterNames = new();
-        List<string> textsToSpeak = new();
+        var voiceModelUUIDs = new List<string>();
+        var characterNames = new List<string>();
+        var textsToSpeak = new List<string>();
+
+
 
         for (int i = 0; i < outputLines.Length; i++)
         {
@@ -380,9 +416,14 @@ public class SceneDirector : MonoBehaviour
                 {
                     voiceModelUUIDs.Add(talkingCharacter.fakeYouUUID);
                     characterNames.Add(talkingCharacter.name);
-                    textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    // Ensures the character's name isn't the only thing on the line, prevents a potential error
+                    if (talkingCharacter.name.Length + 2 <= line.Length)
+                    {
+                        textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    }
 
                 }
+
             }
             else if (line.Contains("["))
             {
@@ -414,6 +455,7 @@ public class SceneDirector : MonoBehaviour
                         // also a valid direction
                         continue;
                     }
+
                 }
 
                 // if you got to this one then this means that its an invalid action, 
@@ -430,6 +472,8 @@ public class SceneDirector : MonoBehaviour
 
     }
 
+
+
     // instructs a character to walk to a gameobeject. and waits until they get there
     public async Task CharacterWalksToLocation(MyCharacterController character, GameObject targetPosition, GameObject lookAt)
     {
@@ -437,7 +481,6 @@ public class SceneDirector : MonoBehaviour
         {
             return;
         }
-
         await character.MoveTowardsPositionAsync(targetPosition.transform.position, 2f);
         if (lookAt != null)
         {
@@ -464,11 +507,19 @@ public class SceneDirector : MonoBehaviour
     public async Task RickAndMortyEnterPortal(string lowerLine)
     {
 
+        // if going into the void set the reflection probe to active so it looks all cool
+         if (lowerLine.Contains("void")){
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(true);
+
+         }
+
         // currentPortalController.OpenPortal();
         currentDimension.portalController.OpenPortal();
 
         //wait for the portal to open
         await Task.Delay(TimeSpan.FromSeconds(0.3f));
+
 
         // reset the target group to be rick and morty
         ResetTargetGroup();
@@ -483,9 +534,12 @@ public class SceneDirector : MonoBehaviour
         characterList[0].hasTalkedThisDimension = true;
         characterList[1].hasTalkedThisDimension = true;
 
+
+
         await rick.MoveTowardsPositionAsync(currentDimension.portalLocation.gameObject.transform.position, 1f);
         RickRenderer.SetActive(false);
         await morty.MoveTowardsPositionAsync(currentDimension.portalLocation.gameObject.transform.position, 1f);
+
 
         MortyRenderer.SetActive(false);
 
@@ -520,9 +574,16 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = BackAlley;
         }
+        else if (lowerLine.Contains("void"))
+        {
+            currentDimension = CodeBulletsVoid;
+        }
+
+
 
         rick.TeleportTo(currentDimension.portalLocation.transform.position);
         morty.TeleportTo(currentDimension.portalLocation.transform.position);
+
 
         previousDimension.actualCamera.SetActive(false);
         currentDimension.actualCamera.SetActive(true);
@@ -536,9 +597,17 @@ public class SceneDirector : MonoBehaviour
         RickRenderer.SetActive(true);
         MortyRenderer.SetActive(true);
 
-        rick.MoveTowardsPosition(currentDimension.centerStage1.transform.position, 0f);
-        rick.LookAtTarget(currentDimension.actualCamera);
-        await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.transform.position, 0f);
-        morty.LookAtTarget(currentDimension.actualCamera);
+        rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 0f);
+        rick.LookAtTarget(currentDimension.actualCamera.gameObject);
+        await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 0f);
+        morty.LookAtTarget(currentDimension.actualCamera.gameObject);
+        // if going into the void set the reflection probe to active so it looks all cool
+         if (!lowerLine.Contains("void")){
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(false);
+
+         }
     }
+
+
 }

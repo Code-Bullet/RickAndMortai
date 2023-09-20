@@ -89,6 +89,8 @@ namespace OpenAI_API.Moderation
 				return CategoryScores.OrderByDescending(kv => kv.Value).First().Value;
 			}
 		}
+
+
 	}
 
 	/// <summary>

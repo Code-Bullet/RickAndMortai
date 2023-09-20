@@ -38,6 +38,7 @@ namespace OpenAI_API
 			this.ApiKey = apiKey;
 		}
 
+
 		/// <summary>
 		/// Instantiates a new Authentication object with the given <paramref name="apiKey"/>, which may be <see langword="null"/>.  For users who belong to multiple organizations, you can specify which organization is used. Usage from these API requests will count against the specified organization's subscription quota.
 		/// </summary>
@@ -62,8 +63,10 @@ namespace OpenAI_API
 					return cachedDefault;
 
 				APIAuthentication auth = LoadFromEnv();
-				auth ??= LoadFromPath();
-				auth ??= LoadFromPath(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+				if (auth == null)
+					auth = LoadFromPath();
+				if (auth == null)
+					auth = LoadFromPath(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
 				cachedDefault = auth;
 				return auth;
@@ -104,20 +107,21 @@ namespace OpenAI_API
 		/// <returns>Returns the loaded <see cref="APIAuthentication"/> any api keys were found, or <see langword="null"/> if it was not successful in finding a config (or if the config file didn't contain correctly formatted API keys)</returns>
 		public static APIAuthentication LoadFromPath(string directory = null, string filename = ".openai", bool searchUp = true)
 		{
-			directory ??= Environment.CurrentDirectory;
+			if (directory == null)
+				directory = Environment.CurrentDirectory;
 
 			string key = null;
 			string org = null;
-            DirectoryInfo curDirectory = new(directory);
+			var curDirectory = new DirectoryInfo(directory);
 
 			while (key == null && curDirectory.Parent != null)
 			{
 				if (File.Exists(Path.Combine(curDirectory.FullName, filename)))
 				{
-                    string[] lines = File.ReadAllLines(Path.Combine(curDirectory.FullName, filename));
-					foreach (string l in lines)
+					var lines = File.ReadAllLines(Path.Combine(curDirectory.FullName, filename));
+					foreach (var l in lines)
 					{
-                        string[] parts = l.Split('=', ':');
+						var parts = l.Split('=', ':');
 						if (parts.Length == 2)
 						{
 							switch (parts[0].ToUpper())
@@ -154,6 +158,7 @@ namespace OpenAI_API
 			return new APIAuthentication(key, org);
 		}
 
+
 		/// <summary>
 		/// Tests the api key against the OpenAI API, to ensure it is valid.  This hits the models endpoint so should not be charged for usage.
 		/// </summary>
@@ -163,7 +168,7 @@ namespace OpenAI_API
 			if (string.IsNullOrEmpty(ApiKey))
 				return false;
 
-            OpenAIAPI api = new(this);
+			var api = new OpenAIAPI(this);
 
 			List<Models.Model> results;
 
@@ -179,6 +184,7 @@ namespace OpenAI_API
 
 			return (results.Count > 0);
 		}
+
 	}
 
 	internal static class AuthHelpers
@@ -190,7 +196,8 @@ namespace OpenAI_API
 		/// <returns>Either the provided <paramref name="auth"/> or the <see cref="APIAuthentication.Default"/></returns>
 		public static APIAuthentication ThisOrDefault(this APIAuthentication auth)
 		{
-			auth ??= APIAuthentication.Default;
+			if (auth == null)
+				auth = APIAuthentication.Default;
 
 			return auth;
 		}

@@ -16,7 +16,7 @@ namespace OpenAI_API.Chat
 		/// The model to use for this request
 		/// </summary>
 		[JsonProperty("model")]
-		public string Model { get; set; } = Models.Model.ChatGPTTurbo;
+		public string Model { get; set; } = OpenAI_API.Models.Model.ChatGPTTurbo;
 
 		/// <summary>
 		/// The messages to send with this Chat Request
@@ -29,6 +29,7 @@ namespace OpenAI_API.Chat
 		/// </summary>
 		[JsonProperty("temperature")]
 		public double? Temperature { get; set; }
+
 
 		/// <summary>
 		/// What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. It is generally recommend to use this or <see cref="TopP"/> but not both.
@@ -108,6 +109,7 @@ namespace OpenAI_API.Chat
 		/// </summary>
 		[JsonProperty("frequency_penalty")]
 		public double? FrequencyPenalty { get; set; }
+
 
 		/// <summary>
 		/// The scale of the penalty applied if a token is already present at all.  Should generally be between 0 and 1, although negative numbers are allowed to encourage token reuse.  Defaults to 0.

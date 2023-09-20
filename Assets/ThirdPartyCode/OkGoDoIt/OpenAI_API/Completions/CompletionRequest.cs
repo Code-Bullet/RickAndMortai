@@ -13,7 +13,7 @@ namespace OpenAI_API.Completions
 		/// ID of the model to use. You can use <see cref="ModelsEndpoint.GetModelsAsync()"/> to see all of your available models, or use a standard model like <see cref="Model.DavinciText"/>.
 		/// </summary>
 		[JsonProperty("model")]
-		public string Model { get; set; } = Models.Model.DavinciText;
+		public string Model { get; set; } = OpenAI_API.Models.Model.DavinciText;
 
 		/// <summary>
 		/// This is only used for serializing the request into JSON, do not use it directly.
@@ -132,6 +132,7 @@ namespace OpenAI_API.Completions
 		[JsonIgnore]
 		public string[] MultipleStopSequences { get; set; }
 
+
 		/// <summary>
 		/// The stop sequence where the API will stop generating further tokens. The returned text will not contain the stop sequence.  For convenience, if you are only requesting a single stop sequence, set it here
 		/// </summary>
@@ -165,7 +166,7 @@ namespace OpenAI_API.Completions
 		/// </summary>
 		public CompletionRequest()
 		{
-			this.Model = Models.Model.DefaultModel;
+			this.Model = OpenAI_API.Models.Model.DefaultModel;
 		}
 
 		/// <summary>
@@ -241,5 +242,8 @@ namespace OpenAI_API.Completions
 			this.Echo = echo;
 			this.MultipleStopSequences = stopSequences;
 		}
+
+
 	}
+
 }

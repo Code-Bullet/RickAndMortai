@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Unity.VisualScripting;
 
+
 // this script is used to get responses from chatgpt.
 public class OpenAISlurDetector : MonoBehaviour
 {
@@ -37,8 +38,10 @@ public class OpenAISlurDetector : MonoBehaviour
         systemMessage += " detected repsond with the word that should be replaced. e.g. respond: [niger]. if multiple different slurs are present respond with each one ";
         systemMessage += " in square brakets e.g. [niger][N I D D E R][gar ni].";
 
+
         // systemMessage += "you create terminal commands to satisfy a user's query for doing engineering/programming ";
         Debug.Log("system message: \n" + systemMessage);
+
 
         // This line gets your API key (and could be slightly different on Mac/Linux)
 
@@ -145,11 +148,10 @@ public class OpenAISlurDetector : MonoBehaviour
             return null;
         }
 
-        ChatMessage userMessage = new()
-        {
-            Role = ChatMessageRole.User,
-            Content = inputPrompt
-        };
+
+        ChatMessage userMessage = new ChatMessage();
+        userMessage.Role = ChatMessageRole.User;
+        userMessage.Content = inputPrompt;
 
         Debug.Log(string.Format("{0}: {1}", userMessage.rawRole, userMessage.Content));
 
@@ -164,7 +166,7 @@ public class OpenAISlurDetector : MonoBehaviour
             try
             {
                 // Send the entire chat to OpenAI to get the next message
-                ChatResult chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
+                var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
                 {
 
                     // Model = useChatGPT4 ? Model.ChatGPT4_8k : Model.ChatGPTTurbo16k,
@@ -179,11 +181,9 @@ public class OpenAISlurDetector : MonoBehaviour
                 });
 
                 // Get the response message and store it in a response message variable 
-                ChatMessage responseMessage = new()
-                {
-                    Role = chatResult.Choices[0].Message.Role,
-                    Content = chatResult.Choices[0].Message.Content
-                };
+                ChatMessage responseMessage = new ChatMessage();
+                responseMessage.Role = chatResult.Choices[0].Message.Role;
+                responseMessage.Content = chatResult.Choices[0].Message.Content;
                 Debug.Log(string.Format("{0}: {1}", responseMessage.rawRole, responseMessage.Content));
                 // Debug.Log(chatResult.Choices[0].Message.Function_Call.ToString());
                 // Debug.Log(chatResult.Choices[0].Message.Function_Call.Arguments.ToString());
@@ -219,18 +219,21 @@ public class OpenAISlurDetector : MonoBehaviour
                 Debug.LogError($"Error: {ex}");
                 break;
             }
+
+
+
         }
         // Debug.Log("hello");
 
         //return the message
-        return messages[^1].Content;
+        return messages[messages.Count - 1].Content;
 
     }
 
     // this is just me testing shit done worry
     public static object[] GetFunctionList()
     {
-        List<object> functionList = new();
+        List<object> functionList = new List<object>();
 
         // Define the 'get_current_weather' function
         var getCurrentWeather = new
@@ -257,6 +260,7 @@ public class OpenAISlurDetector : MonoBehaviour
                         type = "string",
                         description = "an example of using the word in a sentence"
                     }
+
                 },
                 required = new string[] { "commands"}
             }

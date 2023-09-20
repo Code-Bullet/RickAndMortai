@@ -68,7 +68,7 @@ namespace OpenAI_API
 			}
 			*/
 
-			HttpClient client = new();
+			HttpClient client = new HttpClient();
 			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _Api.Auth.ApiKey);
 			// Further authentication-header used for Azure openAI service
 			client.DefaultRequestHeaders.Add("api-key", _Api.Auth.ApiKey);
@@ -91,6 +91,7 @@ namespace OpenAI_API
 			return $"Error at {name} ({description}) with HTTP status code: {response.StatusCode}. Content: {resultAsString ?? "<no content>"}";
 		}
 
+
 		/// <summary>
 		/// Sends an HTTP request and returns the response.  Does not do any parsing, but does do error handling.
 		/// </summary>
@@ -108,11 +109,11 @@ namespace OpenAI_API
 			if (verb == null)
 				verb = HttpMethod.Get;
 
-			using HttpClient client = GetClient();
+			using var client = GetClient();
 
 			HttpResponseMessage response = null;
 			string resultAsString = null;
-			HttpRequestMessage req = new(verb, url);
+			HttpRequestMessage req = new HttpRequestMessage(verb, url);
 
 			if (postData != null)
 			{
@@ -123,11 +124,10 @@ namespace OpenAI_API
 				else
 				{
 					string jsonContent = JsonConvert.SerializeObject(postData, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
-                    StringContent stringContent = new(jsonContent, Encoding.UTF8, "application/json");
+					var stringContent = new StringContent(jsonContent, UnicodeEncoding.UTF8, "application/json");
 					req.Content = stringContent;
 				}
 			}
-
 			response = await client.SendAsync(req, streaming ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead);
 
 			if (response.IsSuccessStatusCode)
@@ -168,9 +168,10 @@ namespace OpenAI_API
 		/// <exception cref="HttpRequestException">Throws an exception if a non-success HTTP response was returned</exception>
 		internal async Task<string> HttpGetContent<T>(string url = null)
 		{
-            HttpResponseMessage response = await HttpRequestRaw(url);
+			var response = await HttpRequestRaw(url);
 			return await response.Content.ReadAsStringAsync();
 		}
+
 
 		/// <summary>
 		/// Sends an HTTP Request and does initial parsing
@@ -183,10 +184,10 @@ namespace OpenAI_API
 		/// <exception cref="HttpRequestException">Throws an exception if a non-success HTTP response was returned or if the result couldn't be parsed.</exception>
 		private async Task<T> HttpRequest<T>(string url = null, HttpMethod verb = null, object postData = null) where T : ApiResultBase
 		{
-            HttpResponseMessage response = await HttpRequestRaw(url, verb, postData);
+			var response = await HttpRequestRaw(url, verb, postData);
 			string resultAsString = await response.Content.ReadAsStringAsync();
 
-			T res = JsonConvert.DeserializeObject<T>(resultAsString);
+			var res = JsonConvert.DeserializeObject<T>(resultAsString);
 			try
 			{
 				res.Organization = response.Headers.GetValues("Openai-Organization").FirstOrDefault();
@@ -276,6 +277,7 @@ namespace OpenAI_API
 			return await HttpRequest<T>(url, HttpMethod.Delete, postData);
 		}
 
+
 		/// <summary>
 		/// Sends an HTTP Put request and does initial parsing
 		/// </summary>
@@ -288,6 +290,8 @@ namespace OpenAI_API
 		{
 			return await HttpRequest<T>(url, HttpMethod.Put, postData);
 		}
+
+
 
 		/*
 		/// <summary>
@@ -323,6 +327,7 @@ namespace OpenAI_API
 		}
 		*/
 
+
 		/// <summary>
 		/// Sends an HTTP request and handles a streaming response.  Does basic line splitting and error handling.
 		/// </summary>
@@ -333,7 +338,7 @@ namespace OpenAI_API
 		/// <exception cref="HttpRequestException">Throws an exception if a non-success HTTP response was returned</exception>
 		protected async IAsyncEnumerable<T> HttpStreamingRequest<T>(string url = null, HttpMethod verb = null, object postData = null) where T : ApiResultBase
 		{
-            HttpResponseMessage response = await HttpRequestRaw(url, verb, postData, true);
+			var response = await HttpRequestRaw(url, verb, postData, true);
 
 			string organization = null;
 			string requestId = null;
@@ -356,8 +361,8 @@ namespace OpenAI_API
 
 			string resultAsString = "";
 
-			using (Stream stream = await response.Content.ReadAsStreamAsync())
-			using (StreamReader reader = new(stream))
+			using (var stream = await response.Content.ReadAsStreamAsync())
+			using (StreamReader reader = new StreamReader(stream))
 			{
 				string line;
 				while ((line = await reader.ReadLineAsync()) != null)
@@ -377,7 +382,7 @@ namespace OpenAI_API
 					{ }
 					else if (!string.IsNullOrWhiteSpace(line))
 					{
-						T res = JsonConvert.DeserializeObject<T>(line);
+						var res = JsonConvert.DeserializeObject<T>(line);
 
 						res.Organization = organization;
 						res.RequestId = requestId;

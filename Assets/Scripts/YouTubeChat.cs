@@ -8,20 +8,23 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+
 // this script reads shit from chat, well it recieves messages from a python script that is reading chat
 // it then populates a topic suggestions and  vote suggestions list 
 public class YouTubeChat : MonoBehaviour
 {
 
+
+
     private int maxListSize = 1000;
 
-    public List<string> topicSuggestions = new();
+    public List<string> topicSuggestions = new List<string>();
 
-    public List<string> voteSuggestions = new();
+    public List<string> voteSuggestions = new List<string>();
 
-    List<string> alreadyTakenTopics = new();
+    List<string> alreadyTakenTopics = new List<string>();
 
-    List<string> wordBlacklist = new() { "knee", "nick", "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "september", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
+    List<string> wordBlacklist = new List<string> {"knee", "nick", "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "september", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
 
     private bool connected = false;
 
@@ -47,10 +50,10 @@ public class YouTubeChat : MonoBehaviour
             {
                 StartCoroutine(PythonSocketCommunication());
             }
-
             await Task.Delay(15000);
         }
     }
+
 
     // // a coroutine that constantly checks for new messages and adds them to the lists.
     IEnumerator PythonSocketCommunication()
@@ -68,7 +71,7 @@ public class YouTubeChat : MonoBehaviour
             Debug.Log("Connected!");
             connected = true;
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError("Failed to connect: " + e.ToString());
             yield break; // Exit the Coroutine
@@ -102,6 +105,7 @@ public class YouTubeChat : MonoBehaviour
                         continue;
                     }
 
+
                     if (message.ToLower().StartsWith("topic:"))
                     {
 
@@ -123,6 +127,7 @@ public class YouTubeChat : MonoBehaviour
                                 // Remove oldest message text
                                 topicSuggestions.RemoveAt(0);
                             }
+
                         }
                     }
                     else if (message.ToLower().StartsWith("vote:"))
@@ -166,14 +171,15 @@ public class YouTubeChat : MonoBehaviour
                     //     yield break; // Exit the Coroutine
                     // }
                 }
-
                 yield return null;
 
-            }
 
+            }
             yield return null;  // Wait for the next frame
         }
     }
+
+
 
     // IEnumerator PythonSocketCommunication()
     // {
@@ -190,6 +196,8 @@ public class YouTubeChat : MonoBehaviour
     //             stream = client.GetStream();
     //             Debug.Log("Connected!");
     //             connected = true;
+
+
 
     //             byte[] data = new byte[1024];
 
@@ -218,6 +226,7 @@ public class YouTubeChat : MonoBehaviour
     //                         {
     //                             continue;
     //                         }
+
 
     //                         if (message.ToLower().StartsWith("topic:"))
     //                         {
@@ -280,6 +289,7 @@ public class YouTubeChat : MonoBehaviour
     //                 //     }
     //                 //     yield return null;
 
+
     //                 // }
     //                 yield return null;  // Wait for the next frame
     //             }
@@ -301,6 +311,7 @@ public class YouTubeChat : MonoBehaviour
     //     }
     // }
 
+
     // adds a topic to the already taken topics list
     public void AddToBlacklist(string topic)
     {
@@ -315,6 +326,7 @@ public class YouTubeChat : MonoBehaviour
     {
         voteSuggestions = new List<string>();
     }
+
 
     // counts votes and retuns a int array, which will look like [5,12,123] this means 5 votes for topic 1 ect.
     public int[] CountVotes()
@@ -346,7 +358,7 @@ public class YouTubeChat : MonoBehaviour
     public List<string> GetRandomTopics()
     {
         int n = 3;
-        List<string> randomTopics = new();
+        List<string> randomTopics = new List<string>();
 
         if (topicSuggestions.Count < n)
         {
@@ -356,6 +368,7 @@ public class YouTubeChat : MonoBehaviour
 
         for (int i = 0; i < n; i++)
         {
+
 
             int randomIndex = UnityEngine.Random.Range(0, topicSuggestions.Count);
             string selectedTopic = topicSuggestions[randomIndex];
@@ -383,5 +396,8 @@ public class YouTubeChat : MonoBehaviour
 
         return randomTopics;
     }
+
+
+
 }
 

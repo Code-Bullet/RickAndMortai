@@ -16,6 +16,7 @@ namespace DialogueAI
         public int clipNumber { get; set; }
 
         public bool failed { get; set; }
+
     }
 
     public class SpeakResponse
@@ -48,4 +49,5 @@ namespace DialogueAI
         public string created_at { get; set; }
         public string updated_at { get; set; }
     }
+
 }

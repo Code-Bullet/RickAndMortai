@@ -18,6 +18,7 @@ using UnityEngine.Video;
 using System.Net;
 using OpenCover.Framework.Model;
 
+
 // this script was pretty much copied from porkais ai sponge unity project.
 // https://www.youtube.com/channel/UCVe358khfRWQ6NRT89jEhBA
 
@@ -25,6 +26,10 @@ using OpenCover.Framework.Model;
 // basically it just takes a list of dialog then sends it to FakeYou api and then downloads the audio files
 // to get this to work you need to set your fake you user name and password as EnvironmentVariables.
 
+
+
+
+#pragma warning disable CS4014
 public class FakeYouAPIManager : MonoBehaviour
 {
 
@@ -36,11 +41,13 @@ public class FakeYouAPIManager : MonoBehaviour
     [SerializeField] private List<AudioClip> _clips;
     private HttpClient _client = new();
 
+
     public VideoClip clipToPlay;
     public TextAsset proxyTextFile;
 
     public SceneDirector sceneDirector;
     public bool usingProxies = true;
+
 
     void Start()
     {
@@ -53,7 +60,6 @@ public class FakeYouAPIManager : MonoBehaviour
         {
             proxyArray = proxyTextFile.text.Split('\n');
         }
-
         Init();
 
     }
@@ -93,11 +99,11 @@ public class FakeYouAPIManager : MonoBehaviour
             password = fakeYouPassword
         };
 
-        HttpResponseMessage response = await _client.PostAsync("https://api.fakeyou.com/login",
+        var response = await _client.PostAsync("https://api.fakeyou.com/login",
             new StringContent(JsonConvert.SerializeObject(loginDetails), Encoding.UTF8, "application/json"));
 
-        string cookieData = JsonConvert.SerializeObject(response.Headers.GetValues("set-cookie").First());
-        string[] cookieParts = cookieData.Split(';');
+        var cookieData = JsonConvert.SerializeObject(response.Headers.GetValues("set-cookie").First());
+        var cookieParts = cookieData.Split(';');
         string cookie = cookieParts[0].Replace("session=", "").Replace("\"", "");
 
         System.IO.File.WriteAllText($"{Environment.CurrentDirectory}\\Assets\\Scripts\\Keys\\keyForTheFakeYouCookiesOrSomething.txt", cookie);
@@ -107,19 +113,15 @@ public class FakeYouAPIManager : MonoBehaviour
 
     private void ConfigureHttpClient(string cookie)
     {
-        HttpClientHandler handler = new()
-        {
-            CookieContainer = new CookieContainer()
-        };
+        var handler = new HttpClientHandler();
+        handler.CookieContainer = new CookieContainer();
         handler.CookieContainer.Add(new Uri("https://api.fakeyou.com"), new Cookie("session", cookie));
         if (proxyArray.Length > 0)
         {
             // Set proxy for HttpClientHandler only if proxies are available
             string[] proxyParts = proxyArray[_proxyIndex].Split(':');
-            WebProxy proxy = new(proxyParts[0] + ":" + proxyParts[1])
-            {
-                Credentials = new NetworkCredential(proxyParts[2], proxyParts[3])
-            };
+            var proxy = new WebProxy(proxyParts[0] + ":" + proxyParts[1]);
+            proxy.Credentials = new NetworkCredential(proxyParts[2], proxyParts[3]);
             handler.UseProxy = true;
             handler.Proxy = proxy;
             // if (proxyParts.Length >= 4)
@@ -135,19 +137,21 @@ public class FakeYouAPIManager : MonoBehaviour
     }
     private async Task CheckCookieValidity(HttpClient client)
     {
-        HttpResponseMessage checkKey = await client.GetAsync("https://api.fakeyou.com/v1/billing/active_subscriptions");
-        string checkString = await checkKey.Content.ReadAsStringAsync();
+        var checkKey = await client.GetAsync("https://api.fakeyou.com/v1/billing/active_subscriptions");
+        var checkString = await checkKey.Content.ReadAsStringAsync();
         Debug.Log(checkString);
     }
 
+
+
     private HttpClient _fakeYouClient; // This client will be used for FakeYou API calls
 
-    private Dictionary<string, GameObject> characters = new();
+    private Dictionary<string, GameObject> characters = new Dictionary<string, GameObject>();
 
     // ok im back i know whats going on now. 
     // this is where we chuck the audio clips once they are downloaded
-    public List<AudioClip> generatedAudioClips = new();
-    public List<int> failedAudioClips = new();
+    public List<AudioClip> generatedAudioClips = new List<AudioClip>();
+    public List<int> failedAudioClips = new List<int>();
     public AudioClip defaultSound;
 
     public TMP_Text statisText;
@@ -182,20 +186,23 @@ public class FakeYouAPIManager : MonoBehaviour
             }
         }
 
+
         // holds a bunch of info about the dialogs, i think
-        List<Dialogue> dialogues = new();
+        List<Dialogue> dialogues = new List<Dialogue>();
 
         string[] characterUUIDS = _characterUuids.ToArray();
         string[] textsToSay = _linesToSay.ToArray();
         string[] characterStrings = _characterNames.ToArray();
 
+
         // create the tts requests. and wait until all the requests are confirmed.
         List<Task> ttsTasks = CreateTTSRequestTasks(dialogues, characterUUIDS, textsToSay, characterStrings);
         await Task.WhenAll(ttsTasks);
 
+
         // i was planning on downloading all the shit at once but that broke everything for some reason
         // so thats why i commented it out
-        List<Task> downloadTasks = new();
+        List<Task> downloadTasks = new List<Task>();
         if (updateText != null)
         {
             updateText.text = updateTextStart + " --- " + "Generating FakeYou TTS " + 0 + "/" + _linesToSay.Count;
@@ -209,13 +216,17 @@ public class FakeYouAPIManager : MonoBehaviour
                 // downloadTasks.Add(DownloadDialogFromFakeYou(dialogues[i], 0));
                 await DownloadDialogFromFakeYou(dialogues[i], 0);
             }
+
         }
 
         // await Task.WhenAll(downloadTasks);
 
         return generatedAudioClips;
 
+
     }
+
+
 
     void UpdateStatisText()
     {
@@ -223,6 +234,8 @@ public class FakeYouAPIManager : MonoBehaviour
         {
             statisText.text = statisStatingText + " --- " + "Generating FakeYou TTS " + numberOfClipsCompleted + "/" + generatedAudioClips.Count;
         }
+
+
     }
 
     // fake you breaks when you send it less than 3 character, so we just repeat the last character if its under 3
@@ -250,7 +263,6 @@ public class FakeYouAPIManager : MonoBehaviour
                 input += new string(lastNonSpaceChar, 1);
             }
         }
-
         Debug.Log(input);
         return input;
     }
@@ -258,7 +270,7 @@ public class FakeYouAPIManager : MonoBehaviour
     //creates each tts request based on input lists
     private List<Task> CreateTTSRequestTasks(List<Dialogue> dialogues, string[] characterUUUIDs, string[] textsToSay, string[] characterStrings)
     {
-        List<Task> ttsTasks = new();
+        List<Task> ttsTasks = new List<Task>();
 
         for (int i = 0; i < textsToSay.Length; i++)
         {
@@ -278,7 +290,7 @@ public class FakeYouAPIManager : MonoBehaviour
             tts_model_token = voicemodelUuid,
             uuid_idempotency_token = Guid.NewGuid().ToString()
         };
-        StringContent content = new(JsonConvert.SerializeObject(jsonObj), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonConvert.SerializeObject(jsonObj), Encoding.UTF8, "application/json");
 
         // so sometimes a tts request doesnt work and so we need to retry it a bunch. 
         int maxAttempts = 3;  // Maximum number of attempts
@@ -288,20 +300,18 @@ public class FakeYouAPIManager : MonoBehaviour
         {
             try
             {
-                HttpClientHandler httpClientHandler = new();
+                HttpClientHandler httpClientHandler = new HttpClientHandler();
                 if (proxyArray.Length > 0)
                 {
                     _proxyIndex = (_proxyIndex + 1) % proxyArray.Length;
                     string[] proxyParts = proxyArray[_proxyIndex].Split(':');
-                    WebProxy proxy = new(proxyParts[0] + ":" + proxyParts[1])
-                    {
-                        Credentials = new NetworkCredential(proxyParts[2], proxyParts[3])
-                    };
+                    var proxy = new WebProxy(proxyParts[0] + ":" + proxyParts[1]);
+                    proxy.Credentials = new NetworkCredential(proxyParts[2], proxyParts[3]);
                     httpClientHandler.UseProxy = true;
                     httpClientHandler.Proxy = proxy;
                 }
 
-                CookieContainer cookieContainer = new();
+                CookieContainer cookieContainer = new CookieContainer();
                 string cookieFilePath = $"{Environment.CurrentDirectory}\\Assets\\Scripts\\Keys\\keyForTheFakeYouCookiesOrSomething.txt";
                 string cookieData = System.IO.File.Exists(cookieFilePath) ? System.IO.File.ReadAllText(cookieFilePath) : "";
                 cookieContainer.Add(new Uri("https://api.fakeyou.com"), new Cookie("session", cookieData));
@@ -334,8 +344,8 @@ public class FakeYouAPIManager : MonoBehaviour
 
                 }
 
-                HttpResponseMessage response2 = await requestTask;  // retrieve the result
-                string responseString = await response2.Content.ReadAsStringAsync();
+                var response2 = await requestTask;  // retrieve the result
+                var responseString = await response2.Content.ReadAsStringAsync();
                 SpeakResponse speakResponse = JsonConvert.DeserializeObject<SpeakResponse>(responseString);
 
                 if (!speakResponse.success)
@@ -387,12 +397,14 @@ public class FakeYouAPIManager : MonoBehaviour
         }
     }
 
+
     private async Task DownloadDialogFromFakeYou(Dialogue d, int callNumber)
     {
-        HttpResponseMessage content = await _client.GetAsync($"https://api.fakeyou.com/tts/job/{d.uuid}");
+        Debug.Log("Getting stuff from fake you, Attempt " + callNumber + ": " + d.text);
+        var content = await _client.GetAsync($"https://api.fakeyou.com/tts/job/{d.uuid}");
         Debug.Log("Attempt " + callNumber + ": " + d.text);
-        string responseContent = await content.Content.ReadAsStringAsync();
-        GetResponse v = JsonConvert.DeserializeObject<GetResponse>(responseContent);
+        var responseContent = await content.Content.ReadAsStringAsync();
+        var v = JsonConvert.DeserializeObject<GetResponse>(responseContent);
         Debug.Log("Attempt " + callNumber + ": " + responseContent);
         // Debug.Log(responseContent);
 
@@ -404,7 +416,6 @@ public class FakeYouAPIManager : MonoBehaviour
                 Debug.LogError("timed out on call so just use a burp here");
                 return;
             }
-
             await Task.Delay(100);  // Wait for 100 ms
             await DownloadDialogFromFakeYou(d, callNumber + 1);  // Recursive call
         }
@@ -438,13 +449,13 @@ public class FakeYouAPIManager : MonoBehaviour
             inference_text = d.text,
         };
 
-        StringContent content = new(JsonConvert.SerializeObject(jsonObj), Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PostAsync("https://api.fakeyou.com/tts/inference", content);
+        var content = new StringContent(JsonConvert.SerializeObject(jsonObj), Encoding.UTF8, "application/json");
+        var response = await _client.PostAsync("https://api.fakeyou.com/tts/inference", content);
 
         if (response.IsSuccessStatusCode)
         {
-            string responseString = await response.Content.ReadAsStringAsync();
-            SpeakResponse speakResponse = JsonConvert.DeserializeObject<SpeakResponse>(responseString);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var speakResponse = JsonConvert.DeserializeObject<SpeakResponse>(responseString);
 
             callback(speakResponse.inference_job_token);
         }
@@ -457,7 +468,7 @@ public class FakeYouAPIManager : MonoBehaviour
 
     private async Task ActuallyDownloadTheTTS(Dialogue d, GetResponse v)
     {
-        TaskCompletionSource<bool> tcs = new();
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
         UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip($"https://storage.googleapis.com/vocodes-public{v.state.maybe_public_bucket_wav_audio_path}", AudioType.WAV);
 
@@ -485,4 +496,5 @@ public class FakeYouAPIManager : MonoBehaviour
         // Wait until UnityWebRequest is done.
         await tcs.Task;
     }
+
 }

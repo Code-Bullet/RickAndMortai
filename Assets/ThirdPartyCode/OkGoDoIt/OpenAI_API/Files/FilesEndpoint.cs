@@ -42,6 +42,7 @@ namespace OpenAI_API.Files
 			return await HttpGet<File>($"{Url}/{fileId}");
 		}
 
+
 		/// <summary>
 		/// Returns the contents of the specific file as string
 		/// </summary>
@@ -62,6 +63,7 @@ namespace OpenAI_API.Files
 			return await HttpDelete<File>($"{Url}/{fileId}");
 		}
 
+
 		/// <summary>
 		/// Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit
 		/// </summary>
@@ -69,8 +71,8 @@ namespace OpenAI_API.Files
 		/// <param name="purpose">The intendend purpose of the uploaded documents. Use "fine-tune" for Fine-tuning. This allows us to validate the format of the uploaded file.</param>
 		public async Task<File> UploadFileAsync(string filePath, string purpose = "fine-tune")
 		{
-            MultipartFormDataContent content = new()
-            {
+			var content = new MultipartFormDataContent
+			{
 				{ new StringContent(purpose), "purpose" },
 				{ new ByteArrayContent(System.IO.File.ReadAllBytes(filePath)), "file", Path.GetFileName(filePath) }
 			};
@@ -89,4 +91,6 @@ namespace OpenAI_API.Files
 			public string Obj { get; set; }
 		}
 	}
+
+
 }

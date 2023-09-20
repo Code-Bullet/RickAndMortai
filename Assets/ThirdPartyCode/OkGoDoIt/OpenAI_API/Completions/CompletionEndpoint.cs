@@ -79,7 +79,7 @@ namespace OpenAI_API.Completions
 			params string[] stopSequences
 			)
 		{
-			CompletionRequest request = new(DefaultCompletionRequestArgs)
+			CompletionRequest request = new CompletionRequest(DefaultCompletionRequestArgs)
 			{
 				Prompt = prompt,
 				Model = model ?? DefaultCompletionRequestArgs.Model,
@@ -103,7 +103,7 @@ namespace OpenAI_API.Completions
 		/// <returns></returns>
 		public Task<CompletionResult> CreateCompletionAsync(params string[] prompts)
 		{
-			CompletionRequest request = new(DefaultCompletionRequestArgs)
+			CompletionRequest request = new CompletionRequest(DefaultCompletionRequestArgs)
 			{
 				MultiplePrompts = prompts
 			};
@@ -124,7 +124,7 @@ namespace OpenAI_API.Completions
 		{
 			int index = 0;
 
-			await foreach (CompletionResult res in StreamCompletionEnumerableAsync(request))
+			await foreach (var res in StreamCompletionEnumerableAsync(request))
 			{
 				resultHandler(index++, res);
 			}
@@ -138,7 +138,7 @@ namespace OpenAI_API.Completions
 		/// <param name="resultHandler">An action to be called as each new result arrives.</param>
 		public async Task StreamCompletionAsync(CompletionRequest request, Action<CompletionResult> resultHandler)
 		{
-			await foreach (CompletionResult res in StreamCompletionEnumerableAsync(request))
+			await foreach (var res in StreamCompletionEnumerableAsync(request))
 			{
 				resultHandler(res);
 			}
@@ -185,7 +185,7 @@ namespace OpenAI_API.Completions
 			bool? echo = null,
 			params string[] stopSequences)
 		{
-			CompletionRequest request = new(DefaultCompletionRequestArgs)
+			CompletionRequest request = new CompletionRequest(DefaultCompletionRequestArgs)
 			{
 				Prompt = prompt,
 				Model = model ?? DefaultCompletionRequestArgs.Model,
@@ -214,7 +214,7 @@ namespace OpenAI_API.Completions
 		public async Task<string> CreateAndFormatCompletion(CompletionRequest request)
 		{
 			string prompt = request.Prompt;
-            CompletionResult result = await CreateCompletionAsync(request);
+			var result = await CreateCompletionAsync(request);
 			return prompt + result.ToString();
 		}
 
@@ -225,12 +225,12 @@ namespace OpenAI_API.Completions
 		/// <returns>The best completion</returns>
 		public async Task<string> GetCompletion(string prompt)
 		{
-			CompletionRequest request = new(DefaultCompletionRequestArgs)
+			CompletionRequest request = new CompletionRequest(DefaultCompletionRequestArgs)
 			{
 				Prompt = prompt,
 				NumChoicesPerPrompt = 1
 			};
-            CompletionResult result = await CreateCompletionAsync(request);
+			var result = await CreateCompletionAsync(request);
 			return result.ToString();
 		}
 

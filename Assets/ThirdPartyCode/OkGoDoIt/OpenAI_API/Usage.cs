@@ -21,5 +21,6 @@ namespace OpenAI_API
 		/// </summary>
 		[JsonProperty("total_tokens")]
 		public int TotalTokens { get; set; }
+
 	}
 }

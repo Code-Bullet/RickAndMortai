@@ -87,7 +87,7 @@ namespace OpenAI_API.Chat
 			IReadOnlyDictionary<string, float> logitBias = null,
 			params string[] stopSequences)
 		{
-			ChatRequest request = new(DefaultChatRequestArgs)
+			ChatRequest request = new ChatRequest(DefaultChatRequestArgs)
 			{
 				Messages = messages,
 				Model = model ?? DefaultChatRequestArgs.Model,
@@ -110,7 +110,7 @@ namespace OpenAI_API.Chat
 		/// <returns>The <see cref="ChatResult"/> with the API response.</returns>
 		public Task<ChatResult> CreateChatCompletionAsync(params ChatMessage[] messages)
 		{
-			ChatRequest request = new(DefaultChatRequestArgs)
+			ChatRequest request = new ChatRequest(DefaultChatRequestArgs)
 			{
 				Messages = messages
 			};
@@ -138,7 +138,7 @@ namespace OpenAI_API.Chat
 		{
 			int index = 0;
 
-			await foreach (ChatResult res in StreamChatEnumerableAsync(request))
+			await foreach (var res in StreamChatEnumerableAsync(request))
 			{
 				resultHandler(index++, res);
 			}
@@ -152,7 +152,7 @@ namespace OpenAI_API.Chat
 		/// <param name="resultHandler">An action to be called as each new result arrives.</param>
 		public async Task StreamChatAsync(ChatRequest request, Action<ChatResult> resultHandler)
 		{
-			await foreach (ChatResult res in StreamChatEnumerableAsync(request))
+			await foreach (var res in StreamChatEnumerableAsync(request))
 			{
 				resultHandler(res);
 			}
@@ -196,7 +196,7 @@ namespace OpenAI_API.Chat
 			IReadOnlyDictionary<string, float> logitBias = null,
 			params string[] stopSequences)
 		{
-			ChatRequest request = new(DefaultChatRequestArgs)
+			ChatRequest request = new ChatRequest(DefaultChatRequestArgs)
 			{
 				Messages = messages,
 				Model = model ?? DefaultChatRequestArgs.Model,

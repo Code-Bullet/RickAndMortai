@@ -12,7 +12,7 @@ namespace OpenAI_API
 
 		/// The time when the result was generated
 		[JsonIgnore]
-		public DateTime? Created => CreatedUnixTime.HasValue ? DateTimeOffset.FromUnixTimeSeconds(CreatedUnixTime.Value).DateTime : null;
+		public DateTime? Created => CreatedUnixTime.HasValue ? (DateTime?)(DateTimeOffset.FromUnixTimeSeconds(CreatedUnixTime.Value).DateTime) : null;
 
 		/// <summary>
 		/// The time when the result was generated in unix epoch format

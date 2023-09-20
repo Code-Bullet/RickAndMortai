@@ -29,7 +29,7 @@ namespace OpenAI_API.Models
 		public async Task<Model> RetrieveModelDetailsAsync(string id)
 		{
 			string resultAsString = await HttpGetContent<JsonHelperRoot>($"{Url}/{id}");
-            Model model = JsonConvert.DeserializeObject<Model>(resultAsString);
+			var model = JsonConvert.DeserializeObject<Model>(resultAsString);
 			return model;
 		}
 
@@ -63,6 +63,7 @@ namespace OpenAI_API.Models
 			public List<Model> data { get; set; }
 			[JsonProperty("object")]
 			public string obj { get; set; }
+
 		}
 	}
 }

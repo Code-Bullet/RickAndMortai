@@ -50,5 +50,6 @@ namespace OpenAI_API.Images
 		/// </summary>
 		[JsonProperty("b64_json")]
 		public string Base64Data { get; set; }
+
 	}
 }

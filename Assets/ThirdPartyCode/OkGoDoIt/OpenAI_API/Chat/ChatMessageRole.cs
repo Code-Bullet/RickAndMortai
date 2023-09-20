@@ -27,11 +27,11 @@ namespace OpenAI_API.Chat
 			switch (roleName)
 			{
 				case "system":
-					return System;
+					return ChatMessageRole.System;
 				case "user":
-					return User;
+					return ChatMessageRole.User;
 				case "assistant":
-					return Assistant;
+					return ChatMessageRole.Assistant;
 				default:
 					return null;
 			}

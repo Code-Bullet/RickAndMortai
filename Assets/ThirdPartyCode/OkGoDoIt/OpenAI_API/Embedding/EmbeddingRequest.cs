@@ -45,7 +45,7 @@ namespace OpenAI_API.Embedding
 		/// <param name="input">The prompt to transform</param>
 		public EmbeddingRequest(string input)
 		{
-			Model = Models.Model.AdaTextEmbedding;
+			Model = OpenAI_API.Models.Model.AdaTextEmbedding;
 			this.Input = input;
 		}
 	}

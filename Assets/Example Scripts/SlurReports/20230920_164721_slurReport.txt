@@ -1,0 +1,15 @@
+
+Slur found: n acco	Phonicated: NAKA	Context: us can accomplis
+
+Slur found: n, ke	Phonicated: NKA	    Context: l then, keep co
+Slur found: No ca	Phonicated: NAKA	Context: ick: No catch, 
+
+Slur found: n cr	Phonicated: NKR	    Context:  go on crazy a
+Slur found: ne ca	Phonicated: NAKA	Context: rom one cartoon
+Slur found: n a ga	Phonicated: NAKA	Context: 're in a galaxy 
+
+Slur found: njoy	Phonicated: NJA	    Context: and enjoy the 
+Slur found: n co	Phonicated: NKA	    Context: We can connect
+
+Slur found: n a go	Phonicated: NAKA	Context: o ruin a good ti
+

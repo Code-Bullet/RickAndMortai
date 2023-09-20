@@ -89,6 +89,7 @@ namespace OpenAI_API.Completions
 		}
 	}
 
+
 	public class Logprobs
 	{
 		[JsonProperty("tokens")]
@@ -103,4 +104,5 @@ namespace OpenAI_API.Completions
 		[JsonProperty("text_offset")]
 		public List<int> TextOffsets { get; set; }
 	}
+
 }

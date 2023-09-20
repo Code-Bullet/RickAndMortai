@@ -13,6 +13,10 @@ using System.IO;
 
 // this is from steven4547466 on discord, hes a legend.
 
+
+
+
+
 // this script reads shit from chat, well it recieves messages from a python script that is reading chat
 // it then populates a topic suggestions and  vote suggestions list 
 public class YouTubeChatFromSteven : MonoBehaviour
@@ -39,13 +43,13 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
     private int maxListSize = 1000;
 
-    public List<string> topicSuggestions = new();
+    public List<string> topicSuggestions = new List<string>();
 
-    public List<string> voteSuggestions = new();
+    public List<string> voteSuggestions = new List<string>();
 
-    List<string> alreadyTakenTopics = new();
+    List<string> alreadyTakenTopics = new List<string>();
 
-    List<string> wordBlacklist = new() { "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
+    List<string> wordBlacklist = new List<string> { "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
 
     private bool connected = false;
 
@@ -90,6 +94,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
                     Debug.Log("recieved: " + message );
 
+
                     if (message.ToLower().StartsWith("topic:"))
                     {
 
@@ -113,6 +118,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
                                 // Remove oldest message text
                                 topicSuggestions.RemoveAt(0);
                             }
+
                         }
                     }
                     else if (message.ToLower().StartsWith("vote:"))
@@ -152,6 +158,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
         voteSuggestions = new List<string>();
     }
 
+
     // counts votes and retuns a int array, which will look like [5,12,123] this means 5 votes for topic 1 ect.
     public int[] CountVotes()
     {
@@ -182,7 +189,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
     public List<string> GetRandomTopics()
     {
         int n = 3;
-        List<string> randomTopics = new();
+        List<string> randomTopics = new List<string>();
 
         if (topicSuggestions.Count < n)
         {
@@ -192,6 +199,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
         for (int i = 0; i < n; i++)
         {
+
 
             int randomIndex = UnityEngine.Random.Range(0, topicSuggestions.Count);
             string selectedTopic = topicSuggestions[randomIndex];
@@ -219,5 +227,8 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
         return randomTopics;
     }
+
+
+
 }
 

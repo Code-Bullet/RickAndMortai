@@ -54,5 +54,6 @@ namespace OpenAI_API.Files
 		/// </summary>
 		[JsonProperty("status_details")]
 		public string StatusDetails { get; set; }
+
 	}
 }

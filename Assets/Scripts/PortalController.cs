@@ -85,4 +85,5 @@ private IEnumerator PlayPortalVideo(VideoPlayer videoPlayer, MeshRenderer meshRe
     videoPlayer.enabled = false;
     meshRenderer.enabled = false;
 }
+
 }
