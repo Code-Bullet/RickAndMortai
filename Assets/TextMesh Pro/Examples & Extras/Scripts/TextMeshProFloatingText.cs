@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
 
@@ -25,7 +24,7 @@ namespace TMPro.Examples
 
         //private int m_frame = 0;
 
-        static WaitForEndOfFrame k_WaitForEndOfFrame = new WaitForEndOfFrame();
+        static WaitForEndOfFrame k_WaitForEndOfFrame = new();
         static WaitForSeconds[] k_WaitForSecondsRandom = new WaitForSeconds[]
         {
             new WaitForSeconds(0.05f), new WaitForSeconds(0.1f), new WaitForSeconds(0.15f), new WaitForSeconds(0.2f), new WaitForSeconds(0.25f),
@@ -91,9 +90,7 @@ namespace TMPro.Examples
             {
 
             }
-
         }
-
 
         //void Update()
         //{
@@ -109,7 +106,6 @@ namespace TMPro.Examples
 
         //}
 
-
         public IEnumerator DisplayTextMeshProFloatingText()
         {
             float CountDuration = 2.0f; // How long is the countdown alive.
@@ -121,7 +117,6 @@ namespace TMPro.Examples
             float alpha = 255;
             int int_counter = 0;
 
-
             float fadeDuration = 3 / starting_Count * CountDuration;
 
             while (current_Count > 0)
@@ -131,7 +126,7 @@ namespace TMPro.Examples
                 if (current_Count <= 3)
                 {
                     //Debug.Log("Fading Counter ... " + current_Count.ToString("f2"));
-                    alpha = Mathf.Clamp(alpha - (Time.deltaTime / fadeDuration) * 255, 0, 255);
+                    alpha = Mathf.Clamp(alpha - ((Time.deltaTime / fadeDuration) * 255), 0, 255);
                 }
 
                 int_counter = (int)current_Count;
@@ -165,7 +160,6 @@ namespace TMPro.Examples
             StartCoroutine(DisplayTextMeshProFloatingText());
         }
 
-
         public IEnumerator DisplayTextMeshFloatingText()
         {
             float CountDuration = 2.0f; // How long is the countdown alive.
@@ -186,7 +180,7 @@ namespace TMPro.Examples
                 if (current_Count <= 3)
                 {
                     //Debug.Log("Fading Counter ... " + current_Count.ToString("f2"));
-                    alpha = Mathf.Clamp(alpha - (Time.deltaTime / fadeDuration) * 255, 0, 255);
+                    alpha = Mathf.Clamp(alpha - ((Time.deltaTime / fadeDuration) * 255), 0, 255);
                 }
 
                 int_counter = (int)current_Count;

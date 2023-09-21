@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
     
@@ -32,12 +31,11 @@ namespace TMPro.Examples
             m_camera = Camera.main;
             Application.targetFrameRate = 9999;
 
-            GameObject frameCounter = new GameObject("Frame Counter");
+            GameObject frameCounter = new("Frame Counter");
 
             m_TextMeshPro = frameCounter.AddComponent<TextMeshPro>();
             m_TextMeshPro.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
             m_TextMeshPro.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/LiberationSans SDF - Overlay");
-
 
             m_frameCounter_transform = frameCounter.transform;
             m_frameCounter_transform.SetParent(m_camera.transform);
@@ -57,7 +55,6 @@ namespace TMPro.Examples
 
             Set_FrameCounter_Position(AnchorPosition);
             last_AnchorPosition = AnchorPosition;
-
 
         }
 
@@ -99,7 +96,6 @@ namespace TMPro.Examples
                 m_LastInterval = timeNow;
             }
         }
-
 
         void Set_FrameCounter_Position(FpsCounterAnchorPositions anchor_position)
         {

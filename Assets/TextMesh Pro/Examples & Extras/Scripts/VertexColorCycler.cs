@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
 
@@ -15,12 +14,10 @@ namespace TMPro.Examples
             m_TextComponent = GetComponent<TMP_Text>();
         }
 
-
         void Start()
         {
             StartCoroutine(AnimateVertexColors());
         }
-
 
         /// <summary>
         /// Method to animate vertex colors of a TMP Text object.
@@ -79,6 +76,5 @@ namespace TMPro.Examples
                 yield return new WaitForSeconds(0.05f);
             }
         }
-
     }
 }

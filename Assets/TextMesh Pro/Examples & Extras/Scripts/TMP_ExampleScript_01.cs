@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using System.Collections;
 using TMPro;
 
-
 namespace TMPro.Examples
 {
 
@@ -17,7 +16,6 @@ namespace TMPro.Examples
         private TMP_Text m_text;
 
         //private TMP_InputField m_inputfield;
-
 
         private const string k_label = "The count is <#0080ff>{0}</color>";
         private int count;
@@ -50,7 +48,6 @@ namespace TMPro.Examples
             m_text.rectTransform.sizeDelta = new Vector2(size.x, size.y);
         }
 
-
         void Update()
         {
             if (!isStatic)
@@ -59,6 +56,5 @@ namespace TMPro.Examples
                 count += 1;
             }
         }
-
     }
 }

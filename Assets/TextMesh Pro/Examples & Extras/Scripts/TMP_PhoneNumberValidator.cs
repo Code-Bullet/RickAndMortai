@@ -17,7 +17,8 @@ namespace TMPro
             Debug.Log("Trying to validate...");
             
             // Return unless the character is a valid digit
-            if (ch < '0' && ch > '9') return (char)0;
+            if (ch < '0' && ch > '9') 
+                return (char)0;
 
             int length = text.Length;
 

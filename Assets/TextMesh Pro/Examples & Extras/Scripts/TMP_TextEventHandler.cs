@@ -3,7 +3,6 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
 
-
 namespace TMPro
 {
 
@@ -24,7 +23,6 @@ namespace TMPro
         [Serializable]
         public class LinkSelectionEvent : UnityEvent<string, string, int> { }
 
-
         /// <summary>
         /// Event delegate triggered when pointer is over a character.
         /// </summary>
@@ -34,8 +32,7 @@ namespace TMPro
             set { m_OnCharacterSelection = value; }
         }
         [SerializeField]
-        private CharacterSelectionEvent m_OnCharacterSelection = new CharacterSelectionEvent();
-
+        private CharacterSelectionEvent m_OnCharacterSelection = new();
 
         /// <summary>
         /// Event delegate triggered when pointer is over a sprite.
@@ -46,8 +43,7 @@ namespace TMPro
             set { m_OnSpriteSelection = value; }
         }
         [SerializeField]
-        private SpriteSelectionEvent m_OnSpriteSelection = new SpriteSelectionEvent();
-
+        private SpriteSelectionEvent m_OnSpriteSelection = new();
 
         /// <summary>
         /// Event delegate triggered when pointer is over a word.
@@ -58,8 +54,7 @@ namespace TMPro
             set { m_OnWordSelection = value; }
         }
         [SerializeField]
-        private WordSelectionEvent m_OnWordSelection = new WordSelectionEvent();
-
+        private WordSelectionEvent m_OnWordSelection = new();
 
         /// <summary>
         /// Event delegate triggered when pointer is over a line.
@@ -70,8 +65,7 @@ namespace TMPro
             set { m_OnLineSelection = value; }
         }
         [SerializeField]
-        private LineSelectionEvent m_OnLineSelection = new LineSelectionEvent();
-
+        private LineSelectionEvent m_OnLineSelection = new();
 
         /// <summary>
         /// Event delegate triggered when pointer is over a link.
@@ -82,9 +76,7 @@ namespace TMPro
             set { m_OnLinkSelection = value; }
         }
         [SerializeField]
-        private LinkSelectionEvent m_OnLinkSelection = new LinkSelectionEvent();
-
-
+        private LinkSelectionEvent m_OnLinkSelection = new();
 
         private TMP_Text m_TextComponent;
 
@@ -119,7 +111,6 @@ namespace TMPro
             }
         }
 
-
         void LateUpdate()
         {
             if (TMP_TextUtilities.IsIntersectingRectTransform(m_TextComponent.rectTransform, Input.mousePosition, m_Camera))
@@ -140,7 +131,6 @@ namespace TMPro
                 }
                 #endregion
 
-
                 #region Example of Word Selection
                 // Check if Mouse intersects any words and if so assign a random color to that word.
                 int wordIndex = TMP_TextUtilities.FindIntersectingWord(m_TextComponent, Input.mousePosition, m_Camera);
@@ -155,7 +145,6 @@ namespace TMPro
                     SendOnWordSelection(wInfo.GetWord(), wInfo.firstCharacterIndex, wInfo.characterCount);
                 }
                 #endregion
-
 
                 #region Example of Line Selection
                 // Check if Mouse intersects any words and if so assign a random color to that word.
@@ -174,11 +163,10 @@ namespace TMPro
                         buffer[i] = m_TextComponent.textInfo.characterInfo[i + lineInfo.firstCharacterIndex].character;
                     }
 
-                    string lineText = new string(buffer);
+                    string lineText = new(buffer);
                     SendOnLineSelection(lineText, lineInfo.firstCharacterIndex, lineInfo.characterCount);
                 }
                 #endregion
-
 
                 #region Example of Link Handling
                 // Check if mouse intersects with any links.
@@ -207,18 +195,15 @@ namespace TMPro
             }
         }
 
-
         public void OnPointerEnter(PointerEventData eventData)
         {
             //Debug.Log("OnPointerEnter()");
         }
 
-
         public void OnPointerExit(PointerEventData eventData)
         {
             //Debug.Log("OnPointerExit()");
         }
-
 
         private void SendOnCharacterSelection(char character, int characterIndex)
         {
@@ -249,6 +234,5 @@ namespace TMPro
             if (onLinkSelection != null)
                 onLinkSelection.Invoke(linkID, linkText, linkIndex);
         }
-
     }
 }

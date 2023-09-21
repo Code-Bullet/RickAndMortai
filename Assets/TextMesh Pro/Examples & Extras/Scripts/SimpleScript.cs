@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
 namespace TMPro.Examples
 {
     
@@ -13,7 +12,6 @@ namespace TMPro.Examples
 
         private const string label = "The <#0050FF>count is: </color>{0:2}";
         private float m_frame;
-
 
         void Start()
         {
@@ -47,12 +45,10 @@ namespace TMPro.Examples
             //textMeshPro.fontColor = new Color32(255, 255, 255, 255);
         }
 
-
         void Update()
         {
             m_textMeshPro.SetText(label, m_frame % 1000);
             m_frame += 1 * Time.deltaTime;
         }
-
     }
 }
