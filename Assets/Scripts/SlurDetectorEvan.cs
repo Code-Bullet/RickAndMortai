@@ -113,7 +113,7 @@ public class SlurDetectorEvan : MonoBehaviour
             slurReports.Add(slurReport);
 
 
-            if (slurReports.Count > 5)
+            if (slurReports.Count > 20)
             {
                 try
                 {
@@ -148,7 +148,7 @@ public class SlurDetectorEvan : MonoBehaviour
 
 
             // string slurContainingInputRegexSafe = Regex.Escape(slurContainingInput);
-            currentString = currentString.Replace(slurContainingInput, "nope");
+            currentString = currentString.Replace(slurContainingInput, "NOPE");
 
 
             // currentString = Regex.Replace(currentString, slurContainingInputRegexSafe, "ppp");

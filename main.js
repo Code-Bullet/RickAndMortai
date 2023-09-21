@@ -1,5 +1,5 @@
-// const CHANNEL_ID = "UCgzg_f5HC6EnY-9q5Px1Q-g" // The channel id with the livestream for automated detection
-const CHANNEL_ID = "UCq6VFHwMzcMXbuKyG7SQYIg" // The channel id with the livestream for automated detection
+const CHANNEL_ID = "UCgzg_f5HC6EnY-9q5Px1Q-g" // This is code bullets day off channel
+// const CHANNEL_ID = "UCq6VFHwMzcMXbuKyG7SQYIg" // The channel id with the livestream for automated detection
 const LIVESTREAM_ID = "" // If you want to supply a specific id, that works, too. Otherwise leave this empty and let the automated detection work
 const UPDATE_RATE = 5 // How many times to read new chat per second
 const MAX_PER_UPDATE = 100 // The max it will send in one patch

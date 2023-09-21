@@ -1,0 +1,6 @@
+Slur found: nee, Ga	Phonicated: NAKA   	Context: Gar Knee, Gar Kno
+Slur found: na ca	Phonicated: NAKA   	Context: e gonna catch t
+Slur found: nee. Co	Phonicated: NAKA   	Context: Gar Knee. Come an
+Slur found: nee, Ga	Phonicated: NAKA   	Context: Gar Knee, Gar Kno
+Slur found: nee, Ga	Phonicated: NAKA   	Context: Gar Knee, Gar Kne
+Slur found: nee: Ga	Phonicated: NAKA   	Context: Gar Knee: Gar Kno
