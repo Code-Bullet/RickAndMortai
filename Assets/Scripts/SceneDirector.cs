@@ -19,12 +19,15 @@ public class SceneDirector : MonoBehaviour
 
     public DimensionGameObjects Garage;
     public DimensionGameObjects FrontYard;
-    // public DimensionGameObjects BikiniBottom;
+    public DimensionGameObjects BikiniBottom;
     public DimensionGameObjects SimpsonsHouse;
     public DimensionGameObjects ShreksSwamp;
     public DimensionGameObjects StarWars;
     public DimensionGameObjects BackAlley;
     public DimensionGameObjects CodeBulletsVoid;
+    public DimensionGameObjects DefaultDimension;
+
+    public TMP_Text DimensionText;
     public GameObject reflectionProbe;
 
     public DimensionGameObjects currentDimension;
@@ -116,9 +119,9 @@ public class SceneDirector : MonoBehaviour
                         await CharacterWalksToLocation(character1.characterController, location, lookAt);
                     }
                 }
-                else if (lowerLine.Contains("rick and morty enter the portal") ||
-                lowerLine.Contains("rick and morty enter a portal") ||
-                lowerLine.Contains("rick and morty enter portal"))
+                else if (lowerLine.Contains("enter the portal") ||
+                lowerLine.Contains("enter a portal") ||
+                lowerLine.Contains("enter portal"))
                 {
                     await RickAndMortyEnterPortal(lowerLine);
                 }
@@ -448,9 +451,9 @@ public class SceneDirector : MonoBehaviour
                         // then its a valid direction
                         continue;
                     }
-                    else if (lowerLine.Contains("rick and morty enter the portal") ||
-                    lowerLine.Contains("rick and morty enter a portal") ||
-                    lowerLine.Contains("rick and morty enter portal"))
+                    else if (lowerLine.Contains("enter the portal") ||
+                    lowerLine.Contains("enter a portal") ||
+                    lowerLine.Contains("enter portal"))
                     {
                         // also a valid direction
                         continue;
@@ -508,11 +511,12 @@ public class SceneDirector : MonoBehaviour
     {
 
         // if going into the void set the reflection probe to active so it looks all cool
-         if (lowerLine.Contains("void")){
+        if (lowerLine.Contains("void"))
+        {
             //turn on reflection probe
             reflectionProbe.gameObject.SetActive(true);
 
-         }
+        }
 
         // currentPortalController.OpenPortal();
         currentDimension.portalController.OpenPortal();
@@ -544,6 +548,8 @@ public class SceneDirector : MonoBehaviour
         MortyRenderer.SetActive(false);
 
         previousDimension = currentDimension;
+        
+        RenderSettings.fog = false;
 
         if (lowerLine.Contains("yard"))
         {
@@ -553,10 +559,11 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = Garage;
         }
-        // else if (lowerLine.Contains("bikinibottom") || lowerLine.Contains("bikini bottom"))
-        // {
-        //     currentDimension = BikiniBottom;
-        // }
+        else if (lowerLine.Contains("bikinibottom") || lowerLine.Contains("bikini bottom"))
+        {
+            currentDimension = BikiniBottom;
+            RenderSettings.fog = true;
+        }
         else if (lowerLine.Contains("simpsonshouse") || lowerLine.Contains("simpsons"))
         {
             currentDimension = SimpsonsHouse;
@@ -577,6 +584,28 @@ public class SceneDirector : MonoBehaviour
         else if (lowerLine.Contains("void"))
         {
             currentDimension = CodeBulletsVoid;
+        }
+        else
+        {
+            currentDimension = DefaultDimension;
+            //update location text
+            // get the text after rick and morty enter the portal to _______
+
+            int index = lowerLine.IndexOf("portal to ");
+
+            // If "portal to" exists in the original string
+            if (index != -1)
+            {
+                // Extract the part of the string after "portal to"
+                string destination = lowerLine.Substring(index + "portal to ".Length);
+
+
+                DimensionText.text = "[todo: make " + destination;
+            }
+            else
+            {
+                DimensionText.text = "[todo: make Dimension]";
+            }
         }
 
 
@@ -602,11 +631,12 @@ public class SceneDirector : MonoBehaviour
         await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 0f);
         morty.LookAtTarget(currentDimension.actualCamera.gameObject);
         // if going into the void set the reflection probe to active so it looks all cool
-         if (!lowerLine.Contains("void")){
+        if (!lowerLine.Contains("void"))
+        {
             //turn on reflection probe
             reflectionProbe.gameObject.SetActive(false);
 
-         }
+        }
     }
 
 
