@@ -1,10 +1,6 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Samples/High Definition RP/14.0.8/Volumetric Samples/Scenes/Volumetric Samples Scene.unity.meta
-guid: d1c57c07c17729a4b9fba9998a0a493c
-========
 guid: 58422d7664d69114ebd5c6f2ce4e6552
 folderAsset: yes
->>>>>>>> upstream/main:Assets/FBX files/Environments/green screen.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
