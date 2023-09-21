@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cinemachine;
 using TMPro;
-using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -20,11 +19,16 @@ public class SceneDirector : MonoBehaviour
 
     public DimensionGameObjects Garage;
     public DimensionGameObjects FrontYard;
-    // public DimensionGameObjects BikiniBottom;
+    public DimensionGameObjects BikiniBottom;
     public DimensionGameObjects SimpsonsHouse;
     public DimensionGameObjects ShreksSwamp;
     public DimensionGameObjects StarWars;
     public DimensionGameObjects BackAlley;
+    public DimensionGameObjects CodeBulletsVoid;
+    public DimensionGameObjects DefaultDimension;
+
+    public TMP_Text DimensionText;
+    public GameObject reflectionProbe;
 
     public DimensionGameObjects currentDimension;
     public DimensionGameObjects previousDimension;
@@ -78,7 +82,7 @@ public class SceneDirector : MonoBehaviour
         {
             Debug.Log("Running " + line);
             string lowerLine = line.ToLower();
-
+            int numWords = line.Split(' ').Length;
 
 
             // if its an action instruction
@@ -115,9 +119,9 @@ public class SceneDirector : MonoBehaviour
                         await CharacterWalksToLocation(character1.characterController, location, lookAt);
                     }
                 }
-                else if (lowerLine.Contains("rick and morty enter the portal") ||
-                lowerLine.Contains("rick and morty enter a portal") ||
-                lowerLine.Contains("rick and morty enter portal"))
+                else if (lowerLine.Contains("enter the portal") ||
+                lowerLine.Contains("enter a portal") ||
+                lowerLine.Contains("enter portal"))
                 {
                     await RickAndMortyEnterPortal(lowerLine);
                 }
@@ -150,14 +154,16 @@ public class SceneDirector : MonoBehaviour
                             // await ProcessDialogFromLines(outputLines);
                             titleText.text = line.Substring(talkingCharacter.name.Length + 2);
                             titleText.gameObject.SetActive(true);
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                             titleText.gameObject.SetActive(false);
 
                         }
                         else
                         {
                             textField.text = line;
-                            audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
                         }
 
                         continue;
@@ -202,7 +208,8 @@ public class SceneDirector : MonoBehaviour
 
                     //actually play the audio
                     textField.text = line;
-                    audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                    else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
 
                     //we done
                     talkingCharacter.characterController.StopTalking();
@@ -412,7 +419,11 @@ public class SceneDirector : MonoBehaviour
                 {
                     voiceModelUUIDs.Add(talkingCharacter.fakeYouUUID);
                     characterNames.Add(talkingCharacter.name);
-                    textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    // Ensures the character's name isn't the only thing on the line, prevents a potential error
+                    if (talkingCharacter.name.Length + 2 <= line.Length)
+                    {
+                        textsToSpeak.Add(line.Substring(talkingCharacter.name.Length + 2));
+                    }
 
                 }
 
@@ -440,9 +451,9 @@ public class SceneDirector : MonoBehaviour
                         // then its a valid direction
                         continue;
                     }
-                    else if (lowerLine.Contains("rick and morty enter the portal") ||
-                    lowerLine.Contains("rick and morty enter a portal") ||
-                    lowerLine.Contains("rick and morty enter portal"))
+                    else if (lowerLine.Contains("enter the portal") ||
+                    lowerLine.Contains("enter a portal") ||
+                    lowerLine.Contains("enter portal"))
                     {
                         // also a valid direction
                         continue;
@@ -499,6 +510,14 @@ public class SceneDirector : MonoBehaviour
     public async Task RickAndMortyEnterPortal(string lowerLine)
     {
 
+        // if going into the void set the reflection probe to active so it looks all cool
+        if (lowerLine.Contains("void"))
+        {
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(true);
+
+        }
+
         // currentPortalController.OpenPortal();
         currentDimension.portalController.OpenPortal();
 
@@ -529,6 +548,8 @@ public class SceneDirector : MonoBehaviour
         MortyRenderer.SetActive(false);
 
         previousDimension = currentDimension;
+        
+        RenderSettings.fog = false;
 
         if (lowerLine.Contains("yard"))
         {
@@ -538,10 +559,11 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = Garage;
         }
-        // else if (lowerLine.Contains("bikinibottom") || lowerLine.Contains("bikini bottom"))
-        // {
-        //     currentDimension = BikiniBottom;
-        // }
+        else if (lowerLine.Contains("bikinibottom") || lowerLine.Contains("bikini bottom"))
+        {
+            currentDimension = BikiniBottom;
+            RenderSettings.fog = true;
+        }
         else if (lowerLine.Contains("simpsonshouse") || lowerLine.Contains("simpsons"))
         {
             currentDimension = SimpsonsHouse;
@@ -558,6 +580,32 @@ public class SceneDirector : MonoBehaviour
         else if (lowerLine.Contains("alley"))
         {
             currentDimension = BackAlley;
+        }
+        else if (lowerLine.Contains("void"))
+        {
+            currentDimension = CodeBulletsVoid;
+        }
+        else
+        {
+            currentDimension = DefaultDimension;
+            //update location text
+            // get the text after rick and morty enter the portal to _______
+
+            int index = lowerLine.IndexOf("portal to ");
+
+            // If "portal to" exists in the original string
+            if (index != -1)
+            {
+                // Extract the part of the string after "portal to"
+                string destination = lowerLine.Substring(index + "portal to ".Length);
+
+
+                DimensionText.text = "[todo: make " + destination;
+            }
+            else
+            {
+                DimensionText.text = "[todo: make Dimension]";
+            }
         }
 
 
@@ -578,11 +626,17 @@ public class SceneDirector : MonoBehaviour
         RickRenderer.SetActive(true);
         MortyRenderer.SetActive(true);
 
-
         rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 0f);
         rick.LookAtTarget(currentDimension.actualCamera.gameObject);
         await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 0f);
         morty.LookAtTarget(currentDimension.actualCamera.gameObject);
+        // if going into the void set the reflection probe to active so it looks all cool
+        if (!lowerLine.Contains("void"))
+        {
+            //turn on reflection probe
+            reflectionProbe.gameObject.SetActive(false);
+
+        }
     }
 
 

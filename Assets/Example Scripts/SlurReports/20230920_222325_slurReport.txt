@@ -1,0 +1,6 @@
+Slur found: n ga	Phonicated: NKA   	Context: aks in garbled
+Slur found: n 1: Ga	Phonicated: NKA   	Context: Person 1: Gar kne
+Slur found: nee ga	Phonicated: NAKA   	Context: Gar knee gar kne
+Slur found: n 2: Ga	Phonicated: NKA   	Context: Person 2: Gar kno
+Slur found: nee ga	Phonicated: NAKA   	Context: gar knee gar kne
+Slur found: n: Ga	Phonicated: NKA   	Context: Person: Gar kno

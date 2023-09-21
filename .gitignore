@@ -73,3 +73,6 @@ crashlytics-build.properties
 
 
 node_modules/
+
+OutputScripts/
+.vsconfig
