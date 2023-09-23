@@ -9,6 +9,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Security.Cryptography;
 
 
 // this is the big daddy script that controls everything
@@ -117,7 +118,14 @@ public class WholeThingManager : MonoBehaviour
 
         bottomBarVotingInfoText.SetActive(enable);
     }
-
+    //getCurrentTimestamp
+    //forSceneStore
+    public static string GetCurrentUnixTimestampAsString()
+    {
+        DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        long timestamp = (long)(DateTime.UtcNow - epoch).TotalSeconds;
+        return timestamp.ToString();
+    }
 
     // this is the big daddy
     private async Task MainLoop()
@@ -509,6 +517,9 @@ public class WholeThingManager : MonoBehaviour
         // we done	
         stillGeneratingScene = false;
         nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLines, ttsVoiceActingOrdered);
+        
+        BinarySerialization.WriteToBinaryFile<RickAndMortyScene>($"RickAndMortyScenesStore/{GetCurrentUnixTimestampAsString()}.bin", nextScene);
+
     }
 
 
@@ -545,7 +556,7 @@ public class WholeThingManager : MonoBehaviour
 
 }
 
-
+[Serializable]
 public class RickAndMortyScene
 {
     public string titleString;
@@ -558,7 +569,7 @@ public class RickAndMortyScene
         titleString = initialPrompt;
         author = promptAuthor;
         chatGPTOutputLines = outputLines;
-        ttsVoiceActingLines = voiceActing;
+        ttsVoiceActingLines = ttsVoiceActingLines;
     }
 }
 
