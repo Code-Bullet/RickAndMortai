@@ -65,7 +65,7 @@ public class SlurDetectorWalter : MonoBehaviour
     }
 
     private static object slurLogFileLock = new object();
-    private static string slurLogFilePath = "slurRepalceLog.txt";
+    private static string slurLogFilePath = "slurfilterLists/slurRepalceLog.txt";
     static void LogSlurReplacementToFile(string message)
     {
         lock (slurLogFileLock)
