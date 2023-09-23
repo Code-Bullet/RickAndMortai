@@ -72,7 +72,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 #slurRepalceLog
-slurRepalceLog.txt
+/[Aa]ssets/[Ss]cripts/slurfilterLists/slurRepalceLog.txt
 
 node_modules/
 
