@@ -64,6 +64,16 @@ public class SlurDetectorWalter : MonoBehaviour
         return input;
     }
 
+    private static object slurLogFileLock = new object();
+    private static string slurLogFilePath = "slurRepalceLog.txt";
+    static void LogSlurReplacementToFile(string message)
+    {
+        lock (slurLogFileLock)
+        {
+            // Append a line to the file
+            File.AppendAllText(logFilePath, message + Environment.NewLine);
+        }
+    }
 
     // call slurCheck with topic or scene, replaces with NOPE
     public string RemoveSlurs(string input)
@@ -72,13 +82,12 @@ public class SlurDetectorWalter : MonoBehaviour
         input = blacklistFilter(input);
 
         List<SlurData> slurData = GetSlurData(input);
-        List<(string, string)> removedWords = new List<(string, string)>();
 
         foreach (SlurData slur in slurData)
         {
-            if (slur.MatchedPhrase.Length > 3)
+            if (!WhiteList.Contains(slur.MatchedPhrase) && slur.MatchedPhrase.Length > 3)
             {
-                removedWords.Add((slur.MatchedPhrase, slur.MatchedPhonetic));
+                LogSlurReplacementToFile($"Removed {slur.MatchedPhrase} | {slur.MatchedPhonetic}");
                 input = input.Replace(slur.MatchedPhrase, "nope", StringComparison.OrdinalIgnoreCase);
             }
         }
