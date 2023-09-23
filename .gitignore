@@ -71,6 +71,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+#slurRepalceLog
+/[Aa]ssets/[Ss]cripts/slurfilterLists/slurRepalceLog.txt
 
 node_modules/
 

@@ -17,7 +17,9 @@ public class WholeThingManager : MonoBehaviour
 {
     public static WholeThingManager Singleton;
     public OpenAISlurDetector slurDetectorChatGPT;
-    public SlurDetectorEvan slurDetectorPhonic;
+
+    public SlurDetectorEvan slurDetectorPhonicEvan;
+    public SlurDetectorWalter slurDetectorPhonicWalter;
     public AIController AIController;
     public SceneDirector sceneDirector;
     public FakeYouAPIManager fakeYouAPIManager;
@@ -56,7 +58,8 @@ public class WholeThingManager : MonoBehaviour
 
 
     public bool useChatgptSlurDetection = false;
-    public bool usePhonicSlurDetection = true;
+    public bool usePhonicSlurDetectionEvan = false;
+    public bool usePhonicSlurDetectionWalter = true;
 
 
     void Start()
@@ -452,15 +455,27 @@ public class WholeThingManager : MonoBehaviour
 
                 }
                 Debug.Log("ah");
-                if (usePhonicSlurDetection)
+                if (usePhonicSlurDetectionEvan)
                 {
                     Debug.Log("get detecting boy");
                     for (int i = 0; i < chatGPTOutputLines.Length; i++)
                     {
                         Debug.Log(i);
-                        chatGPTOutputLines[i] = slurDetectorPhonic.RemoveSlurs(chatGPTOutputLines[i]);
+                        chatGPTOutputLines[i] = slurDetectorPhonicEvan.RemoveSlurs(chatGPTOutputLines[i]);
                     }
                     Debug.Log("yay");
+
+                }
+
+                if (usePhonicSlurDetectionWalter)
+                {
+                    Debug.Log("fucking edgelords");
+                    for (int i = 0; i < chatGPTOutputLines.Length; i++)
+                    {
+                        Debug.Log(i);
+                        chatGPTOutputLines[i] = slurDetectorPhonicWalter.RemoveSlurs(chatGPTOutputLines[i]);
+                    }
+                    Debug.Log("now acceptably fucked up");
 
                 }
 
