@@ -182,7 +182,7 @@ public class WholeThingManager : MonoBehaviour
 
             if (randomTopics == null)
             {
-                randomTopics = new List<string> {"morty talks to peter griffin\nme",
+                randomTopics = new List<string> {"morty talks with yoda\nme",
                 "Rick and morty fight batman\nme",
                   "Rick and morty go to Australia\nme" };
             }
@@ -440,7 +440,7 @@ public class WholeThingManager : MonoBehaviour
                     openAICameraDirector.Clear();
 
 
-                    chatGPTOutput = "Narrator: " + initialPrompt + "\n" + "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
+                    // chatGPTOutput = "Narrator: " + initialPrompt + "\n" + "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
 
                     string str2 = AIController.OutputString;
                     chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str2);

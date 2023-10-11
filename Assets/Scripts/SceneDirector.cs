@@ -498,7 +498,7 @@ public class SceneDirector : MonoBehaviour
                         else if (lowerLine.Contains("simpsonshouse") || lowerLine.Contains("simpsons"))
                         {
                         }
-                        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks"))
+                        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks") ||lowerLine.Contains("shrek's"))
                         {
                         }
                         else if (lowerLine.Contains("star wars cantina") || lowerLine.Contains("star wars") ||
@@ -651,7 +651,7 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = SimpsonsHouse;
         }
-        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks"))
+        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks") || lowerLine.Contains("shrek's"))
         {
             currentDimension = ShreksSwamp;
         }
