@@ -12,6 +12,7 @@ public class SceneDirector : MonoBehaviour
 {
     public List<CharacterInfo> characterList;
     public CharacterInfo defaultGuy;
+    public AiArtCharacterController defaultGuyAIArtController;
 
 
     public MyCharacterController rick;
@@ -34,6 +35,8 @@ public class SceneDirector : MonoBehaviour
     public DimensionGameObjects previousDimension;
 
     public FakeYouAPIManager fakeYouAPIManager;
+
+    public CameraShotManager cameraShotManager;
 
     private AudioSource audioSource;
     private AudioClip[] audioClips;
@@ -76,8 +79,6 @@ public class SceneDirector : MonoBehaviour
         int audioClipIndex = 0;
 
 
-
-
         foreach (string line in outputLines)
         {
             Debug.Log("Running " + line);
@@ -88,6 +89,9 @@ public class SceneDirector : MonoBehaviour
             // if its an action instruction
             if (line.Contains('[') && !line.Contains(":"))
             {
+
+                Debug.Log("Stage Direction instruction: " + line);
+
                 CharacterInfo character1 = null;
                 CharacterInfo character2 = null;
 
@@ -103,9 +107,6 @@ public class SceneDirector : MonoBehaviour
                 GameObject lookAt = null;
 
                 GetLocation(lowerLine, ref location, ref lookAt);
-
-
-
 
                 //line is a stage direction like [rick walks to morty] or [spongebob walks to center stage]
                 if (lowerLine.Contains("walks to "))
@@ -132,8 +133,18 @@ public class SceneDirector : MonoBehaviour
                 }
 
             }
+            else if (line.Contains('{') && !line.Contains(":"))
+            {
+                Debug.Log("camera instruction: " + line);
+                // if camera instruction 
+                cameraShotManager.ChangeCameraShot(line);
+            }
             else
             {
+                Debug.Log("Dialog instruction: " + line);
+                Debug.Log("clip number: " + audioClipIndex + "/" + voiceActingClips.Count);
+
+
                 if (voiceActingClips != null && audioClipIndex >= voiceActingClips.Count)
                 {
                     continue;
@@ -143,6 +154,7 @@ public class SceneDirector : MonoBehaviour
                 if (talkingCharacter != null)
                 {
 
+                    Debug.Log(line);
                     // if the character is the narrator then theres no character to animate and shit. so just play the audio
                     if (talkingCharacter.name == "narrator")
                     {
@@ -217,6 +229,13 @@ public class SceneDirector : MonoBehaviour
                 }
 
             }
+        }
+
+
+        // if rick and morty arent in the garage have them return to the garage.
+        if (currentDimension != Garage)
+        {
+            await RickAndMortyEnterPortal("[rick and morty enter the portal to the garage]");
         }
 
     }
@@ -315,7 +334,7 @@ public class SceneDirector : MonoBehaviour
 
     // gets the characters that are participating in this action, character 1 is the first mention character and character 2 is the second.
     // so "[rick walks to morty]  returns chacters 1 rick, character 2 morty.
-    private void GetCharacters(string lowerLine, ref CharacterInfo character1, ref CharacterInfo character2)
+    public void GetCharacters(string lowerLine, ref CharacterInfo character1, ref CharacterInfo character2)
     {
         int character1Index = -1;
         int character2Index = -1;
@@ -395,8 +414,11 @@ public class SceneDirector : MonoBehaviour
     // this bad boy looks at the script from chatgpt and creates 3 string lists which define who is talking and what they are saying.
     // it will also convert bad attempts at instructions to narrator lines, because sometimes chatgpt gets a little creative with instructions.
     // like [rick and morty start fighting shrek] thats not a thing we can do so i just get the narrator to read it out.
-    public List<string>[] ProcessDialogFromLines(ref string[] outputLines)
+
+    // this is also where we identify that ai images we need to generate. thats the reference string inputs
+    public List<string>[] ProcessDialogFromLines(ref string[] outputLines, ref string nameOfAiGeneratedCharacter, ref string nameOfAiGeneratedDimension)
     {
+
 
         var voiceModelUUIDs = new List<string>();
         var characterNames = new List<string>();
@@ -417,6 +439,15 @@ public class SceneDirector : MonoBehaviour
                 CharacterInfo talkingCharacter = GetWhosTalking(lowerLine);
                 if (talkingCharacter != null)
                 {
+
+                    // if a character is used that isnt in the roster then default guy will be chosen
+                    // this is returned as a ref variable so the main thing manager knows that it needs to generate images.
+                    if (talkingCharacter == defaultGuy)
+                    {
+                        Debug.Log("found character " + defaultGuy.name);
+                        nameOfAiGeneratedCharacter = defaultGuy.name;
+                    }
+
                     voiceModelUUIDs.Add(talkingCharacter.fakeYouUUID);
                     characterNames.Add(talkingCharacter.name);
                     // Ensures the character's name isn't the only thing on the line, prevents a potential error
@@ -439,7 +470,6 @@ public class SceneDirector : MonoBehaviour
                 // if there is no character in the direction its immidiately invalid
                 if (character1 != null)
                 {
-
                     GameObject location = null;
                     GameObject lookAt = null;
 
@@ -451,10 +481,63 @@ public class SceneDirector : MonoBehaviour
                         // then its a valid direction
                         continue;
                     }
-                    else if (lowerLine.Contains("enter the portal") ||
-                    lowerLine.Contains("enter a portal") ||
-                    lowerLine.Contains("enter portal"))
+                    else if (lowerLine.Contains("enter the portal to") ||
+                    lowerLine.Contains("enter a portal to") ||
+                    lowerLine.Contains("enter portal to"))
                     {
+                        // this is a mad autistic way of doing this but i cant be fucked changin it
+                        if (lowerLine.Contains("yard"))
+                        {
+                        }
+                        else if (lowerLine.Contains("garage"))
+                        {
+                        }
+                        else if (lowerLine.Contains("bikinibottom") || lowerLine.Contains("bikini bottom"))
+                        {
+                        }
+                        else if (lowerLine.Contains("simpsonshouse") || lowerLine.Contains("simpsons"))
+                        {
+                        }
+                        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks"))
+                        {
+                        }
+                        else if (lowerLine.Contains("star wars cantina") || lowerLine.Contains("star wars") ||
+                        lowerLine.Contains("cantina") || lowerLine.Contains("starwars"))
+                        {
+                        }
+                        else if (lowerLine.Contains("alley"))
+                        {
+                        }
+                        else if (lowerLine.Contains("void"))
+                        {
+                        }
+                        else
+                        {
+                            //update location text
+                            // get the text after rick and morty enter the portal to _______
+
+                            int index = lowerLine.IndexOf("portal to ");
+
+                            // If "portal to" exists in the original string
+                            if (index != -1)
+                            {
+                                // Extract the part of the string after "portal to"
+                                string destination = lowerLine.Substring(index + "portal to ".Length);
+                                // remove final ]
+                                nameOfAiGeneratedDimension = destination.Substring(0, destination.Length - 1);
+                            }
+                            else
+                            {
+                                // idk how it can not have "portal to" in it but in that case just chuck the whole bitch in the ai generated thing.
+                                nameOfAiGeneratedDimension = lowerLine;
+
+                            }
+
+                            Debug.Log("found dimension: " + nameOfAiGeneratedDimension);
+                        }
+
+
+
                         // also a valid direction
                         continue;
                     }
@@ -548,7 +631,7 @@ public class SceneDirector : MonoBehaviour
         MortyRenderer.SetActive(false);
 
         previousDimension = currentDimension;
-        
+
         RenderSettings.fog = false;
 
         if (lowerLine.Contains("yard"))
@@ -568,7 +651,7 @@ public class SceneDirector : MonoBehaviour
         {
             currentDimension = SimpsonsHouse;
         }
-        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shrek"))
+        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks"))
         {
             currentDimension = ShreksSwamp;
         }

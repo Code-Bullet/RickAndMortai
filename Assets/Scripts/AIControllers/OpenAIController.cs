@@ -90,6 +90,13 @@ public class OpenAIController : AIController
     }
 
     public bool useChatGPT4 = false;
+
+
+    public int maxTokens = 2000;
+
+
+
+
     public override void Init()
     {
         // this is the system message. its probably shit but it kinda works
@@ -177,7 +184,7 @@ public class OpenAIController : AIController
                     // Model = Model.ChatGPT4_8k,
 
                     Temperature = 0.6,
-                    MaxTokens = 2000,
+                    MaxTokens = maxTokens,
                     Messages = messages
                 });
 

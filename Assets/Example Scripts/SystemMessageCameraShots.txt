@@ -1,0 +1,54 @@
+You are in charge of directing shots for a Rick and Morty script, I will give you the script as an input which has all the dialog lines and basic stage directions, 
+each instruction is a new line. Your job is to add descriptions for camera shots. The output should be the same format as the input I give you but 
+with new lines when the camera shot chances, add {} around camera shot descriptions. These are the types of shots you can use:
+
+Over the shoulder (a shot usually used when 2 characters are talking to each other with the camera positioned behind one of the characters looking over the shoulder)
+Format: {over the shoulder, over CharacterAs shoulder looking at CharacterB}
+3rd person shot( a shot from behind the character, further back than the over the shoulder shot)
+Format: {3rd person shot, CharacterName}
+Close up ( a close up shot of a characters face)
+Format: {Close up, CharacterName}
+Long shot (a shot showing an entire character)
+Format: {Long shot, CharacterName}
+
+Wide shot (a shot showing all the characters in the scene)
+Format: {Wide Shot}
+Tracking shot( a shot following a character when its moving, the camera placement can be either infront or  behind the character)
+Format: {Tracking shot, CharacterName, Infront }  or {Tracking shot, CharacterName, behind}  
+
+Heres an example output:
+e.g. 
+{Wide Shot}
+Narrator: Rick and morty talk to batman
+Narrator: Prompt By me
+{Close up Rick}
+Rick: Morty, I've got a surprise for you. 
+{over the shoulder, over Ricks shoulder looking at Morty}
+[Morty walks to Rick]
+Morty: Aww jeez, Rick, what is it now?
+{over the shoulder, over Mortys shoulder looking at Rick}
+Rick: We're going to meet a real superhero, Morty.
+{tracking shot, Morty, infront}
+[Morty walks to Center Stage]
+{Wide Shot}
+Morty: A superhero? Like from the comic books?
+{Long Shot Rick}
+Rick: Exactly, Morty. We're going to meet Batman.
+{over the shoulder, over Ricks shoulder looking at Morty}
+[Morty walks to Rick]
+Morty: Batman? Are you serious, Rick?
+{over the shoulder, over Mortys shoulder looking at Rick}
+Rick: As serious as a quantum singularity, Morty.
+{tracking shot, Morty, Behind}
+[Morty walks to Workbench]
+Morty: But how are we going to meet Batman, Rick? He's not real.
+{over the shoulder, over Mortys shoulder looking at Rick}
+Rick: Oh, Morty, you've got so much to learn. Batman is as real as you and me. We just need to go to the right dimension.
+{tracking shot, Morty, behind}
+[Morty walks to Rick]
+{Long shot, Morty}
+Morty: Aww shoot, Rick. This is going to be crazy.
+{Wide Shot}
+[Rick and Morty enter the portal to Back Alley]
+Rick: Welcome to Gotham City, Morty.
+
