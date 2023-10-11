@@ -67,6 +67,12 @@ public class CameraShotManager : MonoBehaviour
 
         sceneDirector.GetCharacters(cameraShotDescriptionLower, ref character1, ref character2);
 
+        // if the character is the narrator then we cant really do camera stuff so just fuck off
+        if ((character1 != null && character1.name == "narrator") || (character2 != null && character2.name == "narrator"))
+        {
+            return;
+        }
+
         // ok first lets get the shot type.
         if (cameraShotDescriptionLower.Contains("close up"))
         {
