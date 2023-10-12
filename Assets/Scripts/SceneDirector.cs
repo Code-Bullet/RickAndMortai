@@ -142,13 +142,14 @@ public class SceneDirector : MonoBehaviour
             else
             {
                 Debug.Log("Dialog instruction: " + line);
-                Debug.Log("clip number: " + audioClipIndex + "/" + voiceActingClips.Count);
 
 
                 if (voiceActingClips != null && audioClipIndex >= voiceActingClips.Count)
                 {
                     continue;
                 }
+
+
 
                 CharacterInfo talkingCharacter = GetWhosTalking(lowerLine);
                 if (talkingCharacter != null)
@@ -498,7 +499,7 @@ public class SceneDirector : MonoBehaviour
                         else if (lowerLine.Contains("simpsonshouse") || lowerLine.Contains("simpsons"))
                         {
                         }
-                        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks") ||lowerLine.Contains("shrek's"))
+                        else if (lowerLine.Contains("shreksswamp") || lowerLine.Contains("shreks") || lowerLine.Contains("shrek's"))
                         {
                         }
                         else if (lowerLine.Contains("star wars cantina") || lowerLine.Contains("star wars") ||
@@ -709,9 +710,9 @@ public class SceneDirector : MonoBehaviour
         RickRenderer.SetActive(true);
         MortyRenderer.SetActive(true);
 
-        rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 0f);
+        rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 1f);
         rick.LookAtTarget(currentDimension.actualCamera.gameObject);
-        await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 0f);
+        await morty.MoveTowardsPositionAsync(currentDimension.centerStage2.gameObject.transform.position, 1f);
         morty.LookAtTarget(currentDimension.actualCamera.gameObject);
         // if going into the void set the reflection probe to active so it looks all cool
         if (!lowerLine.Contains("void"))

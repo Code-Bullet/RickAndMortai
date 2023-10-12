@@ -10,22 +10,25 @@ public class CameraShotManager : MonoBehaviour
     public string testString;
     public bool runTestString = false;
 
+    public List<GameObject> allCameras;
+
+
+    private float lastCameraSwitchTime;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        lastCameraSwitchTime = -1f; // Initialize with a negative value
     }
 
     // Update is called once per frame
     void Update()
     {
-
         if (runTestString)
         {
             ChangeCameraShot(testString);
             runTestString = false;
         }
-
     }
 
 
@@ -33,6 +36,15 @@ public class CameraShotManager : MonoBehaviour
 
     public void SetVirtualCamera(GameObject virtualCamera)
     {
+        // Check the time difference since the last switch
+        if (Time.time - lastCameraSwitchTime < 1f)
+        {
+            SetAllBrainsBlendMethodToEaseInOut();
+        }
+        else
+        {
+            SetAllBrainsBlendMethodToCut();
+        }
 
         // turn off all other vcs
         foreach (CharacterInfo character in sceneDirector.characterList)
@@ -48,6 +60,7 @@ public class CameraShotManager : MonoBehaviour
         }
         sceneDirector.currentDimension.virtualCamera.SetActive(false);
         virtualCamera.SetActive(true);
+        lastCameraSwitchTime = Time.time;
     }
 
 
@@ -141,5 +154,25 @@ public class CameraShotManager : MonoBehaviour
             }
         }
 
+    }
+
+    private void SetAllBrainsBlendMethodToEaseInOut()
+    {
+        CinemachineBrain[] brains = FindObjectsOfType<CinemachineBrain>();
+        foreach (CinemachineBrain brain in brains)
+        {
+            brain.m_DefaultBlend.m_Style = CinemachineBlendDefinition.Style.EaseInOut;
+            brain.m_DefaultBlend.m_Time = 0.5f;
+
+        }
+    }
+
+    private void SetAllBrainsBlendMethodToCut()
+    {
+        CinemachineBrain[] brains = FindObjectsOfType<CinemachineBrain>();
+        foreach (CinemachineBrain brain in brains)
+        {
+            brain.m_DefaultBlend.m_Style = CinemachineBlendDefinition.Style.Cut;
+        }
     }
 }

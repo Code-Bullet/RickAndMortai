@@ -102,7 +102,7 @@ public class MyCharacterController : MonoBehaviour
         animator.SetBool("isTalking", false);
     }
 
-    public float rotationSpeed = 50.0f;
+    private float rotationSpeed = 10.0f;
 
     public void LookAtTarget(GameObject target)
     {
@@ -118,9 +118,10 @@ public class MyCharacterController : MonoBehaviour
 
         for (int i = 0; i < 100; i++)
         {
-            if (Quaternion.Angle(transform.rotation, lookRotation) > 0.1f)
+            if (Quaternion.Angle(transform.rotation, lookRotation) > 1f)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+                // Debug.Log("still spinning angle:  " + Quaternion.Angle(transform.rotation, lookRotation));
                 yield return null; // wait until next frame
             }
             else
@@ -129,12 +130,6 @@ public class MyCharacterController : MonoBehaviour
                 break;
             }
         }
-        // while (Quaternion.Angle(transform.rotation, lookRotation) > 0.1f)
-        // {
-        //     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
-        //     yield return null; // wait until next frame
-        // }
-
         // Ensure the rotation is exact at the end
         transform.rotation = lookRotation;
     }

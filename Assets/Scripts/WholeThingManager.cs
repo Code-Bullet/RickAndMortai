@@ -431,22 +431,22 @@ public class WholeThingManager : MonoBehaviour
             }
             else
             {
-                // add camera angles
-                if (usingChatGptCameraShots)
-                {
-                    textField.text = creatingScene + " --- " + "Adding Camera Angles";
+                // // add camera angles
+                // if (usingChatGptCameraShots)
+                // {
+                //     textField.text = creatingScene + " --- " + "Adding Camera Angles";
 
-                    chatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(chatGPTOutput);
-                    openAICameraDirector.Clear();
+                //     chatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(chatGPTOutput);
+                //     openAICameraDirector.Clear();
 
 
-                    // chatGPTOutput = "Narrator: " + initialPrompt + "\n" + "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
+                //     // chatGPTOutput = "Narrator: " + initialPrompt + "\n" + "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
 
-                    string str2 = AIController.OutputString;
-                    chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str2);
-                    AIController.OutputString = str2;
+                //     string str2 = AIController.OutputString;
+                //     chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str2);
+                //     AIController.OutputString = str2;
 
-                }
+                // }
 
 
 
@@ -508,16 +508,13 @@ public class WholeThingManager : MonoBehaviour
 
 
                 }
-                Debug.Log("ah");
+
                 if (usePhonicSlurDetection)
                 {
-                    Debug.Log("get detecting boy");
                     for (int i = 0; i < chatGPTOutputLines.Length; i++)
                     {
-                        Debug.Log(i);
                         chatGPTOutputLines[i] = slurDetectorPhonic.RemoveSlurs(chatGPTOutputLines[i]);
                     }
-                    Debug.Log("yay");
 
                 }
 
@@ -585,19 +582,19 @@ public class WholeThingManager : MonoBehaviour
 
         }
 
-        // Task<string> CameraShotsChatGPTTask = null;
-        // if (usingChatGptCameraShots)
-        // {
-        //     string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
-        //     CameraShotsChatGPTTask = openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
-        //     // string cameraChatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
-        //     // // string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
-        //     // char[] delims = new[] { '\r', '\n' };
-        //     // string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
-        //     // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
-        //     allConcurrentTasks.Add(CameraShotsChatGPTTask);
+        Task<string> CameraShotsChatGPTTask = null;
+        if (usingChatGptCameraShots)
+        {
+            string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
+            CameraShotsChatGPTTask = openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
+            // string cameraChatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
+            // // string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
+            // char[] delims = new[] { '\r', '\n' };
+            // string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+            // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
+            allConcurrentTasks.Add(CameraShotsChatGPTTask);
 
-        // }
+        }
 
 
 
@@ -625,14 +622,95 @@ public class WholeThingManager : MonoBehaviour
         Debug.Log("finish await");
         //retrieve the result of ttsVoiceActingTask after awaiting it
 
-        // if (usingChatGptCameraShots)
-        // {
+        if (usingChatGptCameraShots)
+        {
 
-        //     string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
-        //     char[] delims = new[] { '\r', '\n' };
-        //     string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
-        //     chatGPTOutputLines = outputLinesProcessedWithCameraShots;
-        // }
+            string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
+            char[] delims = new[] { '\r', '\n' };
+            string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+
+            // ok so now we have 2 scripts 1 with camera angles and 1 without, sometimes the one without removes lines and shit, so we cant
+            // just use that we have to merge them
+
+
+
+
+            List<string> combinedList = chatGPTOutputLines.ToList();
+
+            int checkedIndexOnCombinedList = 0;
+            //length -1 because we dont care if a camera instruciton is at the end of the list
+            for (int i = 0; i < outputLinesProcessedWithCameraShots.Length - 1; i++)
+            {
+                string lineWeChecking = outputLinesProcessedWithCameraShots[i];
+                //if this bitch is a camera command
+                if (lineWeChecking.Contains("{") && !lineWeChecking.Contains(":"))
+                {
+
+
+                    // then we get the instuction after this one and find it in the original array.
+                    string nextInstruction = outputLinesProcessedWithCameraShots[i + 1];
+
+                    // dont start at 0 so if 2 lines are the same we dont insert it again
+                    for (int j = checkedIndexOnCombinedList; j < combinedList.Count; j++)
+                    {
+                        // Clean strings by removing special characters, spaces, and converting to lowercase
+
+                        string cleanedString1 = Regex.Replace(combinedList[j], "[^a-zA-Z0-9]", "").ToLower();
+                        string cleanedString2 = Regex.Replace(nextInstruction, "[^a-zA-Z0-9]", "").ToLower();
+                        //match found
+                        if (cleanedString1 == cleanedString2)
+                        {
+                            // add the instruction in before j
+                            combinedList.Insert(j, lineWeChecking);
+
+                            // move the checked index forward so we dont add another line before this.
+                            // its +2 becauses we inserted an item which increases the index by 1 and then we want to move the pointer to the next instuction
+                            checkedIndexOnCombinedList = j + 2;
+                            break;
+                        }
+                    }
+                }
+
+            }
+
+
+            // ok now check for entering portals, only 2 shots actually look good so change it to either wide shot, or tracking shot behind.
+            for (int i = 1; i < combinedList.Count; i++)
+            {
+                string lineWeChecking = combinedList[i];
+                if (lineWeChecking.Contains("[") && lineWeChecking.ToLower().Contains("portal to"))
+                {
+                    string previousLine = combinedList[i - 1];
+                    if (!previousLine.Contains("{"))
+                    {
+                        combinedList.Insert(i, "{Wide Shot}");
+                        i += 1;
+                        continue;
+                    }
+                    else if (!previousLine.ToLower().Contains("wide shot"))
+                    {
+                        //if the previous shot isnt a wide shot then add a tracking shot behind.
+                        combinedList[i-1] = "{Tracking shot, Morty, behind}";
+                        continue;
+                    }
+                }
+            }
+
+
+
+
+            string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
+
+            Debug.Log("original: \n " + string.Join("\n", chatGPTOutputLines));
+            Debug.Log("Chatgpt camer angles: \n " + string.Join("\n", outputLinesProcessedWithCameraShots));
+            Debug.Log("Combined: \n " + string.Join("\n", combinedList.ToArray()));
+
+
+
+            chatGPTOutputLines = combinedList.ToArray();
+
+            // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
+        }
 
 
         List<AudioClip> ttsVoiceActingOrdered = null;
@@ -659,7 +737,14 @@ public class WholeThingManager : MonoBehaviour
         stillGeneratingScene = false;
         nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLines, ttsVoiceActingOrdered);
     }
+    bool AreStringsEqual(string s1, string s2)
+    {
+        // Clean strings by removing special characters, spaces, and converting to lowercase
+        s1 = Regex.Replace(s1, "[^a-zA-Z0-9]", "").ToLower();
+        s2 = Regex.Replace(s2, "[^a-zA-Z0-9]", "").ToLower();
 
+        return s1 == s2;
+    }
 
     // this shit is so the vote text changes smoothly over time
     private int initialTopic1Votes = 0;
