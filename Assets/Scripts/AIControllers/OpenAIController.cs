@@ -148,6 +148,8 @@ public class OpenAIController : AIController
     // ok this is the actual interaction with chatgpt.
     public override async Task<string> EnterPromptAndGetResponse(string inputPrompt)
     {
+        Console.WriteLine(string.Format("chatgpt prompt={0}", inputPrompt));
+
         // Don't submit empty messages
         if (inputPrompt.Length < 1)
         {
