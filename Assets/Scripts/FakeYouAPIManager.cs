@@ -52,8 +52,8 @@ public class FakeYouAPIManager : MonoBehaviour
     void Start()
     {
         // get username and password
-        fakeYouUsernameOrEmail = Environment.GetEnvironmentVariable("FAKE_YOU_USERNAME_OR_EMAIL", EnvironmentVariableTarget.User);
-        fakeYouPassword = Environment.GetEnvironmentVariable("FAKE_YOU_PASSWORD", EnvironmentVariableTarget.User);
+        fakeYouUsernameOrEmail = WholeThingManager.Singleton.config.FAKE_YOU_USERNAME_OR_EMAIL;
+        fakeYouPassword = WholeThingManager.Singleton.config.FAKE_YOU_PASSWORD;
 
         // get a list of proxy servers. 
         if (usingProxies && proxyTextFile != null)
