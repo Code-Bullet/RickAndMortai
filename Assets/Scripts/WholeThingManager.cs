@@ -77,9 +77,32 @@ public class WholeThingManager : MonoBehaviour
     public bool justDoOneScene = false;
 
 
+    // Environment variables / Global configuration.
+    public GlobalConfigData config;
+
+    private void loadConfig()
+    {
+        string configFilePath = Path.Combine(Application.dataPath, "config.json");
+
+        if (!File.Exists(configFilePath))
+        {
+            Debug.LogError("config.json not found in the project root.");
+            this.config = GlobalConfigData.CreateFromEnvVars();
+        }
+        else
+        {
+            // Read the JSON file
+            string jsonText = File.ReadAllText(configFilePath);
+            this.config = GlobalConfigData.CreateFromJSON(jsonText);
+        }
+    }
+
+
     void Start()
     {
         Singleton = this;
+        loadConfig();
+
         ToggleDiscordPlugEvery10Seconds();
         titleText.gameObject.SetActive(false);
         enableOrDisableVotingUI(false);
