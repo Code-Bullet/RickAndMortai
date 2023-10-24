@@ -411,7 +411,7 @@ public class FakeYouAPIManager : MonoBehaviour
         if (v.state == null || v.state.status == "pending" || v.state.status == "started" || v.state.status == "attempt_failed")
         {
             // if this hasent changed for like 50 attempts then we pull the plug. 
-            if (callNumber > 100)
+            if (callNumber > 50)
             {
                 Debug.LogError("timed out on call so just use a burp here");
                 return;

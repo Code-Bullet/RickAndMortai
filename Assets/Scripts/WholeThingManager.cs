@@ -76,6 +76,9 @@ public class WholeThingManager : MonoBehaviour
 
     public bool justDoOneScene = false;
 
+    public bool runningTestTopicList = false;
+    public List<string> testTopicList;
+
 
     void Start()
     {
@@ -146,15 +149,22 @@ public class WholeThingManager : MonoBehaviour
         await Task.Delay(2000);
 
         RickAndMortyScene currentScene = null;
-
         bool firstRunThrough = true;
 
-        // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-        // start creating a scene while the first round of voting happens
-        CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+        if (runningTestTopicList && testTopicList.Count > 0)
+        {
+            CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
+            testTopicList.RemoveAt(0);
+
+        }
+        else
+        {
+            CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+        }
 
         for (int i = 0; i < 1000; i++)
         {
+
 
             float waitingCounter = 0;
             // if we're currently running a scene wait 
@@ -310,7 +320,17 @@ public class WholeThingManager : MonoBehaviour
 
             if (justDoOneScene) { return; }
 
-            CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+            if (runningTestTopicList && testTopicList.Count > 0)
+            {
+                CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
+                testTopicList.RemoveAt(0);
+
+            }
+            else
+            {
+                CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+            }
+
             firstRunThrough = false;
         }
 
@@ -690,7 +710,7 @@ public class WholeThingManager : MonoBehaviour
                     else if (!previousLine.ToLower().Contains("wide shot"))
                     {
                         //if the previous shot isnt a wide shot then add a tracking shot behind.
-                        combinedList[i-1] = "{Tracking shot, Morty, behind}";
+                        combinedList[i - 1] = "{Tracking shot, Morty, behind}";
                         continue;
                     }
                 }

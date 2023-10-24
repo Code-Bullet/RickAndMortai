@@ -208,7 +208,7 @@ public class SceneDirector : MonoBehaviour
                     {
                         if (characterInfo != talkingCharacter)
                         {
-                            characterInfo.characterController.LookAtTarget(talkingCharacter.gameObject);
+                            characterInfo.characterController.LookAtTarget(talkingCharacter.cameraTarget);
                         }
                     }
 

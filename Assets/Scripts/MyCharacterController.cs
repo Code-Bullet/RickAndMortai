@@ -11,6 +11,14 @@ public class MyCharacterController : MonoBehaviour
     private Animator animator;
 
 
+    public RuntimeAnimatorController dancingAnimatorController;
+    private RuntimeAnimatorController normalAnimatorController;
+
+    public GameObject lipSyncManager;
+
+    private bool isDancing = false;
+
+
 
     void Start()
     {
@@ -25,20 +33,76 @@ public class MyCharacterController : MonoBehaviour
         {
             agent.speed = movementSpeed;
         }
+
+
+
+        if (lipSyncManager != null)
+        {
+            lipSyncManager.SetActive(false);
+        }
+
+
+        normalAnimatorController = animator.runtimeAnimatorController;
+
     }
+
+
+
+
+
 
     void Update()
     {
-        // Check if the agent is moving
-        if (agent.velocity.magnitude > 0)
+        // // Check for 's' key press to start dancing
+        // if (Input.GetKeyDown(KeyCode.S))
+        // {
+        //     StartDancing(1);  // Assuming danceNumber 1 for this example
+        // }
+
+        // // Check for 'd' key press to stop dancing
+        // if (Input.GetKeyDown(KeyCode.D))
+        // {
+        //     StopDancing();
+        // }
+
+        if (!isDancing)
         {
-            animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
+            // Check if the agent is moving
+            if (agent.velocity.magnitude > 0)
+            {
+                animator.SetBool("isRunning", true);
+            }
+            else
+            {
+                animator.SetBool("isRunning", false);
+            }
         }
     }
+
+
+
+    public void StartDancing(int danceNumber)
+    {
+
+        if (dancingAnimatorController != null)
+        {
+
+            Debug.Log("start dancing baby");
+            isDancing = true;
+            animator.runtimeAnimatorController = dancingAnimatorController;
+            animator.SetInteger("dance number", danceNumber);
+        }
+
+    }
+
+    public void StopDancing()
+    {
+        Debug.Log("stop dancing baby");
+
+        isDancing = false;
+        animator.runtimeAnimatorController = normalAnimatorController;
+    }
+
 
     public void MoveTowardsPosition(Vector3 targetPosition, float stoppingDistance)
     {
@@ -94,11 +158,20 @@ public class MyCharacterController : MonoBehaviour
 
     public void StartTalking()
     {
+        if (lipSyncManager != null)
+        {
+            lipSyncManager.SetActive(true);
+        }
         animator.SetBool("isTalking", true);
+
     }
 
     public void StopTalking()
     {
+        if (lipSyncManager != null)
+        {
+            lipSyncManager.SetActive(false);
+        }
         animator.SetBool("isTalking", false);
     }
 
@@ -106,6 +179,7 @@ public class MyCharacterController : MonoBehaviour
 
     public void LookAtTarget(GameObject target)
     {
+
         StartCoroutine(LookAtTargetOverTime(target));
     }
 

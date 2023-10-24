@@ -1,0 +1,24 @@
+<script type='text/javascript'>
+window.SpeechBlendWEBGL = {};
+
+window.AudioContext = (function(){
+  var ACConsructor = window.AudioContext || window.webkitAudioContext;
+
+  return function(){
+    var ac = new ACConsructor();
+    window.SpeechBlendWEBGL.ac = ac;
+    window.SpeechBlendWEBGL.a = ac.createAnalyser();
+    window.SpeechBlendWEBGL.a.smoothingTimeConstant = 0;
+    window.SpeechBlendWEBGL.fa = new Uint8Array(window.SpeechBlendWEBGL.a.frequencyBinCount); 
+    window.SpeechBlendWEBGL.la = new Uint8Array(window.SpeechBlendWEBGL.a.fftSize); 
+    window.SpeechBlendWEBGL.a.connect(ac.destination); 
+      
+    ac.actualDestination = ac.destination;
+    Object.defineProperty(ac, 'destination', { 
+      value: window.SpeechBlendWEBGL.a,
+      writable: false
+    });   
+    return ac; 
+  }
+})();
+</script>
