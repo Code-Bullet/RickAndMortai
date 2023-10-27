@@ -1,0 +1,21 @@
+Slur found: n, co	Phonicated: NKA   	Context: I mean, country
+Slur found: satisfied, you get	Phonicated: SATASFATAKAT   	Context:  not satisfied, you get your
+Slur found: new ga	Phonicated: NAKA   	Context: ot a new gadget 
+Slur found: ny co	Phonicated: NAKA   	Context: rom any compute
+Slur found: nco	Phonicated: NKA   	Context: and uncoverin
+Slur found: nco	Phonicated: NKA   	Context: e's uncoverin
+Slur found: n ca	Phonicated: NKA   	Context: s been causing
+Slur found: n gu	Phonicated: NKA   	Context:  green guy? Wh
+Slur found: unga	Phonicated: ANKA   	Context: e a gungan in 
+Slur found: unga	Phonicated: ANKA   	Context: new gungan!
+Slur found: n aga	Phonicated: NAKA   	Context: gungan again!
+Slur found: unga	Phonicated: ANKA   	Context: e a gungaNOPEi
+Slur found: sh I could	Phonicated: XAKAT   	Context:  I wish I could.
+Slur found: n a ca	Phonicated: NAKA   	Context: 're in a cartoon
+Slur found: ne co	Phonicated: NAKA   	Context: ry line contain
+Slur found: n cr	Phonicated: NKR   	Context: red in cream p
+Slur found: n a ga	Phonicated: NAKA   	Context: s than a game of
+Slur found: n charac	Phonicated: NKARAK   	Context: artoon character.
+Slur found: n a co	Phonicated: NAKA   	Context: ode in a compute
+Slur found: na co	Phonicated: NAKA   	Context: e gonna convinc
+Slur found: na go	Phonicated: NAKA   	Context: m gonna go lie 

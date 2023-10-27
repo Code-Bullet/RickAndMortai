@@ -1,0 +1,21 @@
+Slur found: n charac	Phonicated: NKARAK   	Context: , even characters 
+Slur found: n' cr	Phonicated: NKR   	Context: rickin' creepy 
+Slur found: n' cr	Phonicated: NKR   	Context: rickin' creepy.
+Slur found: n a go	Phonicated: NAKA   	Context: t even a good wo
+Slur found: n charac	Phonicated: NKARAK   	Context: artoon characters.
+Slur found: n charac	Phonicated: NKARAK   	Context: artoon characters.
+Slur found: ncr	Phonicated: NKR   	Context: nds incredibl
+Slur found: n equ	Phonicated: NAKA   	Context: ave an equal sa
+Slur found: nje	Phonicated: NJA   	Context: sql injection
+Slur found: nje	Phonicated: NJA   	Context: SQL injection
+Slur found: nje	Phonicated: NJA   	Context: SQL injection
+Slur found: nje	Phonicated: NJA   	Context: SQL injection
+Slur found: nje	Phonicated: NJA   	Context: SQL injection
+Slur found: nje	Phonicated: NJA   	Context: ode injection
+Slur found: for good	Phonicated: FARKAT   	Context: this for good. Wub
+Slur found: Now go	Phonicated: NAKA   	Context:  do. Now go to y
+Slur found: Now ge	Phonicated: NAKA   	Context: rty. Now get out
+Slur found: n egi	Phonicated: NAJA   	Context: ses an egiant m
+Slur found: new ga	Phonicated: NAKA   	Context: ot a new game fo
+Slur found: n E-Gi	Phonicated: NAJA   	Context: got an E-Giant M
+Slur found: ne co	Phonicated: NAKA   	Context: ry line contain

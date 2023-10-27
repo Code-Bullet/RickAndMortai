@@ -239,6 +239,18 @@ public class FakeYouAPIManager : MonoBehaviour
             catch (Exception ex)
             {
                 Debug.LogError($"Error while downloading dialog for index {i}: {ex.Message}");
+                try
+                {
+                    if (!dialogues[i].failed)
+                    {
+                        await DownloadDialogFromFakeYou(dialogues[i], 0);
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    Debug.LogError($"Error while downloading dialog for index {i}: {ex2.Message}");
+                    // Handle or log the exception as needed
+                }
                 // Handle or log the exception as needed
             }
         }

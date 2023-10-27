@@ -67,13 +67,11 @@ public class CameraShotManager : MonoBehaviour
     // input should be a single line. e.g. {Close Up, Rick}
     public void ChangeCameraShot(string cameraShotDescription)
     {
-        Debug.Log(cameraShotDescription);
         if (cameraShotDescription == null)
         {
             return;
         }
         string cameraShotDescriptionLower = cameraShotDescription.ToLower();
-        Debug.Log(cameraShotDescriptionLower);
 
         CharacterInfo character1 = null;
         CharacterInfo character2 = null;

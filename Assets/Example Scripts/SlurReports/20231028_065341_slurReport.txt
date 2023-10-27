@@ -1,0 +1,21 @@
+Slur found: n gr	Phonicated: NKR   	Context: ins in great d
+Slur found: Now co	Phonicated: NAKA   	Context: rty. Now come on
+Slur found: ne co	Phonicated: NAKA   	Context: machine code th
+Slur found: nagem	Phonicated: NAJAM   	Context: ry management. 
+Slur found: Now co	Phonicated: NAKA   	Context: lot. Now come on
+Slur found: Now, gr	Phonicated: NAKR   	Context:  it. Now, grab yo
+Slur found: nco	Phonicated: NKA   	Context:  to uncover t
+Slur found: nage.	Phonicated: NAJA   	Context: to manage.
+Slur found: Unoriginal? I co	Phonicated: ANARAJANAKA   	Context: al". Unoriginal? I coded t
+Slur found: na ge	Phonicated: NAKA   	Context: e gonna get fiv
+Slur found: ny cr	Phonicated: NAKR   	Context: is tiny crap an
+Slur found: ny cr	Phonicated: NAKR   	Context: ust any crap. I
+Slur found: ng u	Phonicated: NKA   	Context: et hung up on 
+Slur found: ng u	Phonicated: NKA   	Context: et hung up on 
+Slur found: nicker	Phonicated: NAKAR   	Context: our knickers in 
+Slur found: Now gr	Phonicated: NAKR   	Context: gs'. Now grab yo
+Slur found: new ga	Phonicated: NAKA   	Context: ot a new gadget 
+Slur found: n a ca	Phonicated: NAKA   	Context: 're in a cartoon
+Slur found: na ca	Phonicated: NAKA   	Context: se mana capacit
+Slur found: nages	Phonicated: NAJS   	Context: ro manages to d
+Slur found: new ge	Phonicated: NAKA   	Context: raft new gear an

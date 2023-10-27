@@ -1,0 +1,21 @@
+Slur found: n, I gu	Phonicated: NAKA   	Context: I mean, I guess I
+Slur found: n co	Phonicated: NKA   	Context: mes in countle
+Slur found: n cr	Phonicated: NKR   	Context:  human creativ
+Slur found: n cu	Phonicated: NKA   	Context:  human culture
+Slur found: ave I got	Phonicated: AFAKAT   	Context: hat have I got myse
+Slur found: n go	Phonicated: NKA   	Context: d even gods ha
+Slur found: n Ja	Phonicated: NJA   	Context: are in JavaScr
+Slur found: n ki	Phonicated: NKA   	Context: s been killed.
+Slur found: n Ja	Phonicated: NJA   	Context: are in JavaScr
+Slur found: n Ja	Phonicated: NJA   	Context: are in JavaScr
+Slur found: f you get	Phonicated: FAKAT   	Context: nly if you get caug
+Slur found: n' Ga	Phonicated: NKA   	Context: fuckin' Galacti
+Slur found: f you could	Phonicated: FAKAT   	Context: ing if you could help
+Slur found: now, gu	Phonicated: NAKA   	Context: n't know, guys. T
+Slur found: n co	Phonicated: NKA   	Context: u mean confusi
+Slur found: necr	Phonicated: NAKR   	Context: in Minecraft.
+Slur found: necr	Phonicated: NAKR   	Context: et Minecraft, 
+Slur found: new charac	Phonicated: NAKARAK   	Context: ed a new character c
+Slur found: ne ju	Phonicated: NAJA   	Context: t prune juice a
+Slur found: ne ju	Phonicated: NAJA   	Context: f prune juice a
+Slur found: ne ju	Phonicated: NAJA   	Context: m prune juice a

@@ -18,14 +18,7 @@ namespace Assets.Scripts.AIControllers
             Debug.Log(message);
             // textField.text = message;
 
-            message = message.Replace("frick", "fuck");
-            message = message.Replace("Frick", "Fuck");
-            message = message.Replace("Freakin", "Fuckin");
-            message = message.Replace("freakin", "fuckin");
-            message = message.Replace("crap", "shit");
-            message = message.Replace("Crap", "Shit");
-            message = message.Replace("shoot", "shit");
-            message = message.Replace("Shoot", "Shit");
+
             message = message.Replace("Nigger", "nope");
             message = message.Replace("Nigga", "nope");
             message = message.Replace("nigga", "nope");
@@ -59,6 +52,26 @@ namespace Assets.Scripts.AIControllers
             char[] delims = new[] { '\r', '\n' };
             string[] outputLinesProcessed = message.Split(delims, StringSplitOptions.RemoveEmptyEntries);
             return outputLinesProcessed;
+        }
+
+
+        public static string[] AddSwearing(string[] chatgptOutputMessageLines)
+        {
+            string[] chatgptOutputMessageLinesWithSwearing = new string[chatgptOutputMessageLines.Length];
+            for (int i = 0; i < chatgptOutputMessageLines.Length; i++)
+            {
+                chatgptOutputMessageLinesWithSwearing[i]= chatgptOutputMessageLines[i];
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("frick", "fuck");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("Frick", "Fuck");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("Freakin", "Fuckin");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("freakin", "fuckin");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("crap", "shit");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("Crap", "Shit");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("shoot", "shit");
+                chatgptOutputMessageLinesWithSwearing[i] = chatgptOutputMessageLinesWithSwearing[i].Replace("Shoot", "Shit");
+            }
+
+            return chatgptOutputMessageLinesWithSwearing;
         }
     }
 }

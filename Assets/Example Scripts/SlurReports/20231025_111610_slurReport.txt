@@ -1,0 +1,21 @@
+Slur found: new ga	Phonicated: NAKA   	Context: wn a new gadget.
+Slur found: n' chaos	Phonicated: NKAS   	Context: fuckin' chaos.
+Slur found: nco	Phonicated: NKA   	Context:  He encontrad
+Slur found: n aqu	Phonicated: NAKA   	Context: y, ven aquí! He
+Slur found: n qu	Phonicated: NKA   	Context:  es un queso o
+Slur found: nígen	Phonicated: NAJAN   	Context:  alienígenas in
+Slur found: nico	Phonicated: NAKA   	Context:  Lo único para
+Slur found: Now ge	Phonicated: NAKA   	Context: ick. Now get out
+Slur found: Now gr	Phonicated: NAKR   	Context: rty. Now grab yo
+Slur found: unga	Phonicated: ANKA   	Context: ing gungan.
+Slur found: n a cr	Phonicated: NAKR   	Context: d than a crazy s
+Slur found: n co	Phonicated: NKA   	Context: ool in coding.
+Slur found: naki	Phonicated: NAKA   	Context: new Anakin wou
+Slur found: naki	Phonicated: NAKA   	Context: hat Anakin was
+Slur found: naki	Phonicated: NAKA   	Context: hat Anakin was
+Slur found: naki	Phonicated: NAKA   	Context:  of Anakin. 
+Slur found: n aga	Phonicated: NAKA   	Context: t then again, S
+Slur found: NE JHO	Phonicated: NAJA   	Context: K DWANE JHONSON
+Slur found: ne Joh	Phonicated: NAJA   	Context:  Dwayne Johnson,
+Slur found: ne Joh	Phonicated: NAJA   	Context: Dwayne Johnson:
+Slur found: n: You gu	Phonicated: NAKA   	Context: ohnson: You guys ar

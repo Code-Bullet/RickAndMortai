@@ -244,6 +244,7 @@ public class SceneDirector : MonoBehaviour
         }
 
         cameraShotManager.ChangeCameraShot("{wide shot}");
+        
     }
 
 

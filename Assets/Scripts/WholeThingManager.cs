@@ -174,11 +174,11 @@ public class WholeThingManager : MonoBehaviour
 
                 // if we have waited for more that 8 minutes restart everything.
                 waitingCounter += 1;
-                if (waitingCounter > 8 * 60)
-                {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                    return;
-                }
+                // if (waitingCounter > 8 * 60)
+                // {
+                //     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //     return;
+                // }
             }
 
             // so scene has finished playing
@@ -288,13 +288,13 @@ public class WholeThingManager : MonoBehaviour
                 voteTime += 0.5f;
 
                 // if we have been voting for more than 5 minutes (10 minutes if this is the first loop) then restart everything 
-                float timeBeforeRestarting = 5 * 60;
-                if (firstRunThrough) timeBeforeRestarting += 5 * 60;
-                if (voteTime > timeBeforeRestarting)
-                {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                    return;
-                }
+            //     float timeBeforeRestarting = 5 * 60;
+            //     if (firstRunThrough) timeBeforeRestarting += 5 * 60;
+            //     if (voteTime > timeBeforeRestarting)
+            //     {
+            //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //         return;
+            //     }
             }
 
             // ok voting is done 
@@ -371,6 +371,7 @@ public class WholeThingManager : MonoBehaviour
         string initialPrompt = "";
         string chatGPTOutput = "";
         string[] chatGPTOutputLines = null;
+        string[] chatGPTOutputLinesWithSwearing = null;
         string creatingScene = "";
         bool foundGoodPrompt = false;
 
@@ -416,36 +417,37 @@ public class WholeThingManager : MonoBehaviour
             // process the message into indavidual lines
             string str = AIController.OutputString;
             chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+            
             AIController.OutputString = str;
-            if (!useDefaultScript)
-            {
-                // save a text file
-                try
-                {
-                    // Get the current date and time
-                    string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            // if (!useDefaultScript)
+            // {
+            //     // save a text file
+            //     try
+            //     {
+            //         // Get the current date and time
+            //         string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
-                    // Create the full path for the file
-                    string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
+            //         // Create the full path for the file
+            //         string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
 
-                    // Create an empty file and close it immediately
-                    using (FileStream fs = File.Create(path))
-                    {
-                        // Close the file immediately to allow subsequent write operations
-                    }
+            //         // Create an empty file and close it immediately
+            //         using (FileStream fs = File.Create(path))
+            //         {
+            //             // Close the file immediately to allow subsequent write operations
+            //         }
 
-                    // Write the string to the file
-                    File.WriteAllText(path, chatGPTOutput);
+            //         // Write the string to the file
+            //         File.WriteAllText(path, chatGPTOutput);
 
-                    // Log success
-                    Debug.Log("Data saved successfully to: " + path);
-                }
-                catch (System.Exception e)
-                {
-                    // Log any exceptions that occur
-                    Debug.LogError("An error occurred while saving data: " + e.Message);
-                }
-            }
+            //         // Log success
+            //         Debug.Log("Data saved successfully to: " + path);
+            //     }
+            //     catch (System.Exception e)
+            //     {
+            //         // Log any exceptions that occur
+            //         Debug.LogError("An error occurred while saving data: " + e.Message);
+            //     }
+            // }
 
 
             // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
@@ -577,19 +579,26 @@ public class WholeThingManager : MonoBehaviour
             // Log any exceptions that occur	
             Debug.LogError("An error occurred while saving data: " + e.Message);
         }
+
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
+
+
+        chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
 
 
         string nameOfAiGeneratedCharacter = null;
         string nameOfAiGeneratedDimension = null;
         // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-        List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
-        List<string> voiceModelUUIDs = dialogInfo[0];
-        List<string> characterNames = dialogInfo[1];
-        List<string> textsToSpeak = dialogInfo[2];
 
-        Debug.Log(nameOfAiGeneratedCharacter);
-        Debug.Log(nameOfAiGeneratedDimension);
+
+
+        List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
+        List<string>[] dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLinesWithSwearing, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
+        List<string> voiceModelUUIDs = dialogInfoWithSwearing[0];
+        List<string> characterNames = dialogInfoWithSwearing[1];
+        List<string> textsToSpeak = dialogInfoWithSwearing[2];
+
+
 
         List<Task> allConcurrentTasks = new List<Task>();
 
@@ -664,8 +673,6 @@ public class WholeThingManager : MonoBehaviour
             // just use that we have to merge them
 
 
-
-
             List<string> combinedList = chatGPTOutputLines.ToList();
 
             int checkedIndexOnCombinedList = 0;
@@ -676,7 +683,6 @@ public class WholeThingManager : MonoBehaviour
                 //if this bitch is a camera command
                 if (lineWeChecking.Contains("{") && !lineWeChecking.Contains(":"))
                 {
-
 
                     // then we get the instuction after this one and find it in the original array.
                     string nextInstruction = outputLinesProcessedWithCameraShots[i + 1];
@@ -739,6 +745,7 @@ public class WholeThingManager : MonoBehaviour
 
 
             chatGPTOutputLines = combinedList.ToArray();
+            chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
 
             // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
         }
@@ -766,7 +773,7 @@ public class WholeThingManager : MonoBehaviour
         textField.text = creatingScene + " --- " + "Done :)";
         // we done	
         stillGeneratingScene = false;
-        nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLines, ttsVoiceActingOrdered);
+        nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLinesWithSwearing, ttsVoiceActingOrdered);
     }
     bool AreStringsEqual(string s1, string s2)
     {

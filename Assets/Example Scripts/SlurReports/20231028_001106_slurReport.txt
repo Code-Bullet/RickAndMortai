@@ -1,0 +1,21 @@
+Slur found: n aga	Phonicated: NAKA   	Context: al gun again?
+Slur found: n go	Phonicated: NKA   	Context: d then goes to
+Slur found: nic a	Phonicated: NAKA   	Context:  a panic attack
+Slur found: nic a	Phonicated: NAKA   	Context:  a panic attack
+Slur found: n, aga	Phonicated: NAKA   	Context: ld man, against 
+Slur found: n Gu	Phonicated: NKA   	Context: Martin Gutteri
+Slur found: n' cr	Phonicated: NKR   	Context: rickin' crazy!
+Slur found: ne qu	Phonicated: NAKA   	Context: ty-nine quadril
+Slur found: Now ge	Phonicated: NAKA   	Context:  it. Now get out
+Slur found: ncr	Phonicated: NKR   	Context: ets increasin
+Slur found: n go	Phonicated: NKA   	Context: d then goes to
+Slur found: Simpsons! Ke	Phonicated: SAMPSANSKA   	Context: rit, Simpsons! Keep it
+Slur found: ncr	Phonicated: NKR   	Context: ets increasin
+Slur found: nicker	Phonicated: NAKAR   	Context: our knickers in 
+Slur found: Now, ge	Phonicated: NAKA   	Context: you. Now, get out
+Slur found: n Joh	Phonicated: NJA   	Context: catman John
+Slur found: n Joh	Phonicated: NJA   	Context: catman John, Mo
+Slur found: n go	Phonicated: NKA   	Context: d then goes to
+Slur found: n co	Phonicated: NKA   	Context: not in control
+Slur found: n co	Phonicated: NKA   	Context:  taken control
+Slur found: ne cr	Phonicated: NAKR   	Context: ..plane crashin

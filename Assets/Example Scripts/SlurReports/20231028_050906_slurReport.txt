@@ -1,0 +1,21 @@
+Slur found: nuke,	Phonicated: NAKA   	Context: ot a nuke, Yoda
+Slur found: nuke,	Phonicated: NAKA   	Context: ut a nuke, Yoda
+Slur found: nukes	Phonicated: NAKS   	Context: ping nukes. The
+Slur found: new ga	Phonicated: NAKA   	Context: ot a new gadget 
+Slur found: f. We got	Phonicated: FAKAT   	Context:  stuff. We got a bi
+Slur found: n' ki	Phonicated: NKA   	Context: rickin' kidding
+Slur found: Now co	Phonicated: NAKA   	Context: ard? Now come on
+Slur found: n a gi	Phonicated: NAKA   	Context: e down a giant l
+Slur found: nuke.	Phonicated: NAKA   	Context:  the nuke.
+Slur found: nuke i	Phonicated: NAKA   	Context:  the nuke is rea
+Slur found: na ge	Phonicated: NAKA   	Context: y gonna get one
+Slur found: nuke go	Phonicated: NAKKA   	Context:  the nuke goes of
+Slur found: n go	Phonicated: NKA   	Context: all in good fu
+Slur found: n. Ca	Phonicated: NKA   	Context:  again. Can't y
+Slur found: agaiNOPEn't you gu	Phonicated: AKANAPANAKA   	Context: Void agaiNOPEn't you guys th
+Slur found: Now ge	Phonicated: NAKA   	Context: tor. Now get bac
+Slur found: ne co	Phonicated: NAKA   	Context: ry line contain
+Slur found: nager	Phonicated: NAKAR   	Context: he manager
+Slur found: nager	Phonicated: NAKAR   	Context: he manager!
+Slur found: nager	Phonicated: NAKAR   	Context: he manager? Mor
+Slur found: nager	Phonicated: NAKAR   	Context: he manager!
