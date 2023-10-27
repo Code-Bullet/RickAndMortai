@@ -1,0 +1,24 @@
+
+There are two scripts in this package.
+One for the multi color light, and one for the rotating disco light.
+
+
+COLOR CHANGING LIGHT
+
+This script is attached to the prefab Nightclub>Lights>Multicolor_LightCube.
+The name of the script is "MultiColorLight.cs".
+A lights source has to be attached to the script. You can do this in the editor. In the prefab, it is the lightsource in the
+prefab that is attached.
+The script iterates through all color hue values, with steps of 0.001. This makes the attached light slowly change color.
+
+
+ROTATING DISCO LIGHT
+
+This script is attached to the prefab Nightclub>Lights>RotatingDiscoLights.
+The name of the script is "RotatingDiscopLight.cs"
+This script rotates the gameobject it is attached to. In the inspector you have to attah four lightsources.
+The prefab contains these lightsources. Also, in the inspector you can switch one or more lights on or off.
+The code to do this is pretty straight forward.
+
+If you have any questions about the code, please contact info@devjockeys.com
+

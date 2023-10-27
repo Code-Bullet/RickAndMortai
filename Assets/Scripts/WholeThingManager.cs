@@ -79,7 +79,7 @@ public class WholeThingManager : MonoBehaviour
     public bool runningTestTopicList = false;
     public List<string> testTopicList;
 
-
+    public RandomCameraDance danceFloorManager;
     void Start()
     {
         Singleton = this;
@@ -151,16 +151,16 @@ public class WholeThingManager : MonoBehaviour
         RickAndMortyScene currentScene = null;
         bool firstRunThrough = true;
 
-        if (runningTestTopicList && testTopicList.Count > 0)
-        {
-            CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
-            testTopicList.RemoveAt(0);
+        // if (runningTestTopicList && testTopicList.Count > 0)
+        // {
+        //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
+        //     testTopicList.RemoveAt(0);
 
-        }
-        else
-        {
-            CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
-        }
+        // }
+        // else
+        // {
+        //     CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+        // }
 
         for (int i = 0; i < 1000; i++)
         {
@@ -230,6 +230,10 @@ public class WholeThingManager : MonoBehaviour
 
             // since we are generating a scene in the background while we play a scene, the generating scene needs to finish generating before we finish voting
             // and we also wait a minimum of 30 seconds
+
+            danceFloorManager.DanceCameraStart();
+
+
             while (stillGeneratingScene || (voteTime < 30f && waitForVoting))
             {
                 //get the votes
@@ -309,14 +313,21 @@ public class WholeThingManager : MonoBehaviour
             }
 
 
-            currentScene = nextScene;
+            youTubeChat.AddToBlacklist(randomTopics[chosenTopic]);
             enableOrDisableVotingUI(false);
 
+            if (nextScene != null)
+            {
+                currentScene = nextScene;
+                RunScene(currentScene);
+
+            }
+
+
+            danceFloorManager.DanceCameraStop();
             // add the chosen topic to the blacklist so it doesnt play again
-            youTubeChat.AddToBlacklist(randomTopics[chosenTopic]);
 
             // both of these are async functions, so they will run in the backgound, this means we are running a scene and generating a scene at the same time. 
-            RunScene(currentScene);
 
             if (justDoOneScene) { return; }
 

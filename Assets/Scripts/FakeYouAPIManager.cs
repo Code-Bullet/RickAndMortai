@@ -195,10 +195,17 @@ public class FakeYouAPIManager : MonoBehaviour
         string[] characterStrings = _characterNames.ToArray();
 
 
-        // create the tts requests. and wait until all the requests are confirmed.
-        List<Task> ttsTasks = CreateTTSRequestTasks(dialogues, characterUUIDS, textsToSay, characterStrings);
-        await Task.WhenAll(ttsTasks);
-
+        try
+        {
+            // create the tts requests and wait until all the requests are confirmed.
+            List<Task> ttsTasks = CreateTTSRequestTasks(dialogues, characterUUIDS, textsToSay, characterStrings);
+            await Task.WhenAll(ttsTasks);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error while creating TTS requests: {ex.Message}");
+            // Handle or log the exception as needed
+        }
 
         // i was planning on downloading all the shit at once but that broke everything for some reason
         // so thats why i commented it out
@@ -208,22 +215,36 @@ public class FakeYouAPIManager : MonoBehaviour
             updateText.text = updateTextStart + " --- " + "Generating FakeYou TTS " + 0 + "/" + _linesToSay.Count;
         }
         // we go through each dialog and wait until its downloaded.
+        // for (int i = 0; i < dialogues.Count; i++)
+        // {
+
+        //     if (!dialogues[i].failed)
+        //     {
+        //         // downloadTasks.Add(DownloadDialogFromFakeYou(dialogues[i], 0));
+        //         await DownloadDialogFromFakeYou(dialogues[i], 0);
+        //     }
+
+        // }
+
+
         for (int i = 0; i < dialogues.Count; i++)
         {
-
-            if (!dialogues[i].failed)
+            try
             {
-                // downloadTasks.Add(DownloadDialogFromFakeYou(dialogues[i], 0));
-                await DownloadDialogFromFakeYou(dialogues[i], 0);
+                if (!dialogues[i].failed)
+                {
+                    await DownloadDialogFromFakeYou(dialogues[i], 0);
+                }
             }
-
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error while downloading dialog for index {i}: {ex.Message}");
+                // Handle or log the exception as needed
+            }
         }
-
         // await Task.WhenAll(downloadTasks);
 
         return generatedAudioClips;
-
-
     }
 
 

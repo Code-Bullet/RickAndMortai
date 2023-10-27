@@ -53,17 +53,6 @@ public class MyCharacterController : MonoBehaviour
 
     void Update()
     {
-        // // Check for 's' key press to start dancing
-        // if (Input.GetKeyDown(KeyCode.S))
-        // {
-        //     StartDancing(1);  // Assuming danceNumber 1 for this example
-        // }
-
-        // // Check for 'd' key press to stop dancing
-        // if (Input.GetKeyDown(KeyCode.D))
-        // {
-        //     StopDancing();
-        // }
 
         if (!isDancing)
         {

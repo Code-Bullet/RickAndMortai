@@ -199,9 +199,10 @@ public class SceneDirector : MonoBehaviour
                     }
 
 
-
+                    Debug.Log(1);
 
                     talkingCharacter.characterController.StartTalking();
+                    Debug.Log(2);
 
                     //every other character turns towards talking character
                     foreach (CharacterInfo characterInfo in characterList)
@@ -212,18 +213,21 @@ public class SceneDirector : MonoBehaviour
                         }
                     }
 
+                    Debug.Log(3);
                     // if rick it talking then burpify the audio
                     if (voiceActingClips != null && talkingCharacter.name == "rick")
                     {
                         voiceActingClips[audioClipIndex] = burpifier.Burpify(voiceActingClips[audioClipIndex]);
                     }
 
+                    Debug.Log(4);
 
                     //actually play the audio
                     textField.text = line;
                     if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
                     else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
 
+                    Debug.Log(5);
                     //we done
                     talkingCharacter.characterController.StopTalking();
 
@@ -239,6 +243,7 @@ public class SceneDirector : MonoBehaviour
             await RickAndMortyEnterPortal("[rick and morty enter the portal to the garage]");
         }
 
+        cameraShotManager.ChangeCameraShot("{wide shot}");
     }
 
 

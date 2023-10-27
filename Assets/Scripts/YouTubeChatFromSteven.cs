@@ -49,21 +49,64 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
     List<string> alreadyTakenTopics = new List<string>();
 
-    List<string> wordBlacklist = new List<string> { "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia" };  // List of predefined words that topics cannot contain
+    List<string> wordBlacklist = new List<string> {  "faggot", "fagot", "nigga", "niga", "niger", "nigger", "nick g", "nick c", "meth", "911", "9/11", "9 11", "nine eleven", "Homophobic", "Isis", "Muslim", "semitic", "Rape", "Retard", "Pedophile", "Pedophilia"};  // List of predefined words that topics cannot contain
 
     private bool connected = false;
 
     public HttpListener listener;
     public int port = 9999;
     public bool usingYoutubeChatStuff = true;
+    private string saveFilePath = "Assets/topicSuggestions/topicSuggestions.txt";
+
     void Start()
     {
         if (usingYoutubeChatStuff)
         {
+            LoadTopicsFromFile(); // Load the topicSuggestions list from the file
+            InvokeRepeating("SaveTopicsToFile", 60f, 60f); // Save topics to file every 60 seconds
             Server();
         }
     }
 
+
+    // Method to save the topicSuggestions list to a file
+    private void SaveTopicsToFile()
+    {
+        try
+        {
+            File.WriteAllLines(saveFilePath, topicSuggestions);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error saving topics to file: {ex.Message}");
+        }
+    }
+
+    // Method to load the topicSuggestions list from a file
+    private void LoadTopicsFromFile()
+    {
+        if (File.Exists(saveFilePath))
+        {
+            try
+            {
+                var lines = File.ReadAllLines(saveFilePath);
+                topicSuggestions.Clear(); // Clear existing items
+                for (int i = 0; i < lines.Length; i += 2)
+                {
+                    if (i + 1 < lines.Length) // Ensure there's an author for every topic
+                    {
+                        string topicMessage = lines[i];
+                        string author = lines[i + 1];
+                        topicSuggestions.Add(topicMessage + "\n" + author);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error loading topics from file: {ex.Message}");
+            }
+        }
+    }
     public static byte[] responseBuffer = Encoding.UTF8.GetBytes("OK");
     public void Server()
     {
@@ -92,7 +135,7 @@ public class YouTubeChatFromSteven : MonoBehaviour
                         continue;
                     }
 
-                    Debug.Log("recieved: " + message );
+                    Debug.Log("recieved: " + message);
 
 
                     if (message.ToLower().StartsWith("topic:"))
