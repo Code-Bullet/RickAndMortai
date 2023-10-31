@@ -9,8 +9,9 @@ from diffusers import StableDiffusionImg2ImgPipeline
 
 
 # Model.
-model_id_or_path = "runwayml/stable-diffusion-v1-5"
+# model_id_or_path = "runwayml/stable-diffusion-v1-5"
 # model_id_or_path = "stabilityai/stable-diffusion-xl-base-1.0"
+model_id_or_path = "stabilityai/stable-diffusion-xl-refiner-1.0"
 print("Caching model: ", model_id_or_path)
 
 print("Downloading...")

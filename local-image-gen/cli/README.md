@@ -30,3 +30,10 @@ This will generate a sample image. Roughly ~30s on Mac M1.
 python generate.py
 ```
 
+## Replicate server.
+
+This will run a Replicate-compatible API server for the StableDiffusionXL model.
+
+```sh
+python server/server.py
+```
