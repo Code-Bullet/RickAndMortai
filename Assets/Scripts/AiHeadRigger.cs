@@ -7,10 +7,10 @@ using Dummiesman;
 using UnityEngine.UI;
 using UnityEditor;
 
-public class AICharacterPreview : MonoBehaviour
+public class AIHeadRigger : MonoBehaviour
 {
     // The name of the character, which we use to find the 3D model on the file system.
-    public string characterKey = "walter white";
+    public string characterKey = "mario";
 
     // The list of generation ID's we indexed on the file system.
     [SerializeField]
@@ -42,7 +42,7 @@ public class AICharacterPreview : MonoBehaviour
         if (this.generations.Length == 0) return;
 
         string genId = this.generations[selectedGeneration];
-        renderGeneration(genId);
+        RenderGeneration(this.characterKey, genId);
     }
 
     void Update()
@@ -89,7 +89,7 @@ public class AICharacterPreview : MonoBehaviour
         this.generations = generations.ToArray();
     }
 
-    void renderGeneration(string generationId)
+    public void RenderGeneration(string characterKey, string generationId)
     {
         this.generationId = generationId;
 
@@ -99,14 +99,14 @@ public class AICharacterPreview : MonoBehaviour
         //var loadedObject : GameObject = Instantiate(Resources.Load("modelName"));/
 
         // Approach 3:
-        GameObject head = new OBJLoader().Load($"local-image-gen/headshot/data/3d/{this.characterKey}/{generationId}/logs/image.obj");
+        GameObject head = new OBJLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}/logs/image.obj");
         head.name = $"{this.characterKey} (${generationId.Substring(0, 5)})";
 
         // Add texture to head.
         //
 
         // 1. Load the Material.
-        Dictionary<string, Material> materials = new MTLLoader().Load($"local-image-gen/headshot/data/3d/{this.characterKey}/{generationId}/logs/image.mtl");
+        Dictionary<string, Material> materials = new MTLLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}/logs/image.mtl");
         Material defaultMat = materials["defaultMat"];
 
         // 2. Configure it.
@@ -159,7 +159,7 @@ public class AICharacterPreview : MonoBehaviour
 
             // Select next generation in list.
             selectedGeneration = (selectedGeneration + 1) % this.generations.Length;
-            renderGeneration(this.generations[selectedGeneration]);
+            RenderGeneration(this.characterKey, this.generations[selectedGeneration]);
         }
     }
 }

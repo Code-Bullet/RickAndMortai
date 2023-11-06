@@ -18,6 +18,8 @@ server_base_url = "http://0.0.0.0:{server_port}"
 # Error: {error: "Error generating headshots - {err}}
 @app.route('/v1/character-heads/generate', methods=['POST'])
 def generate():
+    # Testing:
+    # return jsonify({'generation_ids': ["6jpkjglb773m5qy5jne2h6e72y", "fx2rvqdbbzvn27ewgjwkbpvu4m", "hdwwdddbmpu2ln63wcogn3c6ny"]}), 200
     character_name = request.json.get('character')
     
     if not character_name or not isinstance(character_name, str) or len(character_name) == 0:
