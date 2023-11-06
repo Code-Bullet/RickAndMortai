@@ -148,6 +148,8 @@ def gen_3d(image="", save_dir=""):
 # - this function runs 4 generations in parallel
 # - generation is run remotely on Replicate's GPU servers
 def generate_headshots(character):
+    print(character)
+
     # image = open("data/inputs-2d/head.png", "rb")
     image_black_bg = 'https://i.imgur.com/B5C3aww.png'
     image_white_bg = "https://i.imgur.com/F13wrbW.png"
@@ -181,9 +183,9 @@ def generate_headshots(character):
         # (image_style_ref2, prompt_2, negative_prompt, image_white_bg),
 
         (None, prompt_1, negative_prompt, image_white_bg, character),
-        # (None, prompt_1, negative_prompt, image_white_bg, character),
-        # (None, prompt_2, negative_prompt, image_white_bg, character),
-        # (None, prompt_2, negative_prompt, image_white_bg, character),
+        (None, prompt_1, negative_prompt, image_white_bg, character),
+        (None, prompt_2, negative_prompt, image_white_bg, character),
+        (None, prompt_2, negative_prompt, image_white_bg, character),
 
         # (image_style_ref1, prompt_1, negative_prompt, None),
         # (image_style_ref1, prompt_1, negative_prompt, None),
@@ -208,6 +210,8 @@ def generate_headshots(character):
     image_3d_results = executor.map(gen_3d, *zip(*inputs_3d))
     image_3d_results = list(image_3d_results)
     print(image_3d_results)
+
+    return image_3d_results
 
 
 def main():

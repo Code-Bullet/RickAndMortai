@@ -16,7 +16,7 @@ server_base_url = "http://0.0.0.0:{server_port}"
 # Input: {character: "walter white"}
 # Output: {generation_ids: ["3m7v6stb7lbvhysbnykluzteyq", "gjveqa3bnufcidlumyactt5gd4"]}
 # Error: {error: "Error generating headshots - {err}}
-@app.route('/v1/generate', methods=['POST'])
+@app.route('/v1/character-heads/generate', methods=['POST'])
 def generate():
     character_name = request.json.get('character')
     

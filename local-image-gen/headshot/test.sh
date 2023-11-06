@@ -1,0 +1,1 @@
+curl -X POST -H "Content-Type: application/json" -d '{"character": "mario"}' http://0.0.0.0:10001/v1/character-heads/generate
