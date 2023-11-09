@@ -7,27 +7,12 @@ public class AiArtDimensionController : MonoBehaviour
 {
     // public string name;
 
-    // this shit is for ai art stuff
-    private Texture2D nextSceneTexture;
-
     public Renderer dimensionBackgroundPlaneRenderer;
 
-
-
-    public void UpdateTextureForNextScene()
+    public void Prepare(AIDimension aiDimension)
     {
+        if (aiDimension == null) return;
 
-        if (nextSceneTexture!= null)
-        {
-            dimensionBackgroundPlaneRenderer.material.mainTexture = nextSceneTexture;
-        }
+        dimensionBackgroundPlaneRenderer.material.mainTexture = aiDimension.texture;
     }
-
-
-    public void SetTextureForNextScene(Texture2D nextSceneTexture_)
-    {
-        nextSceneTexture = nextSceneTexture_;
-    }
-
-
 }

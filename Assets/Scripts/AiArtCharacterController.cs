@@ -14,37 +14,23 @@ public class AiArtCharacterController : MonoBehaviour
     public Renderer characterRight;
     public Renderer characterBack;
 
-    private Texture2D nextSceneTexture;
-
-
-
-
-
-    public void UpdateTextureForNextScene()
+    public void Prepare(AICharacter aiCharacter)
     {
+        if (aiCharacter == null) return;
 
-        if (nextSceneTexture != null)
-        {
-            // this is where we convert a single texture into 2 textures
-            Texture2D[] splitTextures = SplitTexture(nextSceneTexture);
+        // this is where we convert a single texture into 2 textures
+        Texture2D[] splitTextures = SplitTexture(aiCharacter.texture);
 
-            Texture2D rightFaceTexture = splitTextures[0];
-            Texture2D frontFaceTexture = splitTextures[1];
-            Texture2D leftFaceTexture = FlipTextureHorizontally(rightFaceTexture);
+        Texture2D rightFaceTexture = splitTextures[0];
+        Texture2D frontFaceTexture = splitTextures[1];
+        Texture2D leftFaceTexture = FlipTextureHorizontally(rightFaceTexture);
 
 
-            characterRight.material.mainTexture = rightFaceTexture;
-            characterFront.material.mainTexture = frontFaceTexture;
-            characterLeft.material.mainTexture = leftFaceTexture;
-            characterBack.material.mainTexture = frontFaceTexture;
-        }
+        characterRight.material.mainTexture = rightFaceTexture;
+        characterFront.material.mainTexture = frontFaceTexture;
+        characterLeft.material.mainTexture = leftFaceTexture;
+        characterBack.material.mainTexture = frontFaceTexture;
     }
-
-    public void SetTextureForNextScene(Texture2D nextSceneTexture_)
-    {
-        nextSceneTexture = nextSceneTexture_;
-    }
-
 
 
     // public void SetPlanesToTextures(CharacterInfo character)
