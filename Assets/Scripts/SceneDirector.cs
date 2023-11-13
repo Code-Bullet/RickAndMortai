@@ -68,11 +68,22 @@ public class SceneDirector : MonoBehaviour
         AddCharacterTargetGroup(characterList[0]);
         AddCharacterTargetGroup(characterList[1]);
 
-        // Reset Rick and Morty to the Garage.
-        rick.transform.position = Vector3.zero;
-        morty.transform.position = Vector3.zero;
+        
         //rick.TeleportTo(currentDimension.portalLocation.transform.position);
         //morty.TeleportTo(currentDimension.portalLocation.transform.position);
+    }
+
+    public void ResetStuff()
+    {
+        // reset the cunts
+        // these bastards keep moving
+
+        // Reset Rick and Morty to the Garage.
+        // rick.transform.position = Vector3.zero;
+        // morty.transform.position = Vector3.zero;
+
+        // Reset the cameras.
+        cameraShotManager.Reset();
     }
 
 
@@ -80,6 +91,8 @@ public class SceneDirector : MonoBehaviour
     // this function actually plas the scene
     public async Task PlayScene(string[] outputLines, List<AudioClip> voiceActingClips)
     {
+        ResetStuff();
+
         int audioClipIndex = 0;
 
 
