@@ -219,7 +219,6 @@ public class WholeThingManager : MonoBehaviour
         // {
         //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
         //     testTopicList.RemoveAt(0);
-
         // }
         // else
         // {
