@@ -400,6 +400,9 @@ public class WholeThingManager : MonoBehaviour
         //run the scene
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
 
+        aiArtDimension.Reset();
+        aiArtCharacter.Reset();
+
         // scene done
         currentlyRunningScene = false;
     }

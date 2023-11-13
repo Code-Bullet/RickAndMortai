@@ -32,6 +32,14 @@ public class AiArtCharacterController : MonoBehaviour
         characterBack.material.mainTexture = frontFaceTexture;
     }
 
+    public void Reset()
+    {
+        characterRight.material.mainTexture = null;
+        characterFront.material.mainTexture = null;
+        characterLeft.material.mainTexture = null;
+        characterBack.material.mainTexture = null;
+    }
+
 
     // public void SetPlanesToTextures(CharacterInfo character)
     // {

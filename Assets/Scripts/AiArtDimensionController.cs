@@ -15,4 +15,9 @@ public class AiArtDimensionController : MonoBehaviour
 
         dimensionBackgroundPlaneRenderer.material.mainTexture = aiDimension.texture;
     }
+
+    public void Reset()
+    {
+        dimensionBackgroundPlaneRenderer.material.mainTexture = null;
+    }
 }
