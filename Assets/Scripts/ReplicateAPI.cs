@@ -2,20 +2,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Threading.Tasks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.AIControllers;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using TMPro;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ReplicateAPI : MonoBehaviour
 {
@@ -40,31 +26,48 @@ public class ReplicateAPI : MonoBehaviour
     }
 
 
-
-    public async Task DoAllTheAiArtStuffForAScene(AiArtCharacterController character, string nameOfCharacter, AiArtDimensionController aiArtDimensionController, string nameOfDimension)
+    public async Task<AIArtStuff> DoAllTheAiArtStuffForAScene(string nameOfCharacter, string nameOfDimension)
     {
         Debug.Log("doing all the ai art stuff");
         Debug.Log(nameOfCharacter);
         Debug.Log(nameOfDimension);
+
+        AIArtStuff artStuff = new AIArtStuff();
+
         if (nameOfCharacter != null)
         {
-            Texture2D fullTexture = await GetTextureFromPrompt("2 close up images of " + nameOfCharacter + "'s face, 1 profile image and 1 looking front on, plain background", 512, 256, 0.92f, "https://i.imgur.com/3fm0Z0o.png");
-            character.SetTextureForNextScene(fullTexture);
+            string prompt = $"2 close up images of {nameOfCharacter}'s face, 1 profile image and 1 looking front on, plain background";
+            Texture2D fullTexture = await GetTextureFromPrompt(prompt, 512, 256, 0.92f, "https://i.imgur.com/3fm0Z0o.png");
 
+            AICharacter aiCharacter = new AICharacter();
+            aiCharacter.characterName = nameOfCharacter;
+            aiCharacter.prompt = prompt;
+            aiCharacter.texture = fullTexture;
+
+            artStuff.character = aiCharacter;
         }
 
         if (nameOfDimension != null)
         {
-            Texture2D dimensionTexture = await GetTextureFromPrompt("An environment photo of " + nameOfDimension, 1280, 720, 0.8f, null);
-            aiArtDimensionController.SetTextureForNextScene(dimensionTexture);
+            string prompt = $"An environment photo of {nameOfDimension}";
+            Texture2D dimensionTexture = await GetTextureFromPrompt(prompt, 1280, 720, 0.8f, null);
 
+            AIDimension aiDimension = new AIDimension();
+            aiDimension.dimensionName = nameOfDimension;
+            aiDimension.prompt = prompt;
+            aiDimension.texture = dimensionTexture;
+
+            artStuff.dimension = aiDimension;
         }
+
         Debug.Log("done the ai stuff");
+        return artStuff;
     }
 
     public IEnumerator StartPrediction(string prompt, int width, int height, float promptStrength, string imageUrl)
     {
         Debug.Log("Starting prediction with prompt: " + prompt);
+
 
         var requestPayload = "{\"version\": \"8beff3369e81422112d93b89ca01426147de542cd4684c244b673b105188fe5f\", ";
         requestPayload += "\"input\": {\"prompt\": \"" + prompt + "\", ";

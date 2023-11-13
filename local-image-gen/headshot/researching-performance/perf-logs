@@ -1,0 +1,484 @@
+Performing image-to-3D
+2023-10-31 03:04:45.897985782 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4441, index: 0, mask: {48, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.898017502 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4443, index: 2, mask: {49, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.897985762 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4442, index: 1, mask: {1, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.898039512 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4444, index: 3, mask: {2, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.902520977 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4469, index: 28, mask: {62, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.906512358 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4465, index: 24, mask: {60, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.906514578 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4470, index: 29, mask: {15, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.906518258 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4472, index: 31, mask: {16, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.910510849 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4471, index: 30, mask: {63, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.913202266 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4473, index: 32, mask: {64, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.914513920 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4480, index: 39, mask: {20, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.918255094 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4474, index: 33, mask: {17, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.918509091 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4481, index: 40, mask: {68, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.918512661 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4445, index: 4, mask: {50, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.922509912 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4482, index: 41, mask: {21, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.922511382 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4475, index: 34, mask: {65, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.922553992 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4446, index: 5, mask: {3, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.926508203 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4476, index: 35, mask: {18, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.926520533 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4484, index: 43, mask: {22, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.926528373 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4452, index: 11, mask: {6, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.926509223 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4483, index: 42, mask: {69, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.930512434 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4447, index: 6, mask: {51, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.933424168 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4477, index: 36, mask: {66, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.934510135 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4457, index: 16, mask: {56, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.934520245 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4454, index: 13, mask: {7, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.938477156 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4478, index: 37, mask: {19, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.938508346 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4458, index: 17, mask: {9, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.938516826 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4468, index: 27, mask: {14, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.934510145 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4453, index: 12, mask: {54, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.942507277 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4479, index: 38, mask: {67, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.942517317 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4487, index: 46, mask: {71, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.938508316 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4485, index: 44, mask: {70, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.942507287 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4486, index: 45, mask: {23, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.946516718 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4455, index: 14, mask: {55, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.948592702 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4489, index: 48, mask: {72, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.950514649 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4488, index: 47, mask: {24, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.953653231 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4490, index: 49, mask: {25, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.954511340 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4456, index: 15, mask: {8, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.958522251 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4497, index: 56, mask: {76, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.958542871 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4492, index: 51, mask: {26, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.962515152 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4493, index: 52, mask: {74, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.962519882 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4498, index: 57, mask: {29, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.958521971 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4491, index: 50, mask: {73, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.968843165 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4494, index: 53, mask: {27, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.970516514 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4499, index: 58, mask: {77, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.973901202 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4495, index: 54, mask: {75, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.974520645 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4500, index: 59, mask: {30, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.978520896 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4496, index: 55, mask: {28, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.978540156 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4502, index: 61, mask: {31, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.978521726 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4501, index: 60, mask: {78, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.982519847 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4503, index: 62, mask: {79, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.986521177 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4504, index: 63, mask: {32, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.989078626 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4505, index: 64, mask: {80, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.990522559 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4467, index: 26, mask: {61, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.994142275 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4506, index: 65, mask: {33, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.994522260 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4511, index: 70, mask: {83, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.998515161 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4512, index: 71, mask: {36, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:45.998516161 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4507, index: 66, mask: {81, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.002519772 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4508, index: 67, mask: {34, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.002521872 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4513, index: 72, mask: {84, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.006519413 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4514, index: 73, mask: {37, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.009309849 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4509, index: 68, mask: {82, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.010520344 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4515, index: 74, mask: {85, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.014372637 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4510, index: 69, mask: {35, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.014516605 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4516, index: 75, mask: {38, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.018523496 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4523, index: 82, mask: {89, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.018529466 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4517, index: 76, mask: {86, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.022514647 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4524, index: 83, mask: {42, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.022515897 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4518, index: 77, mask: {39, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.022531547 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4525, index: 84, mask: {90, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.026520448 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4526, index: 85, mask: {43, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.030522649 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4527, index: 86, mask: {91, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.034516220 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4519, index: 78, mask: {87, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.034536060 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4529, index: 88, mask: {92, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.034517950 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4528, index: 87, mask: {44, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.038517511 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4520, index: 79, mask: {40, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.042517172 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4530, index: 89, mask: {45, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.044759035 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4521, index: 80, mask: {88, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.046518173 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4466, index: 25, mask: {13, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.049815942 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4522, index: 81, mask: {41, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.050522554 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4464, index: 23, mask: {12, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.054523925 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4531, index: 90, mask: {93, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.058515576 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4532, index: 91, mask: {46, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.064988897 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4533, index: 92, mask: {94, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.070075605 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4534, index: 93, mask: {47, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.074517860 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4535, index: 94, mask: {95, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.110522829 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4462, index: 21, mask: {11, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.138523386 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4463, index: 22, mask: {59, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.186417319 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4459, index: 18, mask: {57, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.190525589 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4460, index: 19, mask: {10, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+2023-10-31 03:04:46.234523190 [E:onnxruntime:Default, env.cc:254 ThreadMain] pthread_setaffinity_np failed for thread: 4461, index: 20, mask: {58, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.
+[INFO] loading image image.png...
+[INFO] background removal...
+[INFO] recenter...
+{'input': '/src/image_rgba.png', 'prompt': None, 'mesh': None, 'elevation': 0, 'ref_size': 768, 'density_thresh': 1, 'outdir': 'logs', 'save_path': 'image', 'lambda_sd': 0, 'lambda_zero123': 1, 'batch_size': 1, 'iters': 500, 'iters_refine': 50, 'radius': 2, 'fovy': 49.1, 'load': None, 'train_geo': False, 'invert_bg_prob': 0.5, 'gui': False, 'force_cuda_rast': True, 'H': 800, 'W': 800, 'num_pts': 5000, 'sh_degree': 0, 'position_lr_init': 0.001, 'position_lr_final': 2e-05, 'position_lr_delay_mult': 0.02, 'position_lr_max_steps': 500, 'feature_lr': 0.01, 'opacity_lr': 0.05, 'scaling_lr': 0.005, 'rotation_lr': 0.005, 'percent_dense': 0.1, 'density_start_iter': 100, 'density_end_iter': 3000, 'densification_interval': 100, 'opacity_reset_interval': 700, 'densify_grad_threshold': 0.5, 'geom_lr': 0.0001, 'texture_lr': 0.2}
+[INFO] load image from /src/image_rgba.png...
+Number of points at initialisation :  5000
+[INFO] loading zero123...
+Loading pipeline components...:   0%|          | 0/6 [00:00<?, ?it/s]
+Loading pipeline components...:  50%|█████     | 3/6 [00:00<00:00,  6.93it/s]
+Loading pipeline components...:  67%|██████▋   | 4/6 [00:00<00:00,  5.29it/s]
+Loading pipeline components...: 100%|██████████| 6/6 [00:00<00:00,  8.20it/s]
+[INFO] loaded zero123!
+  0%|          | 0/500 [00:00<?, ?it/s]
+  0%|          | 1/500 [00:00<02:22,  3.50it/s]
+  1%|          | 3/500 [00:00<01:02,  8.00it/s]
+  1%|          | 5/500 [00:00<00:49, 10.06it/s]
+  1%|▏         | 7/500 [00:00<00:43, 11.21it/s]
+  2%|▏         | 9/500 [00:00<00:41, 11.90it/s]
+  2%|▏         | 11/500 [00:01<00:40, 12.08it/s]
+  3%|▎         | 13/500 [00:01<00:39, 12.42it/s]
+  3%|▎         | 15/500 [00:01<00:38, 12.67it/s]
+  3%|▎         | 17/500 [00:01<00:37, 12.85it/s]
+  4%|▍         | 19/500 [00:01<00:37, 12.97it/s]
+  4%|▍         | 21/500 [00:01<00:36, 13.06it/s]
+  5%|▍         | 23/500 [00:01<00:36, 13.11it/s]
+  5%|▌         | 25/500 [00:02<00:37, 12.61it/s]
+  5%|▌         | 27/500 [00:02<00:37, 12.78it/s]
+  6%|▌         | 29/500 [00:02<00:36, 12.88it/s]
+  6%|▌         | 31/500 [00:02<00:36, 12.96it/s]
+  7%|▋         | 33/500 [00:02<00:35, 13.03it/s]
+  7%|▋         | 35/500 [00:02<00:35, 13.07it/s]
+  7%|▋         | 37/500 [00:03<00:35, 13.05it/s]
+  8%|▊         | 39/500 [00:03<00:35, 13.05it/s]
+  8%|▊         | 41/500 [00:03<00:35, 13.02it/s]
+  9%|▊         | 43/500 [00:03<00:35, 13.04it/s]
+  9%|▉         | 45/500 [00:03<00:34, 13.07it/s]
+  9%|▉         | 47/500 [00:03<00:34, 13.10it/s]
+ 10%|▉         | 49/500 [00:03<00:34, 13.10it/s]
+ 10%|█         | 51/500 [00:04<00:34, 12.96it/s]
+ 11%|█         | 53/500 [00:04<00:34, 12.99it/s]
+ 11%|█         | 55/500 [00:04<00:34, 13.04it/s]
+ 11%|█▏        | 57/500 [00:04<00:33, 13.09it/s]
+ 12%|█▏        | 59/500 [00:04<00:33, 13.13it/s]
+ 12%|█▏        | 61/500 [00:04<00:33, 13.13it/s]
+ 13%|█▎        | 63/500 [00:05<00:34, 12.70it/s]
+ 13%|█▎        | 65/500 [00:05<00:33, 12.81it/s]
+ 13%|█▎        | 67/500 [00:05<00:33, 12.92it/s]
+ 14%|█▍        | 69/500 [00:05<00:33, 12.97it/s]
+ 14%|█▍        | 71/500 [00:05<00:32, 13.02it/s]
+ 15%|█▍        | 73/500 [00:05<00:32, 13.03it/s]
+ 15%|█▌        | 75/500 [00:05<00:32, 13.08it/s]
+ 15%|█▌        | 77/500 [00:06<00:33, 12.55it/s]
+ 16%|█▌        | 79/500 [00:06<00:33, 12.72it/s]
+ 16%|█▌        | 81/500 [00:06<00:32, 12.89it/s]
+ 17%|█▋        | 83/500 [00:06<00:32, 13.00it/s]
+ 17%|█▋        | 85/500 [00:06<00:31, 13.07it/s]
+ 17%|█▋        | 87/500 [00:06<00:31, 13.12it/s]
+ 18%|█▊        | 89/500 [00:07<00:31, 13.11it/s]
+ 18%|█▊        | 91/500 [00:07<00:31, 13.12it/s]
+ 19%|█▊        | 93/500 [00:07<00:31, 13.10it/s]
+ 19%|█▉        | 95/500 [00:07<00:30, 13.07it/s]
+ 19%|█▉        | 97/500 [00:07<00:30, 13.14it/s]
+ 20%|█▉        | 99/500 [00:07<00:30, 13.18it/s]
+ 20%|██        | 101/500 [00:08<00:34, 11.54it/s]
+ 21%|██        | 103/500 [00:08<00:33, 11.94it/s]
+ 21%|██        | 105/500 [00:08<00:32, 12.26it/s]
+ 21%|██▏       | 107/500 [00:08<00:31, 12.47it/s]
+ 22%|██▏       | 109/500 [00:08<00:30, 12.64it/s]
+ 22%|██▏       | 111/500 [00:08<00:30, 12.76it/s]
+ 23%|██▎       | 113/500 [00:08<00:30, 12.85it/s]
+ 23%|██▎       | 115/500 [00:09<00:30, 12.78it/s]
+ 23%|██▎       | 117/500 [00:09<00:29, 12.85it/s]
+ 24%|██▍       | 119/500 [00:09<00:29, 12.94it/s]
+ 24%|██▍       | 121/500 [00:09<00:29, 13.00it/s]
+ 25%|██▍       | 123/500 [00:09<00:28, 13.01it/s]
+ 25%|██▌       | 125/500 [00:09<00:28, 13.04it/s]
+ 25%|██▌       | 127/500 [00:10<00:28, 13.06it/s]
+ 26%|██▌       | 129/500 [00:10<00:29, 12.71it/s]
+ 26%|██▌       | 131/500 [00:10<00:28, 12.78it/s]
+ 27%|██▋       | 133/500 [00:10<00:28, 12.87it/s]
+ 27%|██▋       | 135/500 [00:10<00:28, 12.95it/s]
+ 27%|██▋       | 137/500 [00:10<00:27, 13.02it/s]
+ 28%|██▊       | 139/500 [00:10<00:27, 12.96it/s]
+ 28%|██▊       | 141/500 [00:11<00:28, 12.79it/s]
+ 29%|██▊       | 143/500 [00:11<00:27, 12.88it/s]
+ 29%|██▉       | 145/500 [00:11<00:27, 12.97it/s]
+ 29%|██▉       | 147/500 [00:11<00:27, 13.00it/s]
+ 30%|██▉       | 149/500 [00:11<00:26, 13.07it/s]
+ 30%|███       | 151/500 [00:11<00:26, 13.07it/s]
+ 31%|███       | 153/500 [00:12<00:26, 13.05it/s]
+ 31%|███       | 155/500 [00:12<00:26, 12.83it/s]
+ 31%|███▏      | 157/500 [00:12<00:26, 12.84it/s]
+ 32%|███▏      | 159/500 [00:12<00:26, 12.92it/s]
+ 32%|███▏      | 161/500 [00:12<00:26, 12.98it/s]
+ 33%|███▎      | 163/500 [00:12<00:26, 12.92it/s]
+ 33%|███▎      | 165/500 [00:12<00:25, 12.94it/s]
+ 33%|███▎      | 167/500 [00:13<00:25, 12.88it/s]
+ 34%|███▍      | 169/500 [00:13<00:25, 12.94it/s]
+ 34%|███▍      | 171/500 [00:13<00:25, 12.99it/s]
+ 35%|███▍      | 173/500 [00:13<00:25, 13.03it/s]
+ 35%|███▌      | 175/500 [00:13<00:24, 13.07it/s]
+ 35%|███▌      | 177/500 [00:13<00:24, 13.10it/s]
+ 36%|███▌      | 179/500 [00:14<00:25, 12.71it/s]
+ 36%|███▌      | 181/500 [00:14<00:24, 12.77it/s]
+ 37%|███▋      | 183/500 [00:14<00:24, 12.82it/s]
+ 37%|███▋      | 185/500 [00:14<00:24, 12.91it/s]
+ 37%|███▋      | 187/500 [00:14<00:24, 12.93it/s]
+ 38%|███▊      | 189/500 [00:14<00:23, 13.01it/s]
+ 38%|███▊      | 191/500 [00:14<00:23, 13.05it/s]
+ 39%|███▊      | 193/500 [00:15<00:23, 12.98it/s]
+ 39%|███▉      | 195/500 [00:15<00:23, 12.94it/s]
+ 39%|███▉      | 197/500 [00:15<00:23, 13.01it/s]
+ 40%|███▉      | 199/500 [00:15<00:23, 13.06it/s]
+ 40%|████      | 201/500 [00:15<00:24, 12.11it/s]
+ 41%|████      | 203/500 [00:15<00:24, 12.32it/s]
+ 41%|████      | 205/500 [00:16<00:23, 12.42it/s]
+ 41%|████▏     | 207/500 [00:16<00:23, 12.53it/s]
+ 42%|████▏     | 209/500 [00:16<00:22, 12.66it/s]
+ 42%|████▏     | 211/500 [00:16<00:22, 12.74it/s]
+ 43%|████▎     | 213/500 [00:16<00:22, 12.84it/s]
+ 43%|████▎     | 215/500 [00:16<00:22, 12.90it/s]
+ 43%|████▎     | 217/500 [00:17<00:22, 12.54it/s]
+ 44%|████▍     | 219/500 [00:17<00:22, 12.65it/s]
+ 44%|████▍     | 221/500 [00:17<00:21, 12.78it/s]
+ 45%|████▍     | 223/500 [00:17<00:21, 12.86it/s]
+ 45%|████▌     | 225/500 [00:17<00:21, 12.93it/s]
+ 45%|████▌     | 227/500 [00:17<00:21, 12.96it/s]
+ 46%|████▌     | 229/500 [00:17<00:20, 12.98it/s]
+ 46%|████▌     | 231/500 [00:18<00:20, 12.91it/s]
+ 47%|████▋     | 233/500 [00:18<00:20, 12.95it/s]
+ 47%|████▋     | 235/500 [00:18<00:20, 12.98it/s]
+ 47%|████▋     | 237/500 [00:18<00:20, 13.01it/s]
+ 48%|████▊     | 239/500 [00:18<00:20, 13.02it/s]
+ 48%|████▊     | 241/500 [00:18<00:19, 13.03it/s]
+ 49%|████▊     | 243/500 [00:19<00:19, 12.95it/s]
+ 49%|████▉     | 245/500 [00:19<00:19, 12.94it/s]
+ 49%|████▉     | 247/500 [00:19<00:19, 12.98it/s]
+ 50%|████▉     | 249/500 [00:19<00:19, 13.02it/s]
+ 50%|█████     | 251/500 [00:19<00:19, 13.02it/s]
+ 51%|█████     | 253/500 [00:19<00:18, 13.05it/s]
+ 51%|█████     | 255/500 [00:19<00:18, 13.03it/s]
+ 51%|█████▏    | 257/500 [00:20<00:18, 12.89it/s]
+ 52%|█████▏    | 259/500 [00:20<00:18, 12.88it/s]
+ 52%|█████▏    | 261/500 [00:20<00:18, 12.94it/s]
+ 53%|█████▎    | 263/500 [00:20<00:18, 12.98it/s]
+ 53%|█████▎    | 265/500 [00:20<00:18, 13.01it/s]
+ 53%|█████▎    | 267/500 [00:20<00:17, 13.01it/s]
+ 54%|█████▍    | 269/500 [00:21<00:17, 13.01it/s]
+ 54%|█████▍    | 271/500 [00:21<00:17, 12.90it/s]
+ 55%|█████▍    | 273/500 [00:21<00:17, 12.94it/s]
+ 55%|█████▌    | 275/500 [00:21<00:17, 12.97it/s]
+ 55%|█████▌    | 277/500 [00:21<00:17, 12.97it/s]
+ 56%|█████▌    | 279/500 [00:21<00:16, 13.01it/s]
+ 56%|█████▌    | 281/500 [00:21<00:16, 13.03it/s]
+ 57%|█████▋    | 283/500 [00:22<00:17, 12.42it/s]
+ 57%|█████▋    | 285/500 [00:22<00:17, 12.59it/s]
+ 57%|█████▋    | 287/500 [00:22<00:16, 12.74it/s]
+ 58%|█████▊    | 289/500 [00:22<00:16, 12.86it/s]
+ 58%|█████▊    | 291/500 [00:22<00:16, 12.93it/s]
+ 59%|█████▊    | 293/500 [00:22<00:15, 12.96it/s]
+ 59%|█████▉    | 295/500 [00:23<00:16, 12.47it/s]
+ 59%|█████▉    | 297/500 [00:23<00:16, 12.53it/s]
+ 60%|█████▉    | 299/500 [00:23<00:15, 12.65it/s]
+ 60%|██████    | 301/500 [00:23<00:16, 11.92it/s]
+ 61%|██████    | 303/500 [00:23<00:16, 12.17it/s]
+ 61%|██████    | 305/500 [00:23<00:15, 12.36it/s]
+ 61%|██████▏   | 307/500 [00:24<00:15, 12.45it/s]
+ 62%|██████▏   | 309/500 [00:24<00:15, 12.40it/s]
+ 62%|██████▏   | 311/500 [00:24<00:15, 12.48it/s]
+ 63%|██████▎   | 313/500 [00:24<00:14, 12.60it/s]
+ 63%|██████▎   | 315/500 [00:24<00:14, 12.63it/s]
+ 63%|██████▎   | 317/500 [00:24<00:14, 12.65it/s]
+ 64%|██████▍   | 319/500 [00:24<00:14, 12.66it/s]
+ 64%|██████▍   | 321/500 [00:25<00:14, 12.47it/s]
+ 65%|██████▍   | 323/500 [00:25<00:14, 12.51it/s]
+ 65%|██████▌   | 325/500 [00:25<00:13, 12.59it/s]
+ 65%|██████▌   | 327/500 [00:25<00:13, 12.67it/s]
+ 66%|██████▌   | 329/500 [00:25<00:13, 12.67it/s]
+ 66%|██████▌   | 331/500 [00:25<00:13, 12.66it/s]
+ 67%|██████▋   | 333/500 [00:26<00:13, 12.46it/s]
+ 67%|██████▋   | 335/500 [00:26<00:13, 12.52it/s]
+ 67%|██████▋   | 337/500 [00:26<00:12, 12.56it/s]
+ 68%|██████▊   | 339/500 [00:26<00:12, 12.60it/s]
+ 68%|██████▊   | 341/500 [00:26<00:12, 12.65it/s]
+ 69%|██████▊   | 343/500 [00:26<00:12, 12.68it/s]
+ 69%|██████▉   | 345/500 [00:27<00:12, 12.65it/s]
+ 69%|██████▉   | 347/500 [00:27<00:12, 12.57it/s]
+ 70%|██████▉   | 349/500 [00:27<00:11, 12.60it/s]
+ 70%|███████   | 351/500 [00:27<00:11, 12.67it/s]
+ 71%|███████   | 353/500 [00:27<00:11, 12.73it/s]
+ 71%|███████   | 355/500 [00:27<00:11, 12.68it/s]
+ 71%|███████▏  | 357/500 [00:28<00:11, 12.65it/s]
+ 72%|███████▏  | 359/500 [00:28<00:11, 12.56it/s]
+ 72%|███████▏  | 361/500 [00:28<00:11, 12.62it/s]
+ 73%|███████▎  | 363/500 [00:28<00:10, 12.61it/s]
+ 73%|███████▎  | 365/500 [00:28<00:10, 12.65it/s]
+ 73%|███████▎  | 367/500 [00:28<00:10, 12.64it/s]
+ 74%|███████▍  | 369/500 [00:28<00:10, 12.66it/s]
+ 74%|███████▍  | 371/500 [00:29<00:10, 12.50it/s]
+ 75%|███████▍  | 373/500 [00:29<00:10, 12.59it/s]
+ 75%|███████▌  | 375/500 [00:29<00:09, 12.66it/s]
+ 75%|███████▌  | 377/500 [00:29<00:09, 12.65it/s]
+ 76%|███████▌  | 379/500 [00:29<00:09, 12.62it/s]
+ 76%|███████▌  | 381/500 [00:29<00:09, 12.67it/s]
+ 77%|███████▋  | 383/500 [00:30<00:09, 12.55it/s]
+ 77%|███████▋  | 385/500 [00:30<00:09, 12.59it/s]
+ 77%|███████▋  | 387/500 [00:30<00:08, 12.59it/s]
+ 78%|███████▊  | 389/500 [00:30<00:08, 12.60it/s]
+ 78%|███████▊  | 391/500 [00:30<00:08, 12.66it/s]
+ 79%|███████▊  | 393/500 [00:30<00:08, 12.69it/s]
+ 79%|███████▉  | 395/500 [00:31<00:08, 12.11it/s]
+ 79%|███████▉  | 397/500 [00:31<00:08, 12.23it/s]
+ 80%|███████▉  | 399/500 [00:31<00:08, 12.39it/s]
+ 80%|████████  | 401/500 [00:31<00:08, 11.86it/s]
+ 81%|████████  | 403/500 [00:31<00:08, 12.10it/s]
+ 81%|████████  | 405/500 [00:31<00:07, 12.30it/s]
+ 81%|████████▏ | 407/500 [00:32<00:07, 12.37it/s]
+ 82%|████████▏ | 409/500 [00:32<00:07, 12.38it/s]
+ 82%|████████▏ | 411/500 [00:32<00:07, 12.43it/s]
+ 83%|████████▎ | 413/500 [00:32<00:06, 12.54it/s]
+ 83%|████████▎ | 415/500 [00:32<00:06, 12.60it/s]
+ 83%|████████▎ | 417/500 [00:32<00:06, 12.65it/s]
+ 84%|████████▍ | 419/500 [00:32<00:06, 12.60it/s]
+ 84%|████████▍ | 421/500 [00:33<00:06, 12.21it/s]
+ 85%|████████▍ | 423/500 [00:33<00:06, 12.36it/s]
+ 85%|████████▌ | 425/500 [00:33<00:06, 12.47it/s]
+ 85%|████████▌ | 427/500 [00:33<00:05, 12.50it/s]
+ 86%|████████▌ | 429/500 [00:33<00:05, 12.58it/s]
+ 86%|████████▌ | 431/500 [00:33<00:05, 12.60it/s]
+ 87%|████████▋ | 433/500 [00:34<00:05, 12.62it/s]
+ 87%|████████▋ | 435/500 [00:34<00:05, 12.58it/s]
+ 87%|████████▋ | 437/500 [00:34<00:04, 12.62it/s]
+ 88%|████████▊ | 439/500 [00:34<00:04, 12.67it/s]
+ 88%|████████▊ | 441/500 [00:34<00:04, 12.68it/s]
+ 89%|████████▊ | 443/500 [00:34<00:04, 12.67it/s]
+ 89%|████████▉ | 445/500 [00:35<00:04, 12.23it/s]
+ 89%|████████▉ | 447/500 [00:35<00:04, 12.32it/s]
+ 90%|████████▉ | 449/500 [00:35<00:04, 12.45it/s]
+ 90%|█████████ | 451/500 [00:35<00:03, 12.54it/s]
+ 91%|█████████ | 453/500 [00:35<00:03, 12.61it/s]
+ 91%|█████████ | 455/500 [00:35<00:03, 12.67it/s]
+ 91%|█████████▏| 457/500 [00:35<00:03, 12.67it/s]
+ 92%|█████████▏| 459/500 [00:36<00:03, 12.58it/s]
+ 92%|█████████▏| 461/500 [00:36<00:03, 12.63it/s]
+ 93%|█████████▎| 463/500 [00:36<00:02, 12.65it/s]
+ 93%|█████████▎| 465/500 [00:36<00:02, 12.68it/s]
+ 93%|█████████▎| 467/500 [00:36<00:02, 12.68it/s]
+ 94%|█████████▍| 469/500 [00:36<00:02, 12.70it/s]
+ 94%|█████████▍| 471/500 [00:37<00:02, 12.65it/s]
+ 95%|█████████▍| 473/500 [00:37<00:02, 12.69it/s]
+ 95%|█████████▌| 475/500 [00:37<00:01, 12.67it/s]
+ 95%|█████████▌| 477/500 [00:37<00:01, 12.70it/s]
+ 96%|█████████▌| 479/500 [00:37<00:01, 12.70it/s]
+ 96%|█████████▌| 481/500 [00:37<00:01, 12.72it/s]
+ 97%|█████████▋| 483/500 [00:38<00:01, 12.26it/s]
+ 97%|█████████▋| 485/500 [00:38<00:01, 12.31it/s]
+ 97%|█████████▋| 487/500 [00:38<00:01, 12.47it/s]
+ 98%|█████████▊| 489/500 [00:38<00:00, 12.56it/s]
+ 98%|█████████▊| 491/500 [00:38<00:00, 12.62it/s]
+ 99%|█████████▊| 493/500 [00:38<00:00, 12.68it/s]
+ 99%|█████████▉| 495/500 [00:39<00:00, 12.72it/s]
+ 99%|█████████▉| 497/500 [00:39<00:00, 12.68it/s]
+100%|█████████▉| 499/500 [00:39<00:00, 12.69it/s]
+100%|██████████| 500/500 [00:39<00:00, 12.68it/s]
+[INFO] save model to logs/image_raw.ply.
+/root/.pyenv/versions/3.10.13/lib/python3.10/site-packages/torch/functional.py:504: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3483.)
+return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+/root/.pyenv/versions/3.10.13/lib/python3.10/site-packages/varname/utils.py:447: UsingExecWarning: 'pure_eval' is not installed. Using 'eval' to get the function that calls 'argname'. Try calling it using a variable reference to the function, or passing the function to 'argname' explicitly.
+warnings.warn(
+Tensor occ torch.Size([128, 128, 128]) torch.float32 cuda:0∈ [0.0,
+37.28217315673828] μ = 0.22696445882320404 σ = 0.8415775299072266
+[INFO] mesh cleaning: (69224, 3) --> (51863, 3), (138512, 3) --> (103888, 3)
+[INFO] mesh decimation: (51863, 3) --> (49919, 3), (103888, 3) --> (100000, 3)
+[INFO] marching cubes result: torch.Size([49919, 3]) (-0.8407162427902222-0.7620404958724976), torch.Size([100000, 3])
+[INFO] unwrap uv...
+[INFO] save model to logs/image_raw.obj.
+[load_obj] use texture from: logs/image_raw_albedo.png
+[load_obj] load texture: (1024, 1024, 3)
+[Mesh loading] v: torch.Size([49919, 3]), f: torch.Size([100000, 3])
+[Mesh loading] vn: torch.Size([49919, 3]), fn: torch.Size([100000, 3])
+[Mesh loading] vt: torch.Size([62189, 2]), ft: torch.Size([100000, 3])
+[INFO] load image from image_rgba.png...
+[INFO] loading zero123...
+Loading pipeline components...:   0%|          | 0/6 [00:00<?, ?it/s]
+Loading pipeline components...:  50%|█████     | 3/6 [00:00<00:00,  9.18it/s]
+Loading pipeline components...:  83%|████████▎ | 5/6 [00:00<00:00,  7.47it/s]
+Loading pipeline components...: 100%|██████████| 6/6 [00:00<00:00,  9.09it/s]
+[INFO] loaded zero123!
+  0%|          | 0/50 [00:00<?, ?it/s]
+  2%|▏         | 1/50 [00:00<00:41,  1.17it/s]
+  4%|▍         | 2/50 [00:01<00:33,  1.44it/s]
+  6%|▌         | 3/50 [00:02<00:30,  1.55it/s]
+  8%|▊         | 4/50 [00:02<00:28,  1.62it/s]
+ 10%|█         | 5/50 [00:03<00:27,  1.65it/s]
+ 12%|█▏        | 6/50 [00:03<00:26,  1.68it/s]
+ 14%|█▍        | 7/50 [00:04<00:25,  1.68it/s]
+ 16%|█▌        | 8/50 [00:04<00:24,  1.69it/s]
+ 18%|█▊        | 9/50 [00:05<00:24,  1.71it/s]
+ 20%|██        | 10/50 [00:06<00:23,  1.70it/s]
+ 22%|██▏       | 11/50 [00:06<00:22,  1.71it/s]
+ 24%|██▍       | 12/50 [00:07<00:22,  1.71it/s]
+ 26%|██▌       | 13/50 [00:07<00:21,  1.71it/s]
+ 28%|██▊       | 14/50 [00:08<00:21,  1.71it/s]
+ 30%|███       | 15/50 [00:09<00:20,  1.71it/s]
+ 32%|███▏      | 16/50 [00:09<00:19,  1.71it/s]
+ 34%|███▍      | 17/50 [00:10<00:19,  1.70it/s]
+ 36%|███▌      | 18/50 [00:10<00:18,  1.70it/s]
+ 38%|███▊      | 19/50 [00:11<00:18,  1.70it/s]
+ 40%|████      | 20/50 [00:11<00:17,  1.71it/s]
+ 42%|████▏     | 21/50 [00:12<00:16,  1.71it/s]
+ 44%|████▍     | 22/50 [00:13<00:16,  1.71it/s]
+ 46%|████▌     | 23/50 [00:13<00:15,  1.70it/s]
+ 48%|████▊     | 24/50 [00:14<00:15,  1.70it/s]
+ 50%|█████     | 25/50 [00:14<00:14,  1.71it/s]
+ 52%|█████▏    | 26/50 [00:15<00:14,  1.71it/s]
+ 54%|█████▍    | 27/50 [00:16<00:13,  1.70it/s]
+ 56%|█████▌    | 28/50 [00:16<00:12,  1.71it/s]
+ 58%|█████▊    | 29/50 [00:17<00:12,  1.70it/s]
+ 60%|██████    | 30/50 [00:17<00:11,  1.71it/s]
+ 62%|██████▏   | 31/50 [00:18<00:11,  1.71it/s]
+ 64%|██████▍   | 32/50 [00:18<00:10,  1.71it/s]
+ 66%|██████▌   | 33/50 [00:19<00:10,  1.70it/s]
+ 68%|██████▊   | 34/50 [00:20<00:09,  1.69it/s]
+ 70%|███████   | 35/50 [00:20<00:08,  1.69it/s]
+ 72%|███████▏  | 36/50 [00:21<00:08,  1.67it/s]
+ 74%|███████▍  | 37/50 [00:21<00:07,  1.66it/s]
+ 76%|███████▌  | 38/50 [00:22<00:07,  1.66it/s]
+ 78%|███████▊  | 39/50 [00:23<00:06,  1.67it/s]
+ 80%|████████  | 40/50 [00:23<00:05,  1.68it/s]
+ 82%|████████▏ | 41/50 [00:24<00:05,  1.69it/s]
+ 84%|████████▍ | 42/50 [00:24<00:04,  1.70it/s]
+ 86%|████████▌ | 43/50 [00:25<00:04,  1.69it/s]
+ 88%|████████▊ | 44/50 [00:26<00:03,  1.69it/s]
+ 90%|█████████ | 45/50 [00:26<00:02,  1.70it/s]
+ 92%|█████████▏| 46/50 [00:27<00:02,  1.71it/s]
+ 94%|█████████▍| 47/50 [00:27<00:01,  1.71it/s]
+ 96%|█████████▌| 48/50 [00:28<00:01,  1.71it/s]
+ 98%|█████████▊| 49/50 [00:29<00:00,  1.70it/s]
+100%|██████████| 50/50 [00:29<00:00,  1.71it/s]
+100%|██████████| 50/50 [00:29<00:00,  1.69it/s]
+[INFO] save model to logs/image.obj.
+[load_obj] use texture from: logs/image_albedo.png
+[load_obj] load texture: (1024, 1024, 3)
+[Mesh loading] v: torch.Size([49919, 3]), f: torch.Size([100000, 3])
+[Mesh loading] vn: torch.Size([49919, 3]), fn: torch.Size([100000, 3])
+0%|          | 0/1 [00:00<?, ?it/s]
+  0%|          | 0/180 [00:00<?, ?it/s][A
+  3%|▎         | 6/180 [00:00<00:03, 56.75it/s][A
+  8%|▊         | 14/180 [00:00<00:02, 65.65it/s][A
+ 12%|█▏        | 21/180 [00:00<00:02, 67.12it/s][A
+ 16%|█▌        | 29/180 [00:00<00:02, 69.52it/s][A
+ 21%|██        | 37/180 [00:00<00:02, 70.93it/s][A
+ 25%|██▌       | 45/180 [00:00<00:01, 71.95it/s][A
+ 29%|██▉       | 53/180 [00:00<00:01, 73.17it/s][A
+ 34%|███▍      | 61/180 [00:00<00:01, 73.38it/s][A
+ 38%|███▊      | 69/180 [00:00<00:01, 74.89it/s][A
+ 43%|████▎     | 77/180 [00:01<00:01, 75.30it/s][A
+ 48%|████▊     | 86/180 [00:01<00:01, 76.47it/s][A
+ 52%|█████▏    | 94/180 [00:01<00:01, 76.75it/s][A
+ 57%|█████▋    | 102/180 [00:01<00:01, 75.66it/s][A
+ 61%|██████    | 110/180 [00:01<00:00, 73.89it/s][A
+ 66%|██████▌   | 118/180 [00:01<00:00, 73.02it/s][A
+ 70%|███████   | 126/180 [00:01<00:00, 72.46it/s][A
+ 74%|███████▍  | 134/180 [00:01<00:00, 72.94it/s][A
+ 79%|███████▉  | 142/180 [00:01<00:00, 72.87it/s][A
+ 83%|████████▎ | 150/180 [00:02<00:00, 72.44it/s][A
+ 88%|████████▊ | 158/180 [00:02<00:00, 72.52it/s][A
+ 92%|█████████▏| 166/180 [00:02<00:00, 71.88it/s][A
+ 97%|█████████▋| 174/180 [00:02<00:00, 70.93it/s][A
+100%|██████████| 180/180 [00:02<00:00, 72.36it/s]
+100%|██████████| 1/1 [00:02<00:00,  2.49s/it]
+100%|██████████| 1/1 [00:02<00:00,  2.49s/it]
+updating: logs/ (stored 0%)
+updating: logs/image_raw.ply(deflated 21%)
+updating: logs/image_raw.obj(deflated 72%)
+updating: logs/image_raw.mtl (deflated 20%)
+updating: logs/image_raw_albedo.png(deflated 2%)
+updating: logs/image.obj(deflated 72%)
+updating: logs/image.mtl (deflated 21%)
+updating: logs/image_albedo.png(deflated 1%)
+
+
+
+
+
+
+
+
+
+
+
+

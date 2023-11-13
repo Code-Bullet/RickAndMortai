@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+torch = "*"
+torchvision = "*"
+invisible-watermark = "*"
+transformers = "*"
+accelerate = "*"
+safetensors = "*"
+flask = "*"
+replicate = "*"
+urllib3 = "<2"
+pydantic = "==1.10.9"
+imgur-python = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
+python_full_version = "3.7.3"

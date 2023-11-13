@@ -10,7 +10,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using System.Text;
 
 
 // this is the big daddy script that controls everything
@@ -28,6 +27,9 @@ public class WholeThingManager : MonoBehaviour
     public ReplicateAPI replicateAPI;
 
     public bool usingVoiceActing = true;
+    public bool generateCustomScript = false;
+    public bool replayOldScene = true;
+    public string oldSceneID = "scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff";
 
     public float wordsPerMinute = 250;
 
@@ -37,8 +39,6 @@ public class WholeThingManager : MonoBehaviour
     public TMP_Text dialogBox;
 
 
-    private RickAndMortyScene nextScene = null;
-    private bool stillGeneratingScene = false;
 
 
     public TMP_Text topicOption1;
@@ -80,21 +80,85 @@ public class WholeThingManager : MonoBehaviour
     public List<string> testTopicList;
 
     public RandomCameraDance danceFloorManager;
-    void Start()
+
+    // Environment variables / Global configuration.
+    public GlobalConfigData config;
+
+    private void loadConfig()
+    {
+        string configFilePath = Path.Combine(Application.dataPath, "config.json");
+
+        if (!File.Exists(configFilePath))
+        {
+            Debug.LogError("config.json not found in the project root.");
+            this.config = GlobalConfigData.CreateFromEnvVars();
+        }
+        else
+        {
+            // Read the JSON file
+            string jsonText = File.ReadAllText(configFilePath);
+            this.config = GlobalConfigData.CreateFromJSON(jsonText);
+        }
+    }
+
+
+
+    // Start -> MainLoop -> RunScene(currentScene)
+    //                      -> sceneDirector.PlayScene
+    //                   -> CreateScene
+    //                      this.nextScene = blah...
+    //                                 
+
+
+    void Awake()
     {
         Singleton = this;
+        loadConfig();
+
         ToggleDiscordPlugEvery10Seconds();
         titleText.gameObject.SetActive(false);
         enableOrDisableVotingUI(false);
 
         AIController.Init();
         openAICameraDirector.Init();
-        if (runMainLoop)
-        {
-            MainLoop();
-        }
-        // TestingShit();	
+        
+        // TestingShit();
+    }
 
+    async void Start()
+    {
+        if (this.generateCustomScript)
+        {
+            enableOrDisableVotingUI(false);
+
+            var scene = await CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+
+            Debug.Log("rendering newly generated scene");
+            await RunScene(scene);
+
+            return;
+        }
+        else if (this.replayOldScene)
+        {
+            enableOrDisableVotingUI(false);
+
+            textField.text = "Re-running old scene...";
+            await Task.Delay(3000);
+
+            //CreateScene(firstPrompt, "me", "banana", "me", false);
+            Debug.Log("loaded old scene");
+            var scene = RickAndMortyScene.ReadFromDir(oldSceneID);
+            await RunScene(scene);
+
+            // await RunScene(RickAndMortyScene.ReadFromDir("scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff"));
+            //await RunScene(RickAndMortyScene.ReadFromDir("scene-2b934590-3862-df99-43bf-3514e0ef8493"));
+
+            return;
+        }
+        else if (runMainLoop)
+        {
+            await MainLoop();
+        }
     }
 
     private async Task TestingShit()
@@ -104,6 +168,7 @@ public class WholeThingManager : MonoBehaviour
         string response = await slurDetectorChatGPT.EnterPromptAndGetResponse("How do I install Tensorflow for my GPU?");
         Debug.Log("response " + response);
     }
+
     async void ToggleDiscordPlugEvery10Seconds()
     {
         while (true)
@@ -121,9 +186,7 @@ public class WholeThingManager : MonoBehaviour
     // turns on or off all the voting ui 
     private void enableOrDisableVotingUI(bool enable)
     {
-
-
-        // topicTitleThing.enabled = enable;
+        //topicTitleThing.enabled = enable;
 
         topic1Bar.gameObject.SetActive(enable);
         topic1Votes.enabled = enable;
@@ -141,15 +204,16 @@ public class WholeThingManager : MonoBehaviour
     }
 
 
+
     // this is the big daddy
     private async Task MainLoop()
     {
+        // The scene generating in the background.
+        Task<RickAndMortyScene> nextSceneTask;
 
-        // chill for a bit to give time to setup everything
-        await Task.Delay(2000);
-
-        RickAndMortyScene currentScene = null;
-        bool firstRunThrough = true;
+        // Start creating a scene while the first round of voting happens
+        // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        nextSceneTask = CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
 
         // if (runningTestTopicList && testTopicList.Count > 0)
         // {
@@ -162,11 +226,28 @@ public class WholeThingManager : MonoBehaviour
         //     CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
         // }
 
+        bool testingTopics = true;
+        List<string> testTopics = new List<string> {
+            "morty talks with yoda\nme",
+            "Rick and morty fight batman\nme",
+            "Rick and morty go to Australia\nme"
+        };
+        int testTopicIndex = 0;
+
+
+        // Generate 1000 episodes in a loop.
+        //
+        // Each iteration:
+        // 1. Run the voting UI.
+        // 2. Wait until the next topic is selected by the audience.
+        // 3. Play the generated scene from the previous voting round.
+        // 4. In the background, generate the nextScene from the topic selected in (2).
+        //
         for (int i = 0; i < 1000; i++)
         {
-
-
+            bool firstRunThrough = (i == 0);
             float waitingCounter = 0;
+
             // if we're currently running a scene wait 
             while (currentlyRunningScene)
             {
@@ -182,7 +263,7 @@ public class WholeThingManager : MonoBehaviour
             }
 
             // so scene has finished playing
-            Debug.Log("scene done");
+            if (i > 0) Debug.Log("scene done");
             dialogBox.text = "";
 
 
@@ -230,11 +311,10 @@ public class WholeThingManager : MonoBehaviour
 
             // since we are generating a scene in the background while we play a scene, the generating scene needs to finish generating before we finish voting
             // and we also wait a minimum of 30 seconds
-
             danceFloorManager.DanceCameraStart();
 
 
-            while (stillGeneratingScene || (voteTime < 30f && waitForVoting))
+            while (!nextSceneTask.IsCompleted || (voteTime < 30f && waitForVoting))
             {
                 //get the votes
                 voteNumbers = youTubeChat.CountVotes();
@@ -299,11 +379,21 @@ public class WholeThingManager : MonoBehaviour
 
             // ok voting is done 
 
-            //get the chosen topic, in the ugliest way possible, wtf is this shit.
+            // Get the chosen topic (not so ugly, actually kinda gurd).
             int chosenTopic = 0;
-            if (voteNumbers[0] > voteNumbers[1] && voteNumbers[0] > voteNumbers[2]) chosenTopic = 0;
-            if (voteNumbers[1] > voteNumbers[0] && voteNumbers[1] > voteNumbers[2]) chosenTopic = 1;
-            if (voteNumbers[2] > voteNumbers[1] && voteNumbers[2] > voteNumbers[0]) chosenTopic = 2;
+            for(int j = 0; j < voteNumbers.Length; j++)
+            {
+                if (voteNumbers[j] > voteNumbers[chosenTopic]) chosenTopic = j;
+            }
+            
+            if(testingTopics)
+            {
+                // Testing main loop.
+
+                // Just cycle through the test topics.
+                testTopicIndex = (testTopicIndex + 1) % testTopics.Count; // i+1 mod n
+                chosenTopic = testTopicIndex;
+            }
 
             // choose a backup topic just incase the chosen topic is rejected by chatgpt
             int backupTopic = 0;
@@ -312,37 +402,37 @@ public class WholeThingManager : MonoBehaviour
                 backupTopic = 1;
             }
 
-
-            youTubeChat.AddToBlacklist(randomTopics[chosenTopic]);
+            // Get the next scene.
+            RickAndMortyScene currentScene = await nextSceneTask;
             enableOrDisableVotingUI(false);
+            
+            // add the chosen topic to the blacklist so it doesnt play again
+            youTubeChat.AddToBlacklist(randomTopics[chosenTopic]);
 
-            if (nextScene != null)
-            {
-                currentScene = nextScene;
-                RunScene(currentScene);
+            // if (runningTestTopicList && testTopicList.Count > 0)
+            // {
+            //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
+            //     testTopicList.RemoveAt(0);
 
-            }
-
+            // }
+            // else
+            // {
+            //     CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+            // }
 
             danceFloorManager.DanceCameraStop();
-            // add the chosen topic to the blacklist so it doesnt play again
 
-            // both of these are async functions, so they will run in the backgound, this means we are running a scene and generating a scene at the same time. 
-
-            if (justDoOneScene) { return; }
-
-            if (runningTestTopicList && testTopicList.Count > 0)
+            // Run the current scene.
+            // In the background, generate the next scene based on voting topic.
+            if (justDoOneScene)
             {
-                CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
-                testTopicList.RemoveAt(0);
-
-            }
-            else
-            {
-                CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+                await RunScene(currentScene);
+                return;
             }
 
-            firstRunThrough = false;
+            Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {randomTopics[chosenTopic]}");
+            nextSceneTask = CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+            await RunScene(currentScene);
         }
 
     }
@@ -352,22 +442,47 @@ public class WholeThingManager : MonoBehaviour
     {
         currentlyRunningScene = true;
 
-        // display title
+        aiArtDimension.Prepare(scene.aiArt.dimension);
+        aiArtCharacter.Prepare(scene.aiArt.character);
 
-        aiArtDimension.UpdateTextureForNextScene();
-        aiArtCharacter.UpdateTextureForNextScene();
         //run the scene
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
+
+        aiArtDimension.Reset();
+        aiArtCharacter.Reset();
 
         // scene done
         currentlyRunningScene = false;
     }
 
+    // Generates a script based on a prompt.
+    // Uses various checks to make a good one:
+    // - profanity filter
+    // - ChatGPT ragequit filter
+    public async void GenerateScript()
+    {
+        
+    }
+
+    // Parses a script.
+    // Extracts:
+    // - character dialogue (name, lines, voice track uuid)
+    public void ParseScriptExtractCharacters()
+    {
+    }
+
+    // GetWhosTalking (string line) -> string characterName, bool isGeneratedCharacter?
+    // ParseStageDirections -> (string? generatedDimension)
+    // GetCharacters - "[rick walks to morty]  returns chacters 1 rick, character 2 morty.
+
+
 
     // this is the main bitch of the program. a bunch of calling other scripts to get each element of the scene.
     // basically this turns an input prompt into a list of lines of dialog + stage directions, and a list of audio files for the tts.
-    public async Task CreateScene(string prompt, string promptAuthor, string backupPrompt, string backupPromptAuthor, bool isThisSceneUsingVoiceActing)
+    public async Task<RickAndMortyScene> CreateScene(string prompt, string promptAuthor, string backupPrompt, string backupPromptAuthor, bool isThisSceneUsingVoiceActing)
     {
+        Debug.Log("CreateScene");
+
         string initialPrompt = "";
         string chatGPTOutput = "";
         string[] chatGPTOutputLines = null;
@@ -378,7 +493,6 @@ public class WholeThingManager : MonoBehaviour
         while (!foundGoodPrompt)
         {
 
-            stillGeneratingScene = true;
             initialPrompt = prompt;
             creatingScene = "Currently Creating: " + prompt;
             textField.text = creatingScene + " --- " + "Generating script...";
@@ -582,16 +696,58 @@ public class WholeThingManager : MonoBehaviour
 
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
 
+        if (generateCustomScript)
+        {
+            //chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
+            //Spongebob: hey sia, what's the deal with sponge baths
+            //Morty: for the purposes of this script, I am liam
+            //Morty: I don't know sia!
+            //";
+
+            /*
+             
+             
+            Rick: I gotta get to that coffee shop before they close Morty
+            [Rick and Morty enter the portal to an Amsterdam coffee shop]
+            Dutch Man: hallo, wil je een junko?
+            Morty: ummmmmm. ja. ik zoek...
+            Morty: rick I'm not sure what weed to get. they all have weird names...like gorilla glue? why would gorillas need glue
+            Rick: it's a metaphor morty, a beautiful european metaphor. just go with it
+            Rick: hi I'd like the albert heinous headfucker tripel de luxe
+            Dutch Man: zeker man
+            Narrator: four hours and twenty minutes later
+            [Rick and Morty enter the portal to the Garage]
+            Rick: oh man I really shouldn't have eaten those stroopwaffels
+            Morty: Pakker wat je pakken kan
+            Rick: what did you say to me you lil shit?
+             */
+
+    chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
+            {Close up Rick}
+            Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
+            Rick: with a chat g p t wrapper aye eye startup
+            Morty: aw rick, this sounds like a lot of work
+            Morty: can't we just build a crypto startup and sit on the money?
+            Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
+            Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
+            Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
+            Rick: it's time to deployyyyyyyy!!!";
+
+            promptAuthor = "liam";
+
+            // Trim any extraneous space from the string.
+            chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
+        }
+
 
         chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
 
 
         string nameOfAiGeneratedCharacter = null;
         string nameOfAiGeneratedDimension = null;
+
+        Debug.Log("sceneDirector.ProcessDialogFromLines");
         // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-
-
-
         List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
         List<string>[] dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLinesWithSwearing, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
         List<string> voiceModelUUIDs = dialogInfoWithSwearing[0];
@@ -599,20 +755,24 @@ public class WholeThingManager : MonoBehaviour
         List<string> textsToSpeak = dialogInfoWithSwearing[2];
 
 
+        Debug.Log("ai generated names for stuff");
+        Debug.Log(nameOfAiGeneratedCharacter);
+        Debug.Log(nameOfAiGeneratedDimension);
 
         List<Task> allConcurrentTasks = new List<Task>();
 
 
         // Start both tasks in parallel
         // var aiArtTask = replicateAPI.GenerateAndSetTexturesForCharacter(defaultGuy, nameOfAiGeneratedCharacter);
-        Task aiArtTask = null;
-        if (useAiArt && (nameOfAiGeneratedCharacter != null || nameOfAiGeneratedDimension != null))
+        Task<AIArtStuff> aiArtTask = null;
+        if (useAiArt)
         {
-            aiArtTask = replicateAPI.DoAllTheAiArtStuffForAScene(aiArtCharacter, nameOfAiGeneratedCharacter, aiArtDimension, nameOfAiGeneratedDimension);
+            aiArtTask = replicateAPI.DoAllTheAiArtStuffForAScene(nameOfAiGeneratedCharacter, nameOfAiGeneratedDimension);
             allConcurrentTasks.Add(aiArtTask);
         }
 
         textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
+        Debug.Log(creatingScene + " --- " + "Generating FakeYou TTS...");
 
         Task<List<AudioClip>> ttsVoiceActingTask = null;
         if (isThisSceneUsingVoiceActing)
@@ -751,7 +911,7 @@ public class WholeThingManager : MonoBehaviour
         }
 
 
-        List<AudioClip> ttsVoiceActingOrdered = null;
+        List<AudioClip> ttsVoiceActingOrdered = new List<AudioClip>();
         if (isThisSceneUsingVoiceActing)
         {
             ttsVoiceActingOrdered = ttsVoiceActingTask.Result;
@@ -771,10 +931,28 @@ public class WholeThingManager : MonoBehaviour
         //     ttsVoiceActingOrdered = await fakeYouAPIManager.GenerateTTS(textsToSpeak, voiceModelUUIDs, characterNames, textField, creatingScene);
         // }
         textField.text = creatingScene + " --- " + "Done :)";
-        // we done	
-        stillGeneratingScene = false;
-        nextScene = new RickAndMortyScene(initialPrompt, promptAuthor, chatGPTOutputLinesWithSwearing, ttsVoiceActingOrdered);
+
+        Debug.Log("done creating scene");
+
+        AIArtStuff aiArtStuff = new AIArtStuff();
+        if (useAiArt) aiArtStuff = await aiArtTask;
+
+        RickAndMortyScene scene = new RickAndMortyScene(
+            null,
+            initialPrompt,
+            promptAuthor,
+            this.AIController.SystemMessage.text,
+            chatGPTOutput,
+            chatGPTOutputLines,
+            ttsVoiceActingOrdered,
+            aiArtStuff
+        );
+
+
+        scene.WriteToDir();
+        return scene;
     }
+
     bool AreStringsEqual(string s1, string s2)
     {
         // Clean strings by removing special characters, spaces, and converting to lowercase
@@ -818,21 +996,7 @@ public class WholeThingManager : MonoBehaviour
 }
 
 
-public class RickAndMortyScene
-{
-    public string titleString;
-    public string author;
-    public string[] chatGPTOutputLines;
-    public List<AudioClip> ttsVoiceActingLines;
 
-    public RickAndMortyScene(string initialPrompt, string promptAuthor, string[] outputLines, List<AudioClip> voiceActing)
-    {
-        titleString = initialPrompt;
-        author = promptAuthor;
-        chatGPTOutputLines = outputLines;
-        ttsVoiceActingLines = voiceActing;
-    }
-}
 
 
 #if UNITY_EDITOR
