@@ -28,7 +28,7 @@ public class RandomCameraDance : MonoBehaviour
 
     public GameObject actualCamera;
 
-    private void Start()
+    private void Awake()
     {
         foreach (var animator in characterAnimators)
         {
@@ -88,6 +88,11 @@ public class RandomCameraDance : MonoBehaviour
         actualCamera.SetActive(true);
 
         int danceNumber = Random.Range(0, 7); // Random number between 0 and 6
+
+        foreach (var pair in initialCharacterPositions)
+        {
+            Debug.Log($"Animator: {pair.Key}, Position: {pair.Value}");
+        }
 
         foreach (var animator in characterAnimators)
         {
