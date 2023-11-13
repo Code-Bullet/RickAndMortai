@@ -79,8 +79,17 @@ public class SceneDirector : MonoBehaviour
         // these bastards keep moving
 
         // Reset Rick and Morty to the Garage.
-        // rick.transform.position = Vector3.zero;
-        // morty.transform.position = Vector3.zero;
+        rick.transform.position = new Vector3(-0.469000012f, 0, 0.865999997f);
+        morty.transform.position = new Vector3(-1.61300004f, 0.00999999978f, -0.495000005f);
+
+        // Show Rick and Morty.
+        Action<MyCharacterController> enableRenderer = obj =>
+        {
+            var renderer = obj.GetComponent<Renderer>();
+            if (renderer != null) renderer.enabled = true;
+        };
+        enableRenderer(rick);
+        enableRenderer(morty);
 
         // Reset the cameras.
         cameraShotManager.Reset();
