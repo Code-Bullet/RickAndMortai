@@ -28,7 +28,7 @@ public class WholeThingManager : MonoBehaviour
 
     public bool usingVoiceActing = true;
     public bool generateCustomScript = false;
-    public bool rerunOldScene = true;
+    public bool replayOldScene = true;
     public string oldSceneID = "scene-3b1e4a70-d64f-58b9-57c9-aefea7b30323";
 
     public float wordsPerMinute = 250;
@@ -134,17 +134,20 @@ public class WholeThingManager : MonoBehaviour
 
             return;
         }
-        else if (this.rerunOldScene)
+        else if (this.replayOldScene)
         {
             enableOrDisableVotingUI(false);
 
             textField.text = "Re-running old scene...";
             await Task.Delay(3000);
 
-            CreateScene(firstPrompt, "me", "banana", "me", false);
-            var scene = RickAndMortyScene.ReadFromDir(oldSceneID);
+            //CreateScene(firstPrompt, "me", "banana", "me", false);
             Debug.Log("loaded old scene");
+            var scene = RickAndMortyScene.ReadFromDir(oldSceneID);
             await RunScene(scene);
+
+            // await RunScene(RickAndMortyScene.ReadFromDir("scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff"));
+            //await RunScene(RickAndMortyScene.ReadFromDir("scene-2b934590-3862-df99-43bf-3514e0ef8493"));
 
             return;
         }
@@ -201,19 +204,23 @@ public class WholeThingManager : MonoBehaviour
     // this is the big daddy
     private async Task MainLoop()
     {
-
-        // The currently playing scene.
-        RickAndMortyScene currentScene = null;
-
         // The scene generating in the background.
         Task<RickAndMortyScene> nextSceneTask;
-
 
         // Start creating a scene while the first round of voting happens
         // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         nextSceneTask = CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
 
-        
+
+        bool testingTopics = true;
+        List<string> testTopics = new List<string> {
+            "morty talks with yoda\nme",
+            "Rick and morty fight batman\nme",
+            "Rick and morty go to Australia\nme"
+        };
+        int testTopicIndex = 0;
+
+
         // Generate 1000 episodes in a loop.
         //
         // Each iteration:
@@ -355,11 +362,21 @@ public class WholeThingManager : MonoBehaviour
 
             // ok voting is done 
 
-            //get the chosen topic, in the ugliest way possible, wtf is this shit.
+            // Get the chosen topic (not so ugly, actually kinda gurd).
             int chosenTopic = 0;
-            if (voteNumbers[0] > voteNumbers[1] && voteNumbers[0] > voteNumbers[2]) chosenTopic = 0;
-            if (voteNumbers[1] > voteNumbers[0] && voteNumbers[1] > voteNumbers[2]) chosenTopic = 1;
-            if (voteNumbers[2] > voteNumbers[1] && voteNumbers[2] > voteNumbers[0]) chosenTopic = 2;
+            for(int j = 0; j < voteNumbers.Length; j++)
+            {
+                if (voteNumbers[j] > voteNumbers[chosenTopic]) chosenTopic = j;
+            }
+            
+            if(testingTopics)
+            {
+                // Testing main loop.
+
+                // Just cycle through the test topics.
+                testTopicIndex = (testTopicIndex + 1) % testTopics.Count; // i+1 mod n
+                chosenTopic = testTopicIndex;
+            }
 
             // choose a backup topic just incase the chosen topic is rejected by chatgpt
             int backupTopic = 0;
@@ -369,7 +386,7 @@ public class WholeThingManager : MonoBehaviour
             }
 
             // Get the next scene.
-            currentScene = await nextSceneTask;
+            RickAndMortyScene currentScene = await nextSceneTask;
             enableOrDisableVotingUI(false);
 
             // add the chosen topic to the blacklist so it doesnt play again
@@ -383,6 +400,7 @@ public class WholeThingManager : MonoBehaviour
                 return;
             }
 
+            Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {randomTopics[chosenTopic]}");
             nextSceneTask = CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
             await RunScene(currentScene);
         }
@@ -647,11 +665,11 @@ public class WholeThingManager : MonoBehaviour
 
         if (generateCustomScript)
         {
-            chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
-            Spongebob: hey sia, what's the deal with sponge baths
-            Morty: for the purposes of this script, I am liam
-            Morty: I don't know sia!
-            ";
+            //chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
+            //Spongebob: hey sia, what's the deal with sponge baths
+            //Morty: for the purposes of this script, I am liam
+            //Morty: I don't know sia!
+            //";
 
             /*
              
@@ -671,16 +689,16 @@ public class WholeThingManager : MonoBehaviour
             Rick: what did you say to me you lil shit?
              */
 
-            //            chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
-            //{Close up Rick}
-            //Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
-            //Rick: with a chat g p t wrapper aye eye startup
-            //Morty: aw rick, this sounds like a lot of work
-            //Morty: can't we just build a crypto startup and sit on the money?
-            //Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
-            //Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
-            //Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
-            //Rick: it's time to deployyyyyyyy!!!";
+    chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
+            {Close up Rick}
+            Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
+            Rick: with a chat g p t wrapper aye eye startup
+            Morty: aw rick, this sounds like a lot of work
+            Morty: can't we just build a crypto startup and sit on the money?
+            Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
+            Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
+            Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
+            Rick: it's time to deployyyyyyyy!!!";
 
             promptAuthor = "liam";
 
