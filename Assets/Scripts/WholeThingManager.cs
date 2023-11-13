@@ -29,7 +29,7 @@ public class WholeThingManager : MonoBehaviour
     public bool usingVoiceActing = true;
     public bool generateCustomScript = false;
     public bool replayOldScene = true;
-    public string oldSceneID = "scene-3b1e4a70-d64f-58b9-57c9-aefea7b30323";
+    public string oldSceneID = "scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff";
 
     public float wordsPerMinute = 250;
 
