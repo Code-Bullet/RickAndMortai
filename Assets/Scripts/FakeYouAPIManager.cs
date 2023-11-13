@@ -16,7 +16,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using System.Net;
-using OpenCover.Framework.Model;
+//using OpenCover.Framework.Model;
 
 
 // this script was pretty much copied from porkais ai sponge unity project.
