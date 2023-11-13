@@ -74,6 +74,8 @@ crashlytics-build.properties
 # Configuration.
 /[Aa]ssets/config.json*
 
+/[Aa]ssets/Liam'z Experiments
+
 node_modules/
 
 OutputScripts/
