@@ -51,9 +51,7 @@ public class AIHeadGenerator : MonoBehaviour
         // Once we get the generation ID's, load them into the models.
         for (int i = 0; i < Math.Min(res.generation_ids.Length, this.choices.Count); i++)
         {
-            // TODO(liamz): this could be improved
-            // we return only the generation_id from the API, but the full folder contains {id}_mesh. 
-            var generationId = res.generation_ids[i] + "_mesh";
+            var generationId = res.generation_ids[i];
             var character = this.choices[i];
 
             Debug.Log($"rigging object {character.name} with generation {generationId} of character {characterKey}");
@@ -66,6 +64,21 @@ public class AIHeadGenerator : MonoBehaviour
 
             headRiggerComponent.RenderGeneration(characterKey, generationId);
         }
+    }
+
+    public async Task<AICharacter> GenerateAICharacter(string characterName)
+    {
+        CharacterHeadsGenerateResponse res = await GenerateHead(characterName);
+
+        AICharacter aiCharacter = new AICharacter();
+        aiCharacter.characterName = characterName;
+        aiCharacter.head3d = new AIHead3D();
+        aiCharacter.head3d.generationIds = res.generation_ids;
+        aiCharacter.head3d.characterKey = characterName;
+        //aiCharacter.prompt = prompt;
+        //aiCharacter.texture = fullTexture;
+
+        return aiCharacter;
     }
 
 
@@ -90,6 +103,11 @@ public class AIHeadGenerator : MonoBehaviour
 
         var body = await res.Content.ReadAsStringAsync();
         var retval = JsonConvert.DeserializeObject<CharacterHeadsGenerateResponse>(body);
+
+        if (retval.error.Length > 0)
+        {
+            throw new Exception($"Error generating 3d head: {retval.error}");
+        }
 
         return retval;
     }

@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import requests
 from generate import generate_headshots
+import config
 
 app = Flask(__name__)
 
@@ -18,9 +19,13 @@ server_base_url = "http://0.0.0.0:{server_port}"
 # Error: {error: "Error generating headshots - {err}}
 @app.route('/v1/character-heads/generate', methods=['POST'])
 def generate():
-    # Testing:
-    # return jsonify({'generation_ids': ["6jpkjglb773m5qy5jne2h6e72y", "fx2rvqdbbzvn27ewgjwkbpvu4m", "hdwwdddbmpu2ln63wcogn3c6ny"]}), 200
     character_name = request.json.get('character')
+
+    # Testing:
+    if character_name == 'Dutch man':
+        test_ids = ['lhinfidbdsy3ay32qnedgwgskq', 'nuedrilbhxjvyo5bhn7ndycjbu', 'pejzlqlb2aviwzqvktw47nrntq', 'fhnfrslb6zrrb7mr55pri5rvwi']
+        return jsonify({'generation_ids': test_ids}), 200
+
     
     if not character_name or not isinstance(character_name, str) or len(character_name) == 0:
         return jsonify({'error': 'Missing character_name.'}), 400

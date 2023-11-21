@@ -221,6 +221,8 @@ public class AICharacter
     public string characterName;
     public string prompt;
 
+    public AIHead3D head3d;
+
     [System.NonSerialized]
     public Texture2D texture;
     public string texturePath;
@@ -228,3 +230,11 @@ public class AICharacter
     public AICharacter() { }
 }
 
+public class AIHead3D
+{
+    public string characterKey;
+    // The generation ID from the remote 3d headshot generation server.
+    public string[] generationIds;
+    // The selected generation.
+    public string selectedGeneration;
+}

@@ -20,7 +20,7 @@ public class MyCharacterController : MonoBehaviour
 
 
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();

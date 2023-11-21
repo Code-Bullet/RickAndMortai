@@ -7,6 +7,7 @@ using Dummiesman;
 using UnityEngine.UI;
 using UnityEditor;
 
+
 public class AIHeadRigger : MonoBehaviour
 {
     // The name of the character, which we use to find the 3D model on the file system.
@@ -25,6 +26,8 @@ public class AIHeadRigger : MonoBehaviour
 
     // The head object loaded at runtime.
     public GameObject head;
+    // The shader to use when adding the head object. Can be overridden.
+    public Shader headShader;
 
     // Cycle through generations every 2s.
     public bool cycleAutomatically = false;
@@ -37,8 +40,11 @@ public class AIHeadRigger : MonoBehaviour
     {
         interval += selectedGeneration;
 
-        loadGenerations();
-
+        if(characterKey.Length > 0)
+        {
+            loadGenerations();
+        }
+        
         if (this.generations.Length == 0) return;
 
         string genId = this.generations[selectedGeneration];
@@ -81,7 +87,7 @@ public class AIHeadRigger : MonoBehaviour
         foreach (var d in Directory.GetDirectories(characterPath))
         {
             var dirName = new DirectoryInfo(d).Name;
-            generations.Add(dirName);
+            generations.Add(dirName.Split("_mesh")[0]); // this is the way
             Debug.Log(dirName);
         }
 
@@ -99,20 +105,20 @@ public class AIHeadRigger : MonoBehaviour
         //var loadedObject : GameObject = Instantiate(Resources.Load("modelName"));/
 
         // Approach 3:
-        GameObject head = new OBJLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}/logs/image.obj");
+        GameObject head = new OBJLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}_mesh/logs/image.obj");
         head.name = $"{this.characterKey} (${generationId.Substring(0, 5)})";
 
         // Add texture to head.
         //
 
         // 1. Load the Material.
-        Dictionary<string, Material> materials = new MTLLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}/logs/image.mtl");
+        Dictionary<string, Material> materials = new MTLLoader().Load($"local-image-gen/headshot/data/3d/{characterKey}/{generationId}_mesh/logs/image.mtl");
         Material defaultMat = materials["defaultMat"];
 
         // 2. Configure it.
         defaultMat.SetFloat("_Mode", 0); // 0 for Opaque
         // HACK: Force re-render.
-        defaultMat.shader = Shader.Find("Standard");
+        defaultMat.shader = headShader == null ? Shader.Find("Standard") : headShader;
 
         // 3. Set it on the child called "default".
         GameObject defaultChild = head.transform.Find("default").gameObject;

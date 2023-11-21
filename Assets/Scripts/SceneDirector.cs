@@ -11,7 +11,22 @@ using UnityEngine;
 public class SceneDirector : MonoBehaviour
 {
     public List<CharacterInfo> characterList;
-    public CharacterInfo defaultGuy;
+    public CharacterInfo defaultGuy
+    {
+        get
+        {
+            if(use3DGuy) return defaultGuy3d;
+            else return defaultGuy2d;
+        }
+        set
+        {
+            throw new Exception("can't modify defaultGuy");
+        }
+    }
+    public CharacterInfo defaultGuy2d;
+    public CharacterInfo defaultGuy3d;
+    public bool use3DGuy = true;
+
     public AiArtCharacterController defaultGuyAIArtController;
 
 
@@ -68,9 +83,14 @@ public class SceneDirector : MonoBehaviour
         AddCharacterTargetGroup(characterList[0]);
         AddCharacterTargetGroup(characterList[1]);
 
-        
+
         //rick.TeleportTo(currentDimension.portalLocation.transform.position);
         //morty.TeleportTo(currentDimension.portalLocation.transform.position);
+    }
+
+    private void Start()
+    {
+        ResetStuff();
     }
 
     public void ResetStuff()
@@ -79,20 +99,25 @@ public class SceneDirector : MonoBehaviour
         // these bastards keep moving
 
         // Reset Rick and Morty to the Garage.
-        rick.transform.position = new Vector3(-0.469000012f, 0, 0.865999997f);
-        morty.transform.position = new Vector3(-1.61300004f, 0.00999999978f, -0.495000005f);
+        //Debug.Log($"resetstuff: {rick.transform.position}");
+        //Debug.Log($"resetstuff: {rick.gameObject.transform.position}");
 
-        // Show Rick and Morty.
-        Action<MyCharacterController> enableRenderer = obj =>
-        {
-            var renderer = obj.GetComponent<Renderer>();
-            if (renderer != null) renderer.enabled = true;
-        };
-        enableRenderer(rick);
-        enableRenderer(morty);
+        //rick.gameObject.transform.position = new Vector3(-0.469000012f, 0, 0.865999997f);
+        //morty.gameObject.transform.position = new Vector3(-1.61300004f, 0.00999999978f, -0.495000005f);
 
-        // Reset the cameras.
-        cameraShotManager.Reset();
+        ////rick.gameObject
+
+        //// Show Rick and Morty.
+        //Action<MyCharacterController> enableRenderer = obj =>
+        //{
+        //    var renderer = obj.GetComponent<Renderer>();
+        //    if (renderer != null) renderer.enabled = true;
+        //};
+        //enableRenderer(rick);
+        //enableRenderer(morty);
+
+        //// Reset the cameras.
+        //cameraShotManager.Reset();
     }
 
 
@@ -100,7 +125,7 @@ public class SceneDirector : MonoBehaviour
     // this function actually plas the scene
     public async Task PlayScene(string[] outputLines, List<AudioClip> voiceActingClips)
     {
-        ResetStuff();
+        //ResetStuff();
 
         int audioClipIndex = 0;
 

@@ -1631,10 +1631,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a99a0dd2d92d434fa996b7683f6657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterKey: easter bunny
+  characterKey: dutch man
   generations: []
   generationId: 
-  selectedGeneration: 0
+  selectedGeneration: 3
   headParent: {fileID: 196802641}
   head: {fileID: 0}
   cycleAutomatically: 0
@@ -1716,6 +1716,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 1
+  dancingAnimatorController: {fileID: 0}
+  lipSyncManager: {fileID: 0}
 --- !u!195 &158582093
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8755,6 +8757,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 1
+  dancingAnimatorController: {fileID: 0}
+  lipSyncManager: {fileID: 0}
 --- !u!195 &983807189
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -12741,6 +12745,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 1
+  dancingAnimatorController: {fileID: 0}
+  lipSyncManager: {fileID: 0}
 --- !u!195 &1476742929
 NavMeshAgent:
   m_ObjectHideFlags: 0

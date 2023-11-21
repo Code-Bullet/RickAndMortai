@@ -63,6 +63,7 @@ public class WholeThingManager : MonoBehaviour
     public bool useChatgptSlurDetection = false;
     public bool usePhonicSlurDetection = true;
     public bool useAiArt = true;
+    public bool useDanceAnimations = true;
 
     public CharacterInfo defaultGuy;
     public AiArtDimensionController aiArtDimension;
@@ -121,16 +122,19 @@ public class WholeThingManager : MonoBehaviour
 
         AIController.Init();
         openAICameraDirector.Init();
-        
+
+
         // TestingShit();
     }
 
     async void Start()
     {
+        sceneDirector.ResetStuff();
         if (this.generateCustomScript)
         {
             enableOrDisableVotingUI(false);
 
+            Debug.Log("generating one custom scene then playing it");
             var scene = await CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
 
             Debug.Log("rendering newly generated scene");
@@ -143,14 +147,12 @@ public class WholeThingManager : MonoBehaviour
             enableOrDisableVotingUI(false);
 
             textField.text = "Re-running old scene...";
-            await Task.Delay(3000);
-
             //CreateScene(firstPrompt, "me", "banana", "me", false);
             Debug.Log("loaded old scene");
             var scene = RickAndMortyScene.ReadFromDir(oldSceneID);
             await RunScene(scene);
 
-            // await RunScene(RickAndMortyScene.ReadFromDir("scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff"));
+            //await RunScene(RickAndMortyScene.ReadFromDir("scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff"));
             //await RunScene(RickAndMortyScene.ReadFromDir("scene-2b934590-3862-df99-43bf-3514e0ef8493"));
 
             return;
@@ -215,7 +217,7 @@ public class WholeThingManager : MonoBehaviour
         // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         nextSceneTask = CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
 
-        // if (runningTestTopicList && testTopicList.Count > 0)
+        // if (runningTestTopicList && testTopicList.Count > 0) 
         // {
         //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
         //     testTopicList.RemoveAt(0);
@@ -227,7 +229,7 @@ public class WholeThingManager : MonoBehaviour
 
         bool testingTopics = true;
         List<string> testTopics = new List<string> {
-            "morty talks with yoda\nme",
+            "morty talks with sadam hussein\nme",
             "Rick and morty fight batman\nme",
             "Rick and morty go to Australia\nme"
         };
@@ -310,7 +312,7 @@ public class WholeThingManager : MonoBehaviour
 
             // since we are generating a scene in the background while we play a scene, the generating scene needs to finish generating before we finish voting
             // and we also wait a minimum of 30 seconds
-            danceFloorManager.DanceCameraStart();
+            if(useDanceAnimations) danceFloorManager.DanceCameraStart();
 
 
             while (!nextSceneTask.IsCompleted || (voteTime < 30f && waitForVoting))
@@ -367,13 +369,13 @@ public class WholeThingManager : MonoBehaviour
                 voteTime += 0.5f;
 
                 // if we have been voting for more than 5 minutes (10 minutes if this is the first loop) then restart everything 
-            //     float timeBeforeRestarting = 5 * 60;
-            //     if (firstRunThrough) timeBeforeRestarting += 5 * 60;
-            //     if (voteTime > timeBeforeRestarting)
-            //     {
-            //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            //         return;
-            //     }
+                //     float timeBeforeRestarting = 5 * 60;
+                //     if (firstRunThrough) timeBeforeRestarting += 5 * 60;
+                //     if (voteTime > timeBeforeRestarting)
+                //     {
+                //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //         return;
+                //     }
             }
 
             // ok voting is done 
@@ -419,7 +421,7 @@ public class WholeThingManager : MonoBehaviour
             //     CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
             // }
 
-            danceFloorManager.DanceCameraStop();
+            if (useDanceAnimations) danceFloorManager.DanceCameraStop();
 
             // Run the current scene.
             // In the background, generate the next scene based on voting topic.
@@ -441,12 +443,49 @@ public class WholeThingManager : MonoBehaviour
     {
         currentlyRunningScene = true;
 
+        // 
+        // 1. Prepare.
+        //
+        if (scene.aiArt.character?.head3d != null)
+        {
+            Debug.Log("using AI head");
+
+            // 1. Tell scene director to use 3D default guy.
+            sceneDirector.use3DGuy = true;
+
+            // 2. Rig the head to the default guy.
+            var character = sceneDirector.defaultGuy3d;
+            var headRiggerComponent = character.GetComponent<AIHeadRiggerBase>();
+            if (headRiggerComponent == null)
+            {
+                throw new Exception("Character does not have AIHeadRiggerBase behaviour");
+            }
+
+            headRiggerComponent.RenderGeneration(
+                scene.aiArt.character.head3d.characterKey,
+                //scene.aiArt.character.head3d.generationIds[1]
+                scene.aiArt.character.head3d.selectedGeneration
+            );
+        }
+        else
+        {
+            sceneDirector.use3DGuy = false;
+            aiArtCharacter.Prepare(scene.aiArt.character);
+        }
+
         aiArtDimension.Prepare(scene.aiArt.dimension);
         aiArtCharacter.Prepare(scene.aiArt.character);
 
-        //run the scene
+
+        //
+        // 2. Play scene.
+        //
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
 
+
+        //
+        // 3. Reset for next scene.
+        //
         aiArtDimension.Reset();
         aiArtCharacter.Reset();
 
@@ -695,48 +734,48 @@ public class WholeThingManager : MonoBehaviour
 
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
 
-        if (generateCustomScript)
-        {
-            //chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
-            //Spongebob: hey sia, what's the deal with sponge baths
-            //Morty: for the purposes of this script, I am liam
-            //Morty: I don't know sia!
-            //";
+        //if (generateCustomScript)
+        //{
+        //    //chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
+        //    //Spongebob: hey sia, what's the deal with sponge baths
+        //    //Morty: for the purposes of this script, I am liam
+        //    //Morty: I don't know sia!
+        //    //";
 
-            /*
-             
-             
-            Rick: I gotta get to that coffee shop before they close Morty
-            [Rick and Morty enter the portal to an Amsterdam coffee shop]
-            Dutch Man: hallo, wil je een junko?
-            Morty: ummmmmm. ja. ik zoek...
-            Morty: rick I'm not sure what weed to get. they all have weird names...like gorilla glue? why would gorillas need glue
-            Rick: it's a metaphor morty, a beautiful european metaphor. just go with it
-            Rick: hi I'd like the albert heinous headfucker tripel de luxe
-            Dutch Man: zeker man
-            Narrator: four hours and twenty minutes later
-            [Rick and Morty enter the portal to the Garage]
-            Rick: oh man I really shouldn't have eaten those stroopwaffels
-            Morty: Pakker wat je pakken kan
-            Rick: what did you say to me you lil shit?
-             */
 
-    chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
-            {Close up Rick}
-            Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
-            Rick: with a chat g p t wrapper aye eye startup
-            Morty: aw rick, this sounds like a lot of work
-            Morty: can't we just build a crypto startup and sit on the money?
-            Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
-            Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
-            Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
-            Rick: it's time to deployyyyyyyy!!!";
+        //    chatGPTOutput = @"
+        //    {Wide shot}
+        //    Rick: I gotta get to that coffee shop before they close Morty
+        //    [Rick and Morty enter the portal to an Amsterdam coffee shop]
+        //    Dutch Man: hallo, wil je een junko?
+        //    Morty: ummmmmm. ja. ik zoek...
+        //    Morty: rick I'm not sure what weed to get. they all have weird names...like gorilla glue? why would gorillas need glue
+        //    Rick: it's a metaphor morty, a beautiful european metaphor. just go with it
+        //    Rick: hi I'd like the albert heinous headfucker tripel de luxe
+        //    Dutch Man: zeker man
+        //    Narrator: four hours and twenty minutes later
+        //    [Rick and Morty enter the portal to the Garage]
+        //    Rick: oh man I really shouldn't have eaten those stroopwaffels
+        //    Morty: Pakker wat je pakken kan
+        //    Rick: what did you say to me you lil shit?";
+            
 
-            promptAuthor = "liam";
+        //    //chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
+        //    //        {Close up Rick}
+        //    //        Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
+        //    //        Rick: with a chat g p t wrapper aye eye startup
+        //    //        Morty: aw rick, this sounds like a lot of work
+        //    //        Morty: can't we just build a crypto startup and sit on the money?
+        //    //        Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
+        //    //        Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
+        //    //        Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
+        //    //        Rick: it's time to deployyyyyyyy!!!";
 
-            // Trim any extraneous space from the string.
-            chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
-        }
+        //    promptAuthor = "LLaMa69";
+
+        //    // Trim any extraneous space from the string.
+        //    chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
+        //}
 
 
         chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
