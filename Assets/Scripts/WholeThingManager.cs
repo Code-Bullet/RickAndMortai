@@ -493,22 +493,6 @@ public class WholeThingManager : MonoBehaviour
         currentlyRunningScene = false;
     }
 
-    // Generates a script based on a prompt.
-    // Uses various checks to make a good one:
-    // - profanity filter
-    // - ChatGPT ragequit filter
-    public async void GenerateScript()
-    {
-        
-    }
-
-    // Parses a script.
-    // Extracts:
-    // - character dialogue (name, lines, voice track uuid)
-    public void ParseScriptExtractCharacters()
-    {
-    }
-
     // GetWhosTalking (string line) -> string characterName, bool isGeneratedCharacter?
     // ParseStageDirections -> (string? generatedDimension)
     // GetCharacters - "[rick walks to morty]  returns chacters 1 rick, character 2 morty.
