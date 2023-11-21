@@ -1631,13 +1631,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a99a0dd2d92d434fa996b7683f6657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterKey: dutch man
+  characterKey: sadam hussein
   generations: []
   generationId: 
   selectedGeneration: 3
   headParent: {fileID: 196802641}
   head: {fileID: 0}
-  cycleAutomatically: 0
+  headShader: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
+  cycleAutomatically: 1
 --- !u!114 &158582089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1832,6 +1833,7 @@ MonoBehaviour:
   selectedGeneration: -1
   headParent: {fileID: 0}
   head: {fileID: 169889621}
+  headShader: {fileID: 0}
   cycleAutomatically: 0
 --- !u!1 &177748023
 GameObject:
@@ -6586,6 +6588,7 @@ MonoBehaviour:
   selectedGeneration: -1
   headParent: {fileID: 0}
   head: {fileID: 770820525}
+  headShader: {fileID: 0}
   cycleAutomatically: 0
 --- !u!1 &773905401
 GameObject:
@@ -8672,13 +8675,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a99a0dd2d92d434fa996b7683f6657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterKey: willie from the simpsons
+  characterKey: sadam hussein
   generations: []
   generationId: 
   selectedGeneration: 3
   headParent: {fileID: 2032424491}
   head: {fileID: 0}
-  cycleAutomatically: 0
+  headShader: {fileID: 0}
+  cycleAutomatically: 1
 --- !u!114 &983807185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12022,6 +12026,7 @@ MonoBehaviour:
   selectedGeneration: -1
   headParent: {fileID: 0}
   head: {fileID: 1374874572}
+  headShader: {fileID: 0}
   cycleAutomatically: 0
 --- !u!1 &1384577063
 GameObject:
@@ -12801,13 +12806,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a99a0dd2d92d434fa996b7683f6657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterKey: walter white
+  characterKey: sadam hussein
   generations: []
   generationId: 
   selectedGeneration: 1
   headParent: {fileID: 1678628092}
   head: {fileID: 0}
-  cycleAutomatically: 0
+  headShader: {fileID: 0}
+  cycleAutomatically: 1
 --- !u!1 &1476789671
 GameObject:
   m_ObjectHideFlags: 0

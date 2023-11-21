@@ -118,7 +118,7 @@ public class AIHeadRigger : MonoBehaviour
         // 2. Configure it.
         defaultMat.SetFloat("_Mode", 0); // 0 for Opaque
         // HACK: Force re-render.
-        defaultMat.shader = headShader == null ? Shader.Find("Standard") : headShader;
+        defaultMat.shader = headShader == null ? Shader.Find("Particles/Standard Unlit") : headShader;
 
         // 3. Set it on the child called "default".
         GameObject defaultChild = head.transform.Find("default").gameObject;

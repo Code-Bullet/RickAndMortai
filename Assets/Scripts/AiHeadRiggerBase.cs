@@ -20,6 +20,8 @@ public class AIHeadRiggerBase : MonoBehaviour
 
     // The head object loaded at runtime.
     public GameObject head;
+    // The shader to use when adding the head object. Can be overridden.
+    public Shader headShader;
 
     // Cycle through generations every 2s.
     public bool cycleAutomatically = false;
@@ -53,7 +55,7 @@ public class AIHeadRiggerBase : MonoBehaviour
         // 2. Configure it.
         defaultMat.SetFloat("_Mode", 0); // 0 for Opaque
         // HACK: Force re-render.
-        defaultMat.shader = Shader.Find("Standard");
+        defaultMat.shader = headShader == null ? Shader.Find("Particles/Standard Unlit") : headShader;
 
         // 3. Set it on the child called "default".
         GameObject defaultChild = head.transform.Find("default").gameObject;
