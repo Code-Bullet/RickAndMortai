@@ -12,6 +12,15 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 
 
+public class TopicVoteResults
+{
+    public string topic;
+    public string author;
+    public string backupTopic;
+    public string backupAuthor;
+}
+
+
 // this is the big daddy script that controls everything
 // basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
 public class WholeThingManager : MonoBehaviour
@@ -25,6 +34,7 @@ public class WholeThingManager : MonoBehaviour
     public FakeYouAPIManager fakeYouAPIManager;
     public YouTubeChatFromSteven youTubeChat;
     public ReplicateAPI replicateAPI;
+    public CharacterVotingChamber characterVotingChamber;
 
     public bool usingVoiceActing = true;
     public bool generateCustomScript = false;
@@ -76,6 +86,7 @@ public class WholeThingManager : MonoBehaviour
     public bool waitForVoting = true;
 
     public bool justDoOneScene = false;
+    private bool testWorkflow = true;
 
     public bool runningTestTopicList = false;
     public List<string> testTopicList;
@@ -84,6 +95,24 @@ public class WholeThingManager : MonoBehaviour
 
     // Environment variables / Global configuration.
     public GlobalConfigData config;
+
+    public GameObject uiCanvas;
+    public GameObject topicVotingUI;
+    public GameObject charVotingUI;
+    public GameObject episodeStuffUI;
+
+    public void SetUI(GameObject ui)
+    {
+        // Hide all UI's.
+        for (int i = 0; i < uiCanvas.transform.childCount; i++)
+        {
+            // Access each child GameObject using index
+            GameObject o = uiCanvas.transform.GetChild(i).gameObject;
+
+            if (o == ui) o.SetActive(true);
+            else o.SetActive(false);
+        }
+    }
 
     private void loadConfig()
     {
@@ -122,7 +151,13 @@ public class WholeThingManager : MonoBehaviour
 
         AIController.Init();
         openAICameraDirector.Init();
+        //this.sceneDirector.cameraShotManager.Reset();
+        this.sceneDirector.ResetStuff();
 
+        SetUI(null);
+
+        // Set active camera.
+        
 
         // TestingShit();
     }
@@ -130,7 +165,46 @@ public class WholeThingManager : MonoBehaviour
     async void Start()
     {
         sceneDirector.ResetStuff();
-        if (this.generateCustomScript)
+
+        if(this.testWorkflow)
+        {
+            // Run test main loop:
+
+            // PRODUCT 0:
+            // Show voting scene w/ custom timeout.
+            Task mockNextSceneTask = Task.Delay(4000);
+            //await RunTopicVote(mockNextSceneTask, 2f);
+            //Debug.Log("topic vote done");
+
+            // Show character voting scene w/ custom timeout.
+            CharacterVoteResults voteRes = await RunCharacterVote(
+                "sadam hussein",
+                //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
+                AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
+                5000
+            );
+            Debug.Log("char vote done");
+
+
+            var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+            scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
+
+            await RunScene(scene);
+
+
+            // PRODUCT 2:
+            // 1. Run mock main loop.
+            // 2. Generate script.
+            // 3. Detect if script has AI character.
+            // 4. aiTask = generate3dAiScene()
+            // 5. Meanwhile, we run the classic voting loop until it's ready.
+            // 6. When it is ready, we run the vote.
+            // 7. And then finally, play the scene.
+
+
+
+        }
+        else if (this.generateCustomScript)
         {
             enableOrDisableVotingUI(false);
 
@@ -188,6 +262,8 @@ public class WholeThingManager : MonoBehaviour
     // turns on or off all the voting ui 
     private void enableOrDisableVotingUI(bool enable)
     {
+        SetUI(topicVotingUI);
+
         //topicTitleThing.enabled = enable;
 
         topic1Bar.gameObject.SetActive(enable);
@@ -205,6 +281,185 @@ public class WholeThingManager : MonoBehaviour
         bottomBarVotingInfoText.SetActive(enable);
     }
 
+    private async Task<CharacterVoteResults> RunCharacterVote(string characterName, string[] generationIds, int timeToVoteMilliseconds)
+    {
+        SetUI(charVotingUI);
+
+        characterVotingChamber.stageCamera.enabled = true;
+
+        characterVotingChamber.Setup(characterName, generationIds);
+        CharacterVoteResults results = await characterVotingChamber.RunVote(timeToVoteMilliseconds);        
+
+        characterVotingChamber.stageCamera.enabled = false;
+        // TODO
+
+        SetUI(null);
+        return results;
+    }
+
+    private async Task<TopicVoteResults> RunTopicVote(Task nextSceneTask, float timeToVoteSeconds)
+    {
+        TopicVoteResults voteResults = new TopicVoteResults();
+
+        bool testingTopics = true;
+        List<string> testTopics = new List<string> {
+            "morty talks with sadam hussein\nme",
+            "Rick and morty fight batman\nme",
+            "Rick and morty go to Australia\nme"
+        };
+        int testTopicIndex = 0;
+
+
+
+        // since we are generating a scene in the background while we play a scene, the generating scene needs to finish generating before we finish voting
+        // and we also wait a minimum of 30 seconds
+        if (useDanceAnimations) danceFloorManager.DanceCameraStart();
+
+
+        // ok lets get the list of topics
+        enableOrDisableVotingUI(true);
+        List<string> randomTopics = youTubeChat.GetRandomTopics();
+
+        if (randomTopics == null)
+        {
+            randomTopics = new List<string> {
+                "morty talks with yoda\nme",
+                "Rick and morty fight batman\nme",
+                "Rick and morty go to Australia\nme"
+            };
+        }
+
+
+        // the topics are stored like "name of topic \nauthor name \n"
+        // so lets extract the topic and author 
+        List<string> randomTopicAuthors = new List<string>();
+
+        for (int j = 0; j < randomTopics.Count; j++)
+        {
+            string topic = randomTopics[j].Split("\n")[0];
+            string author = randomTopics[j].Split("\n")[1];
+            randomTopics[j] = topic;
+            randomTopicAuthors.Add(author);
+        }
+
+
+        //display the topics
+        topicOption1.text = randomTopics[0];
+        topicOption2.text = randomTopics[1];
+        topicOption3.text = randomTopics[2];
+
+        // lets start the voting
+        youTubeChat.ClearVotes();
+        float voteTime = 0;
+        int[] voteNumbers = youTubeChat.CountVotes();
+
+        topic1Bar.ResetBar();
+        topic2Bar.ResetBar();
+        topic3Bar.ResetBar();
+        targetTopic1Votes = 0;
+        targetTopic2Votes = 0;
+        targetTopic3Votes = 0;
+
+
+        // While we're still waiting on the next scene, or we still have time to vote:
+        while (!nextSceneTask.IsCompleted || (voteTime < timeToVoteSeconds && waitForVoting))
+        {
+            //get the votes
+            voteNumbers = youTubeChat.CountVotes();
+
+
+            // this is for testing
+            // voteNumbers[0] = UnityEngine.Random.Range(1, 101);
+            // voteNumbers[1] = UnityEngine.Random.Range(1, 101);
+            // voteNumbers[2] = UnityEngine.Random.Range(1, 101);
+
+
+            // all this shit is for having the vote text move smoothly, dont worry about it
+            initialTopic1Votes = targetTopic1Votes;
+            initialTopic2Votes = targetTopic2Votes;
+            initialTopic3Votes = targetTopic3Votes;
+            targetTopic1Votes = voteNumbers[0];
+            targetTopic2Votes = voteNumbers[1];
+            targetTopic3Votes = voteNumbers[2];
+            StopCoroutine(UpdateVotesTextOverTime(topic1Votes, initialTopic1Votes, targetTopic1Votes));
+            StartCoroutine(UpdateVotesTextOverTime(topic1Votes, initialTopic1Votes, targetTopic1Votes));
+            StopCoroutine(UpdateVotesTextOverTime(topic2Votes, initialTopic2Votes, targetTopic2Votes));
+            StartCoroutine(UpdateVotesTextOverTime(topic2Votes, initialTopic2Votes, targetTopic2Votes));
+            StopCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
+            StartCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
+
+
+            //calculate the highest votes so we can fill the vote bars relative to it.
+            int maxvotes = 0;
+            foreach (int voteNumber in voteNumbers)
+            {
+                if (maxvotes < voteNumber)
+                {
+                    maxvotes = voteNumber;
+                }
+            }
+            if (maxvotes == 0)
+            {
+                topic1Bar.SetFillPercentage(0);
+                topic2Bar.SetFillPercentage(0);
+                topic3Bar.SetFillPercentage(0);
+            }
+            else
+            {
+                topic1Bar.SetFillPercentage((float)voteNumbers[0] / (float)maxvotes);
+                topic2Bar.SetFillPercentage((float)voteNumbers[1] / (float)maxvotes);
+                topic3Bar.SetFillPercentage((float)voteNumbers[2] / (float)maxvotes);
+            }
+
+            // wait for a little bit.
+            await Task.Delay(500);
+            voteTime += 0.5f;
+
+            // if we have been voting for more than 5 minutes (10 minutes if this is the first loop) then restart everything 
+            //     float timeBeforeRestarting = 5 * 60;
+            //     if (firstRunThrough) timeBeforeRestarting += 5 * 60;
+            //     if (voteTime > timeBeforeRestarting)
+            //     {
+            //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //         return;
+            //     }
+        }
+
+        // ok voting is done 
+
+        // Tally votes, get the chosen topic.
+        int chosenTopic = 0;
+        for (int j = 0; j < voteNumbers.Length; j++)
+        {
+            if (voteNumbers[j] > voteNumbers[chosenTopic]) chosenTopic = j;
+        }
+
+        if (testingTopics)
+        {
+            // Testing main loop.
+            // Just cycle through the test topics.
+            testTopicIndex = (testTopicIndex + 1) % testTopics.Count; // i+1 mod n
+            chosenTopic = testTopicIndex;
+        }
+
+        // choose a backup topic just incase the chosen topic is rejected by chatgpt
+        int backupTopic = 0;
+        if (backupTopic == chosenTopic)
+        {
+            backupTopic = 1;
+        }
+
+        enableOrDisableVotingUI(false);
+
+        if (useDanceAnimations) danceFloorManager.DanceCameraStop();
+
+        voteResults.topic = randomTopics[chosenTopic];
+        voteResults.author = randomTopicAuthors[chosenTopic];
+        voteResults.backupTopic = randomTopics[backupTopic];
+        voteResults.backupAuthor = randomTopicAuthors[backupTopic];
+
+        return voteResults;
+    }
 
 
     // this is the big daddy
@@ -216,25 +471,6 @@ public class WholeThingManager : MonoBehaviour
         // Start creating a scene while the first round of voting happens
         // change this line to enter your own prompt. vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         nextSceneTask = CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
-
-        // if (runningTestTopicList && testTopicList.Count > 0) 
-        // {
-        //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
-        //     testTopicList.RemoveAt(0);
-        // }
-        // else
-        // {
-        //     CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
-        // }
-
-        bool testingTopics = true;
-        List<string> testTopics = new List<string> {
-            "morty talks with sadam hussein\nme",
-            "Rick and morty fight batman\nme",
-            "Rick and morty go to Australia\nme"
-        };
-        int testTopicIndex = 0;
-
 
         // Generate 1000 episodes in a loop.
         //
@@ -263,165 +499,18 @@ public class WholeThingManager : MonoBehaviour
                 // }
             }
 
-            // so scene has finished playing
+            // Scene has finished playinh.
             if (i > 0) Debug.Log("scene done");
             dialogBox.text = "";
 
-
-            // ok lets get the list of topics
-            enableOrDisableVotingUI(true);
-            List<string> randomTopics = youTubeChat.GetRandomTopics();
-
-            if (randomTopics == null)
-            {
-                randomTopics = new List<string> {"morty talks with yoda\nme",
-                "Rick and morty fight batman\nme",
-                  "Rick and morty go to Australia\nme" };
-            }
-
-
-            // the topics are stored like "name of topic \nauthor name \n"
-            // so lets extract the topic and author 
-            List<string> randomTopicAuthors = new List<string>();
-
-            for (int j = 0; j < randomTopics.Count; j++)
-            {
-                string topic = randomTopics[j].Split("\n")[0];
-                string author = randomTopics[j].Split("\n")[1];
-                randomTopics[j] = topic;
-                randomTopicAuthors.Add(author);
-            }
-
-
-            //display the topics
-            topicOption1.text = randomTopics[0];
-            topicOption2.text = randomTopics[1];
-            topicOption3.text = randomTopics[2];
-
-            // lets start the voting
-            youTubeChat.ClearVotes();
-            float voteTime = 0;
-            int[] voteNumbers = youTubeChat.CountVotes();
-
-            topic1Bar.ResetBar();
-            topic2Bar.ResetBar();
-            topic3Bar.ResetBar();
-            targetTopic1Votes = 0;
-            targetTopic2Votes = 0;
-            targetTopic3Votes = 0;
-
-            // since we are generating a scene in the background while we play a scene, the generating scene needs to finish generating before we finish voting
-            // and we also wait a minimum of 30 seconds
-            if(useDanceAnimations) danceFloorManager.DanceCameraStart();
-
-
-            while (!nextSceneTask.IsCompleted || (voteTime < 30f && waitForVoting))
-            {
-                //get the votes
-                voteNumbers = youTubeChat.CountVotes();
-
-
-                // this is for testing
-                // voteNumbers[0] = UnityEngine.Random.Range(1, 101);
-                // voteNumbers[1] = UnityEngine.Random.Range(1, 101);
-                // voteNumbers[2] = UnityEngine.Random.Range(1, 101);
-
-
-                // all this shit is for having the vote text move smoothly, dont worry about it
-                initialTopic1Votes = targetTopic1Votes;
-                initialTopic2Votes = targetTopic2Votes;
-                initialTopic3Votes = targetTopic3Votes;
-                targetTopic1Votes = voteNumbers[0];
-                targetTopic2Votes = voteNumbers[1];
-                targetTopic3Votes = voteNumbers[2];
-                StopCoroutine(UpdateVotesTextOverTime(topic1Votes, initialTopic1Votes, targetTopic1Votes));
-                StartCoroutine(UpdateVotesTextOverTime(topic1Votes, initialTopic1Votes, targetTopic1Votes));
-                StopCoroutine(UpdateVotesTextOverTime(topic2Votes, initialTopic2Votes, targetTopic2Votes));
-                StartCoroutine(UpdateVotesTextOverTime(topic2Votes, initialTopic2Votes, targetTopic2Votes));
-                StopCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
-                StartCoroutine(UpdateVotesTextOverTime(topic3Votes, initialTopic3Votes, targetTopic3Votes));
-
-
-                //calculate the highest votes so we can fill the vote bars relative to it.
-                int maxvotes = 0;
-                foreach (int voteNumber in voteNumbers)
-                {
-                    if (maxvotes < voteNumber)
-                    {
-                        maxvotes = voteNumber;
-                    }
-                }
-                if (maxvotes == 0)
-                {
-                    topic1Bar.SetFillPercentage(0);
-                    topic2Bar.SetFillPercentage(0);
-                    topic3Bar.SetFillPercentage(0);
-                }
-                else
-                {
-                    topic1Bar.SetFillPercentage((float)voteNumbers[0] / (float)maxvotes);
-                    topic2Bar.SetFillPercentage((float)voteNumbers[1] / (float)maxvotes);
-                    topic3Bar.SetFillPercentage((float)voteNumbers[2] / (float)maxvotes);
-                }
-
-                // wait for a little bit.
-                await Task.Delay(500);
-                voteTime += 0.5f;
-
-                // if we have been voting for more than 5 minutes (10 minutes if this is the first loop) then restart everything 
-                //     float timeBeforeRestarting = 5 * 60;
-                //     if (firstRunThrough) timeBeforeRestarting += 5 * 60;
-                //     if (voteTime > timeBeforeRestarting)
-                //     {
-                //         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                //         return;
-                //     }
-            }
-
-            // ok voting is done 
-
-            // Get the chosen topic (not so ugly, actually kinda gurd).
-            int chosenTopic = 0;
-            for(int j = 0; j < voteNumbers.Length; j++)
-            {
-                if (voteNumbers[j] > voteNumbers[chosenTopic]) chosenTopic = j;
-            }
             
-            if(testingTopics)
-            {
-                // Testing main loop.
-
-                // Just cycle through the test topics.
-                testTopicIndex = (testTopicIndex + 1) % testTopics.Count; // i+1 mod n
-                chosenTopic = testTopicIndex;
-            }
-
-            // choose a backup topic just incase the chosen topic is rejected by chatgpt
-            int backupTopic = 0;
-            if (backupTopic == chosenTopic)
-            {
-                backupTopic = 1;
-            }
+            // Run a vote.
+            TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
+            // Add the chosen topic to the blacklist so it doesnt play again
+            youTubeChat.AddToBlacklist(voteResults.topic);
 
             // Get the next scene.
             RickAndMortyScene currentScene = await nextSceneTask;
-            enableOrDisableVotingUI(false);
-            
-            // add the chosen topic to the blacklist so it doesnt play again
-            youTubeChat.AddToBlacklist(randomTopics[chosenTopic]);
-
-            // if (runningTestTopicList && testTopicList.Count > 0)
-            // {
-            //     CreateScene(testTopicList[0], "me", "banana", "me", usingVoiceActing);
-            //     testTopicList.RemoveAt(0);
-
-            // }
-            // else
-            // {
-            //     CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
-            // }
-
-            if (useDanceAnimations) danceFloorManager.DanceCameraStop();
 
             // Run the current scene.
             // In the background, generate the next scene based on voting topic.
@@ -431,11 +520,18 @@ public class WholeThingManager : MonoBehaviour
                 return;
             }
 
-            Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {randomTopics[chosenTopic]}");
-            nextSceneTask = CreateScene(randomTopics[chosenTopic], randomTopicAuthors[chosenTopic], randomTopics[backupTopic], randomTopicAuthors[backupTopic], usingVoiceActing);
+            // In the background, create a scene.
+            Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {voteResults.topic}");
+            nextSceneTask = CreateScene(
+                voteResults.topic,
+                voteResults.author,
+                voteResults.backupTopic,
+                voteResults.backupAuthor,
+                usingVoiceActing
+            );
+
             await RunScene(currentScene);
         }
-
     }
 
     // this bad boy displays the title then runs the scene 
@@ -480,7 +576,9 @@ public class WholeThingManager : MonoBehaviour
         //
         // 2. Play scene.
         //
+        SetUI(episodeStuffUI);
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
+        //SetUI(null);
 
 
         //
@@ -915,16 +1013,11 @@ public class WholeThingManager : MonoBehaviour
                 }
             }
 
-
-
-
             string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
 
             Debug.Log("original: \n " + string.Join("\n", chatGPTOutputLines));
             Debug.Log("Chatgpt camer angles: \n " + string.Join("\n", outputLinesProcessedWithCameraShots));
             Debug.Log("Combined: \n " + string.Join("\n", combinedList.ToArray()));
-
-
 
             chatGPTOutputLines = combinedList.ToArray();
             chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);

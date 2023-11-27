@@ -56,6 +56,30 @@ public class AIHeadRigger : MonoBehaviour
         if (this.cycleAutomatically) this.cycleGenerations();
     }
 
+    public static string[] GetGenerationsForCharacter(string characterKey)
+    {
+        // Select a single character to get 3D models for.
+        string characterPath = $"local-image-gen/headshot/data/3d/{characterKey}/";
+        Debug.Log($"characterPath: {characterPath}");
+        if (!Directory.Exists(characterPath))
+        {
+            throw new Exception($"character directory doesn't exist: {characterPath}");
+        }
+
+        // Get all generation directories.
+        List<string> generations = new List<string>();
+        foreach (var d in Directory.GetDirectories(characterPath))
+        {
+            var dirName = new DirectoryInfo(d).Name;
+            generations.Add(dirName.Split("_mesh")[0]); // this is the way
+            Debug.Log(dirName);
+        }
+
+        Debug.Log($"Character generations: {generations.ToArray()}");
+
+        return generations.ToArray();
+    }
+    
     void loadGenerations()
     {
         // NOTE: Unity on macOS doesn't return any directories using Directory.GetDirectories if you give it a full file path.
