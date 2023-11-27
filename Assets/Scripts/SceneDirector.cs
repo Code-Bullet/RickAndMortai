@@ -93,31 +93,28 @@ public class SceneDirector : MonoBehaviour
         ResetStuff();
     }
 
-    public void ResetStuff()
+    public async void ResetStuff()
     {
         // reset the cunts
         // these bastards keep moving
+        currentDimension = Garage;
 
-        // Reset Rick and Morty to the Garage.
-        //Debug.Log($"resetstuff: {rick.transform.position}");
-        //Debug.Log($"resetstuff: {rick.gameObject.transform.position}");
+        currentDimension.actualCamera.SetActive(true);
+        currentDimension.virtualCamera.SetActive(true);
 
-        //rick.gameObject.transform.position = new Vector3(-0.469000012f, 0, 0.865999997f);
-        //morty.gameObject.transform.position = new Vector3(-1.61300004f, 0.00999999978f, -0.495000005f);
+        RickRenderer.SetActive(true);
+        MortyRenderer.SetActive(true);
 
-        ////rick.gameObject
+        rick.TeleportTo(currentDimension.portalLocation.transform.position);
+        morty.TeleportTo(currentDimension.portalLocation.transform.position);
 
-        //// Show Rick and Morty.
-        //Action<MyCharacterController> enableRenderer = obj =>
-        //{
-        //    var renderer = obj.GetComponent<Renderer>();
-        //    if (renderer != null) renderer.enabled = true;
-        //};
-        //enableRenderer(rick);
-        //enableRenderer(morty);
+        rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 1f);
+        rick.LookAtTarget(currentDimension.actualCamera.gameObject);
 
-        //// Reset the cameras.
-        //cameraShotManager.Reset();
+        morty.MoveTowardsPosition(currentDimension.centerStage2.gameObject.transform.position, 1f);
+        morty.LookAtTarget(currentDimension.actualCamera.gameObject);
+
+        cameraShotManager.ChangeCameraShot("{wide shot}");
     }
 
 
@@ -748,8 +745,6 @@ public class SceneDirector : MonoBehaviour
                 DimensionText.text = "[todo: make Dimension]";
             }
         }
-
-
 
         rick.TeleportTo(currentDimension.portalLocation.transform.position);
         morty.TeleportTo(currentDimension.portalLocation.transform.position);
