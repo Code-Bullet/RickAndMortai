@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 public class CharacterVoteResults
 {
-    public string selectedGeneration;
-    public string[] options;
-    public int[] tallies;
+    public string selectedGeneration = "";
+    public string[] options = new string[4];
+    public int[] tallies = new int[4];
 }
 
 public class CharacterVotingChamber : MonoBehaviour
@@ -26,8 +26,6 @@ public class CharacterVotingChamber : MonoBehaviour
     // The camera that shows the stuff.
     public Camera stageCamera;
 
-    public GameObject canvas;
-    public GameObject uiCollection;
 
     public bool isActive = false;
 
@@ -36,7 +34,11 @@ public class CharacterVotingChamber : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        
+        this.results = new CharacterVoteResults();
+        this.results.options = new string[] { };
+        this.results.tallies = new int[4];
+
+
         foreach (TMP_Text t in voteTallies)
         {
             t.text = "VOTES:0";
@@ -54,7 +56,7 @@ public class CharacterVotingChamber : MonoBehaviour
     {
         this.results = new CharacterVoteResults();
         this.results.options = generationIds;
-        this.results.tallies = new int[generationIds.Length];
+        this.results.tallies = new int[4];
 
         // Set the current camera to focus on this scene.
         // Load the 3d objects into all the character controllers.
@@ -81,7 +83,6 @@ public class CharacterVotingChamber : MonoBehaviour
     }
 
     
-    //public async void Run
     public async Task<CharacterVoteResults> RunVote(int timeToVoteMilliseconds)
     {
         isActive = true;
@@ -97,6 +98,10 @@ public class CharacterVotingChamber : MonoBehaviour
         {
             if (results.tallies[j] > results.tallies[highestVoted]) highestVoted = j;
         }
+
+        // Sometimes we only get 3 generations back, cus of some NSFW stuff.
+        // So restrict highestVoted index based on how many options we actually had.
+        highestVoted = highestVoted % this.results.options.Length;
 
         results.selectedGeneration = results.options[highestVoted];
 
@@ -132,6 +137,8 @@ public class CharacterVotingChamber : MonoBehaviour
         for(int i = 0; i < voteTallies.Length; i++)
         {
             TMP_Text t = voteTallies[i];
+            if (results.tallies.Length < i) continue;
+
             t.text = $"VOTES:{results.tallies[i]}";
         }
     }

@@ -22,6 +22,11 @@ def generate():
     character_name = request.json.get('character')
 
     # Testing:
+    if character_name == 'trump':
+        # zfag623bhpj2dzxiqjogsjkf7u
+        test_ids = ['av4y6plbhuph5rhgmckpvrkbdy', 'w6cqlj3bhuf6kjyd2rvmhyylj4', '5bjain3bl6pi5i3datgprlc33q']
+        return jsonify({'generation_ids': test_ids}), 200
+        
     if character_name == 'Dutch man':
         test_ids = ['lhinfidbdsy3ay32qnedgwgskq', 'nuedrilbhxjvyo5bhn7ndycjbu', 'pejzlqlb2aviwzqvktw47nrntq', 'fhnfrslb6zrrb7mr55pri5rvwi']
         return jsonify({'generation_ids': test_ids}), 200
@@ -35,7 +40,7 @@ def generate():
     try:
         generation_ids = generate_headshots(character_name)
     except Exception as err:
-        return jsonify({'error': 'Error generating headshots - {err}.'}), 500
+        return jsonify({'error': 'Error generating headshots - {}.'.format(err)}), 500
     
     return jsonify({'generation_ids': generation_ids}), 200
 

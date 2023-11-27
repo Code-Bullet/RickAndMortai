@@ -11,7 +11,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
-
 public class TopicVoteResults
 {
     public string topic;
@@ -151,15 +150,94 @@ public class WholeThingManager : MonoBehaviour
 
         AIController.Init();
         openAICameraDirector.Init();
-        //this.sceneDirector.cameraShotManager.Reset();
-        this.sceneDirector.ResetStuff();
 
         SetUI(null);
-
-        // Set active camera.
         
 
+
         // TestingShit();
+    }
+
+    
+    private async Task testWorkflow1()
+    {
+        // Run test main loop:
+
+        // PRODUCT 0:
+
+        // Show voting scene w/ custom timeout.
+        Task mockNextSceneTask = Task.Delay(4000);
+        await RunTopicVote(mockNextSceneTask, 2f);
+        Debug.Log("topic vote done");
+
+        // Show character voting scene w/ custom timeout.
+        CharacterVoteResults voteRes = await RunCharacterVote(
+            "sadam hussein",
+            //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
+            AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
+            5000
+        );
+        Debug.Log("char vote done");
+
+
+        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
+
+        await RunScene(scene);
+    }
+
+    private async Task testWorkflow2()
+    {
+        // 1. Generate scene.
+        //var scene = await CreateScene("rick talks to Trump about AI", "me", "banana", "me", usingVoiceActing);
+        //scene.WriteToDir();
+        var scene = RickAndMortyScene.ReadFromDir("scene-trump-3d");
+        //Debug.Log($"saved scene {scene.id}");
+
+        if (scene.aiArt.character == null) throw new Exception("No AI art character wtf???");
+
+        // 2. Generate 3d head character.
+        Debug.Log("Generating 3d character");
+        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
+
+        int expectedTimeSecs = 60 + 60 + 60 + 60 + 30; // 4m30s
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        while (!characterGenTask.IsCompleted)
+        {
+            double progress = stopwatch.Elapsed.TotalSeconds / expectedTimeSecs;
+            progress = Math.Round(progress * 100, 2);
+            Debug.Log($"Generating 3d character ({stopwatch.Elapsed.TotalSeconds}s of {expectedTimeSecs})");
+            textField.text = $"Generating AI character ({progress}%)...";
+
+            await Task.Delay(1000);
+        }
+
+        AICharacter aiCharacterRes = await characterGenTask;
+
+        // 3. Run vote on character.
+        scene.aiArt.character.characterName = aiCharacterRes.characterName;
+        scene.aiArt.character.head3d = aiCharacterRes.head3d;
+        var voteResults = await RunCharacterVote(
+            aiCharacterRes.characterName,
+            aiCharacterRes.head3d.generationIds,
+            10000
+        );
+
+        // 4. Render scene with selected character.
+        scene.aiArt.character.head3d.selectedGeneration = voteResults.selectedGeneration;
+        await RunScene(scene);
+    }
+
+    private async void testWorkflow3()
+    {
+        // PRODUCT 2:
+        // 1. Run mock main loop.
+        // 2. Generate script.
+        // 3. Detect if script has AI character.
+        // 4. aiTask = generate3dAiScene()
+        // 5. Meanwhile, we run the classic voting loop until it's ready.
+        // 6. When it is ready, we run the vote.
+        // 7. And then finally, play the scene.
     }
 
     async void Start()
@@ -168,41 +246,8 @@ public class WholeThingManager : MonoBehaviour
 
         if(this.testWorkflow)
         {
-            // Run test main loop:
-
-            // PRODUCT 0:
-            // Show voting scene w/ custom timeout.
-            Task mockNextSceneTask = Task.Delay(4000);
-            //await RunTopicVote(mockNextSceneTask, 2f);
-            //Debug.Log("topic vote done");
-
-            // Show character voting scene w/ custom timeout.
-            CharacterVoteResults voteRes = await RunCharacterVote(
-                "sadam hussein",
-                //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
-                AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
-                5000
-            );
-            Debug.Log("char vote done");
-
-
-            var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
-            scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
-
-            await RunScene(scene);
-
-
-            // PRODUCT 2:
-            // 1. Run mock main loop.
-            // 2. Generate script.
-            // 3. Detect if script has AI character.
-            // 4. aiTask = generate3dAiScene()
-            // 5. Meanwhile, we run the classic voting loop until it's ready.
-            // 6. When it is ready, we run the vote.
-            // 7. And then finally, play the scene.
-
-
-
+            await testWorkflow2();
+            //await testWorkflow1();
         }
         else if (this.generateCustomScript)
         {

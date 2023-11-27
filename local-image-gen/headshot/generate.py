@@ -203,6 +203,8 @@ def generate_headshots(character):
     print(image_2d_results)
 
     # 2. Generate 3d models for all the 2d images.
+    # filter image_2d_results for nulls
+    image_2d_results = [x for x in image_2d_results if x is not None]
     inputs_3d = [
         (image_2d_url, character) for image_2d_url in image_2d_results
     ]
@@ -211,6 +213,8 @@ def generate_headshots(character):
     image_3d_results = list(image_3d_results)
     print(image_3d_results)
 
+    image_3d_results = [x for x in image_3d_results if x is not None]
+    
     return image_3d_results
 
 

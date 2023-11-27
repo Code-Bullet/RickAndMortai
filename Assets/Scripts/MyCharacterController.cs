@@ -27,7 +27,7 @@ public class MyCharacterController : MonoBehaviour
 
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent component missing from this game object");
+            Debug.LogError($"NavMeshAgent component missing from this game object: {this.name}");
         }
         else
         {
@@ -97,7 +97,7 @@ public class MyCharacterController : MonoBehaviour
     {
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent component missing from this game object");
+            Debug.LogError($"NavMeshAgent component missing from this game object: {this.name}");
             return;
         }
         agent.stoppingDistance = stoppingDistance;
@@ -110,7 +110,7 @@ public class MyCharacterController : MonoBehaviour
     {
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent component missing from this game object");
+            Debug.LogError($"NavMeshAgent component missing from this game object: {this.name}");
             return;
         }
 
@@ -127,7 +127,7 @@ public class MyCharacterController : MonoBehaviour
     {
         if (agent == null)
         {
-            Debug.LogError("NavMeshAgent component missing from this game object");
+            Debug.LogError($"NavMeshAgent component missing from this game object: {this.name}");
             return;
         }
         agent.stoppingDistance = stoppingDistance;

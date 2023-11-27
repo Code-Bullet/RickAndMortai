@@ -93,7 +93,7 @@ public class SceneDirector : MonoBehaviour
         ResetStuff();
     }
 
-    public async void ResetStuff()
+    public void ResetStuff()
     {
         // reset the cunts
         // these bastards keep moving
