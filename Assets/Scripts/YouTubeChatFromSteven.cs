@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Net;
 using Newtonsoft.Json;
 using System.IO;
+using System.Text.RegularExpressions;
 
 // this is from steven4547466 on discord, hes a legend.
 
@@ -46,6 +47,8 @@ public class YouTubeChatFromSteven : MonoBehaviour
     public List<string> topicSuggestions = new List<string>();
 
     public List<string> voteSuggestions = new List<string>();
+
+    public int[] characterVotes = new int[4];
 
     List<string> alreadyTakenTopics = new List<string>();
 
@@ -176,6 +179,24 @@ public class YouTubeChatFromSteven : MonoBehaviour
                             voteSuggestions.Add(voteMessage);
                         }
                     }
+                    else if (message.ToLower().StartsWith("char:"))
+                    {
+                        string choiceString = message.Substring("char:".Length).Trim();
+                        if (!Regex.IsMatch(choiceString, @"[1-4]", RegexOptions.IgnoreCase)) continue;
+
+                        try
+                        {
+                            // lol based
+                            int index = int.Parse(choiceString) - 1; // guaranteed by regex to be 1-4, no underflow check
+                            // subtract by 1 to get array index
+                            characterVotes[index] += 1;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogWarning($"Nonfatal error parsing char:# vote - {ex} '{choiceString}'");
+                        }
+
+                    }
                 }
 
                 resp.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
@@ -199,6 +220,12 @@ public class YouTubeChatFromSteven : MonoBehaviour
     public void ClearVotes()
     {
         voteSuggestions = new List<string>();
+        characterVotes = new int[4];
+    }
+
+    public int[] CountCharacterVotes()
+    {
+        return characterVotes;
     }
 
 
