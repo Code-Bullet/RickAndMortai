@@ -102,7 +102,23 @@ public static class WavUtility
 
 }
 
+public static class PathUtils
+{
+    public static string[] GetSubDirs(string directoryPath)
+    {
+        //string directoryPath = "local-image-gen/headshot/data/3d/";
 
+        // Glob all directories.
+        List<string> dirs = new List<string>();
+        foreach (var d in Directory.GetDirectories(directoryPath))
+        {
+            var dirName = new DirectoryInfo(d).Name;
+            dirs.Add(dirName);   
+        }
+
+        return dirs.ToArray();
+    }
+}
 
 
 public static class GuidUtil

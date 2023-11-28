@@ -142,6 +142,7 @@ public class RickAndMortyScene
     public static RickAndMortyScene ReadFromDir(string sceneId)
     {
         Debug.Log($"Reading scene from directory: {sceneId}");
+
         // Combine the directory path and file name
         string basePath = $"saved-scenes/{sceneId}/";
         string sceneFilePath = $"{basePath}/scene.json";

@@ -34,11 +34,6 @@ public class CharacterVotingChamber : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        this.results = new CharacterVoteResults();
-        this.results.options = new string[] { };
-        this.results.tallies = new int[4];
-
-
         foreach (TMP_Text t in voteTallies)
         {
             t.text = "VOTES:0";
@@ -48,8 +43,6 @@ public class CharacterVotingChamber : MonoBehaviour
         {
             AIHeadRigger rigger = o.GetComponent<AIHeadRigger>();
         }
-
-
     }
 
     public void Setup(string characterName, string[] generationIds)
@@ -78,8 +71,6 @@ public class CharacterVotingChamber : MonoBehaviour
             rigger.RenderGeneration(characterName, generationIds[generationIndex]);
             i++;
         }
-
-
     }
 
     
@@ -90,7 +81,7 @@ public class CharacterVotingChamber : MonoBehaviour
         await Task.Delay(timeToVoteMilliseconds);
 
         var results = this.results;
-        this.results = new CharacterVoteResults();
+        this.results = null;
 
         // Now tally votes.
         int highestVoted = 0;
@@ -101,9 +92,11 @@ public class CharacterVotingChamber : MonoBehaviour
 
         // Sometimes we only get 3 generations back, cus of some NSFW stuff.
         // So restrict highestVoted index based on how many options we actually had.
-        highestVoted = highestVoted % this.results.options.Length;
+        highestVoted = highestVoted % results.options.Length;
 
         results.selectedGeneration = results.options[highestVoted];
+
+        
 
         isActive = false;
 
@@ -112,7 +105,7 @@ public class CharacterVotingChamber : MonoBehaviour
 
     void Update()
     {
-        if (!isActive) return;
+        if (!isActive || this.results == null) return;
 
 
         // Detect manual keyboard voting.

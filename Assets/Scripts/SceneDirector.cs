@@ -82,10 +82,6 @@ public class SceneDirector : MonoBehaviour
         ResetTargetGroup();
         AddCharacterTargetGroup(characterList[0]);
         AddCharacterTargetGroup(characterList[1]);
-
-
-        //rick.TeleportTo(currentDimension.portalLocation.transform.position);
-        //morty.TeleportTo(currentDimension.portalLocation.transform.position);
     }
 
     private void Start()

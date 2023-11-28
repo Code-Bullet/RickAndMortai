@@ -83,9 +83,8 @@ public class WholeThingManager : MonoBehaviour
 
 
     public bool waitForVoting = true;
-
     public bool justDoOneScene = false;
-    private bool testWorkflow = true;
+
 
     public bool runningTestTopicList = false;
     public List<string> testTopicList;
@@ -158,95 +157,18 @@ public class WholeThingManager : MonoBehaviour
         // TestingShit();
     }
 
-    
-    private async Task testWorkflow1()
-    {
-        // Run test main loop:
 
-        // PRODUCT 0:
-
-        // Show voting scene w/ custom timeout.
-        Task mockNextSceneTask = Task.Delay(4000);
-        await RunTopicVote(mockNextSceneTask, 2f);
-        Debug.Log("topic vote done");
-
-        // Show character voting scene w/ custom timeout.
-        CharacterVoteResults voteRes = await RunCharacterVote(
-            "sadam hussein",
-            //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
-            AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
-            5000
-        );
-        Debug.Log("char vote done");
-
-
-        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
-        scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
-
-        await RunScene(scene);
-    }
-
-    private async Task testWorkflow2()
-    {
-        // 1. Generate scene.
-        //var scene = await CreateScene("rick talks to Trump about AI", "me", "banana", "me", usingVoiceActing);
-        //scene.WriteToDir();
-        var scene = RickAndMortyScene.ReadFromDir("scene-trump-3d");
-        //Debug.Log($"saved scene {scene.id}");
-
-        if (scene.aiArt.character == null) throw new Exception("No AI art character wtf???");
-
-        // 2. Generate 3d head character.
-        Debug.Log("Generating 3d character");
-        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
-
-        int expectedTimeSecs = 60 + 60 + 60 + 60 + 30; // 4m30s
-        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        while (!characterGenTask.IsCompleted)
-        {
-            double progress = stopwatch.Elapsed.TotalSeconds / expectedTimeSecs;
-            progress = Math.Round(progress * 100, 2);
-            Debug.Log($"Generating 3d character ({stopwatch.Elapsed.TotalSeconds}s of {expectedTimeSecs})");
-            textField.text = $"Generating AI character ({progress}%)...";
-
-            await Task.Delay(1000);
-        }
-
-        AICharacter aiCharacterRes = await characterGenTask;
-
-        // 3. Run vote on character.
-        scene.aiArt.character.characterName = aiCharacterRes.characterName;
-        scene.aiArt.character.head3d = aiCharacterRes.head3d;
-        var voteResults = await RunCharacterVote(
-            aiCharacterRes.characterName,
-            aiCharacterRes.head3d.generationIds,
-            10000
-        );
-
-        // 4. Render scene with selected character.
-        scene.aiArt.character.head3d.selectedGeneration = voteResults.selectedGeneration;
-        await RunScene(scene);
-    }
-
-    private async void testWorkflow3()
-    {
-        // PRODUCT 2:
-        // 1. Run mock main loop.
-        // 2. Generate script.
-        // 3. Detect if script has AI character.
-        // 4. aiTask = generate3dAiScene()
-        // 5. Meanwhile, we run the classic voting loop until it's ready.
-        // 6. When it is ready, we run the vote.
-        // 7. And then finally, play the scene.
-    }
 
     async void Start()
     {
         sceneDirector.ResetStuff();
+        bool testWorkflow = true;
 
-        if(this.testWorkflow)
+        if(testWorkflow)
         {
-            await testWorkflow2();
+            // ID10T
+            await testWorkflow3();
+            //await testWorkflow2();
             //await testWorkflow1();
         }
         else if (this.generateCustomScript)
@@ -1153,6 +1075,267 @@ public class WholeThingManager : MonoBehaviour
 
 
 
+
+
+
+    //
+    // INTEGRATION TESTS OF LIKE DIFFERENT STUFF (TM)
+    // "Sometimes, a programmer needs to test, and the best way to do that is generate
+    // politically incorrect Rick and Morty AI TV episodes." - Barack Obama
+    //
+    //
+    //
+
+    // Test 1: Run a topic vote, run a character vote, sub the 3D character into a scene read from disk.
+    // This tests:
+    // - transitioning between the voting UI's
+    // - the functionality of the character voting interface
+    private async Task testWorkflow1()
+    {
+        // Run test main loop:
+
+        // PRODUCT 0:
+
+        // Show voting scene w/ custom timeout.
+        Task mockNextSceneTask = Task.Delay(4000);
+        await RunTopicVote(mockNextSceneTask, 2f);
+        Debug.Log("topic vote done");
+
+        // Show character voting scene w/ custom timeout.
+        CharacterVoteResults voteRes = await RunCharacterVote(
+            "sadam hussein",
+            //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
+            AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
+            5000
+        );
+        Debug.Log("char vote done");
+
+
+        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
+
+        await RunScene(scene);
+    }
+
+    // Test 2: create a scene with an AI character in it, generate the 3D AI character, run the character vote, and then play the scene
+    // This tests:
+    // - detecting when to generate 3d char
+    // - the integration with the 3d gen pipeline (also when it fails)
+    // - the progress of the generation / async performance
+    // - running a character vote on the newly downloaded characters
+    private async Task testWorkflow2()
+    {
+        // 1. Generate scene.
+        //var scene = await CreateScene("rick talks to the dalai lama about testiucular torsion", "me", "banana", "me", usingVoiceActing);
+        //Debug.Log($"saved scene {scene.id}");
+        //scene.WriteToDir();
+        //var scene = RickAndMortyScene.ReadFromDir("scene-trump-3d");
+        var scene = RickAndMortyScene.ReadFromDir("scene-dccfd02c-4634-c038-0de1-f09687854ebd");
+
+        if (scene.aiArt.character == null) throw new Exception("No AI art character wtf???");
+
+        // 2. Generate 3d head character.
+        Debug.Log("Generating 3d character");
+        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
+
+        int expectedTimeSecs = 60 + 60 + 60 + 60 + 30; // 4m30s
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        while (!characterGenTask.IsCompleted)
+        {
+            double progress = stopwatch.Elapsed.TotalSeconds / expectedTimeSecs;
+            progress = Math.Round(progress * 100, 2);
+            Debug.Log($"Generating 3d character ({stopwatch.Elapsed.TotalSeconds}s of {expectedTimeSecs})");
+            textField.text = $"Generating AI character ({progress}%)...";
+
+            await Task.Delay(1000);
+        }
+
+        AICharacter aiCharacterRes = await characterGenTask;
+
+        // 3. Run vote on character.
+        scene.aiArt.character.characterName = aiCharacterRes.characterName;
+        scene.aiArt.character.head3d = aiCharacterRes.head3d;
+        var voteResults = await RunCharacterVote(
+            aiCharacterRes.characterName,
+            aiCharacterRes.head3d.generationIds,
+            10000
+        );
+
+        // 4. Render scene with selected character.
+        scene.aiArt.character.head3d.generationIds = aiCharacterRes.head3d.generationIds;
+        scene.aiArt.character.head3d.characterKey = aiCharacterRes.characterName;
+        scene.aiArt.character.head3d.selectedGeneration = voteResults.selectedGeneration;
+        scene.WriteToDir(); // write with new 3d head data.
+
+        await RunScene(scene);
+    }
+
+
+    private async Task<RickAndMortyScene> mockCreateScene(RickAndMortyScene s, int delay)
+    {
+        await Task.Delay(delay);
+        return s;
+    }
+
+    // Test 3: run the main loop with 3d character scenes generating in the background.
+    // This tests:
+    // - 
+    private async Task testWorkflow3()
+    {
+        // PRODUCT 3:
+        // 1. Run mock main loop.
+        // 2. Generate script.
+        // 3. Detect if script has AI character.
+        // 4. aiTask = generate3dAiScene()
+        // 5. Meanwhile, we run the classic voting loop until it's ready.
+        // 6. When it is ready, we run the vote.
+        // 7. And then finally, play the scene.
+
+        // The scene generating in the background.
+        Task<RickAndMortyScene> nextSceneTask = mockCreateScene(RickAndMortyScene.ReadFromDir("scene-trump-3d"), 30000);
+
+        // Ok now in the background:
+        // Sometimes we run a vote and then fork it into 2d and 3d
+        // when we get the scene back, if there is an ai character, we generate one.
+        // while we are waiting on this, continue the main loop
+        // as soon as this is ready, then we run the voting thing, and then we run the actual character fooblah.
+        // that seems like it would work.
+
+        for (int i = 0; i < 1000; i++)
+        {
+            // Run a vote.
+            TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
+
+            // Add the chosen topic to the blacklist so it doesnt play again
+            youTubeChat.AddToBlacklist(voteResults.topic);
+
+            // Get the next scene.
+            RickAndMortyScene currentScene = await nextSceneTask;
+
+            // Check if we can make a 3d scene from it.
+            // If we can, generate a 3d scene in background, and play reruns instead.
+            if (currentScene.aiArt?.character != null)
+            {
+                // Background: Generate 3d scene.
+                Task<PlayItem3DCharacterScene> item3dSceneTask = MakeScene3d(currentScene);
+
+                // Foreground: play reruns.
+                List<RickAndMortyScene> reruns = new List<RickAndMortyScene>();
+                //string[] scenesToRerun = PathUtils.GetSubDirs("saved-scenes/");
+
+                reruns.AddRange(new RickAndMortyScene[] {
+                    RickAndMortyScene.ReadFromDir("scene-sadam-hussein"),
+                    RickAndMortyScene.ReadFromDir("scene-trump-3d"),
+                    RickAndMortyScene.ReadFromDir("scene-samaltman"),
+                    RickAndMortyScene.ReadFromDir("scene-da00c9d5-7789-517d-4116-a3a280308daf")
+                });
+
+                int j = 0;
+
+                while(!item3dSceneTask.IsCompleted)
+                {
+                    int rerunIdx = j % reruns.Count;
+                    Debug.Log($"playing rerun #{j}, iteration {rerunIdx}");
+                    await RunScene(reruns[rerunIdx]);
+                    j++;
+                }
+
+                // Once the 3d scene task is completed, we check if it was successful, and if it was,
+                // we play it.
+                if(item3dSceneTask.IsCompletedSuccessfully)
+                {
+                    PlayItem3DCharacterScene item = await item3dSceneTask;
+                    RickAndMortyScene scene = item.scene;
+                    AICharacter character = item.character;
+
+                    // Run vote on character.
+                    scene.aiArt.character.head3d = character.head3d;
+                    var characterVoteResults = await RunCharacterVote(
+                        character.characterName,
+                        character.head3d.generationIds,
+                        10000
+                    );
+
+                    // Save winning character.
+                    scene.aiArt.character.head3d.generationIds = character.head3d.generationIds;
+                    scene.aiArt.character.head3d.characterKey = character.characterName;
+                    scene.aiArt.character.head3d.selectedGeneration = characterVoteResults.selectedGeneration;
+                    scene.WriteToDir(); // write with new 3d head data.
+
+                    // Background: create next scene.
+                    nextSceneTask = CreateScene(
+                        voteResults.topic,
+                        voteResults.author,
+                        voteResults.backupTopic,
+                        voteResults.backupAuthor,
+                        usingVoiceActing
+                    );
+
+                    // Foreground: play 3d scene.
+                    await RunScene(scene);
+                } else
+                {
+                    // In the background, create a scene.
+                    //Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {voteResults.topic}");
+                    nextSceneTask = CreateScene(
+                        voteResults.topic,
+                        voteResults.author,
+                        voteResults.backupTopic,
+                        voteResults.backupAuthor,
+                        usingVoiceActing
+                    );
+
+                    // Just play the original 2d scene.
+                    await RunScene(currentScene);
+                    continue;
+                }
+            } else
+            {
+                // In the background, create a scene.
+                //Debug.Log($"main loop #{i}: \ncurrent scene: {currentScene.chatGPTRawOutput}\n\nnext scene: {voteResults.topic}");
+                nextSceneTask = CreateScene(
+                    voteResults.topic,
+                    voteResults.author,
+                    voteResults.backupTopic,
+                    voteResults.backupAuthor,
+                    usingVoiceActing
+                );
+
+                // Just play the original 2d scene.
+                await RunScene(currentScene);
+            }
+        }
+    }
+
+    
+    async Task<PlayItem3DCharacterScene> MakeScene3d(RickAndMortyScene scene)
+    {
+        AICharacter character = await Make3dCharacter(scene);
+        PlayItem3DCharacterScene item3dScene = new PlayItem3DCharacterScene();
+        item3dScene.character = character;
+        item3dScene.scene = scene;
+        return item3dScene;
+    }
+
+    // Make a 3d character version of a rickandmorty scene with 2d ai character.
+    async Task<AICharacter> Make3dCharacter(RickAndMortyScene scene)
+    {
+        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
+
+        int expectedTimeSecs = 60 * 7; // 7m
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        while (!characterGenTask.IsCompleted)
+        {
+            double progress = stopwatch.Elapsed.TotalSeconds / expectedTimeSecs;
+            progress = Math.Round(progress * 100, 2);
+            Debug.Log($"Generating 3d character ({stopwatch.Elapsed.TotalSeconds}s of {expectedTimeSecs})");
+            textField.text = $"Generating AI character ({progress}%)...";
+
+            await Task.Delay(1000);
+        }
+
+        return await characterGenTask;
+    }
 }
 
 
@@ -1192,3 +1375,12 @@ public class RandomScript_Editor : Editor
     }
 }
 #endif
+
+
+class PlayItem { }
+
+class PlayItem3DCharacterScene : PlayItem
+{
+    public AICharacter character;
+    public RickAndMortyScene scene;
+}
