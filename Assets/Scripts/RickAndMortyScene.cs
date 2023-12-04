@@ -24,7 +24,15 @@ public class RickAndMortyScene
     // Unprocessed.
     public string chatGPTRawOutput;
 
+    /// <summary>
+    /// The processed lines of the script.
+    /// </summary>
     // Processed (for slurs etc.).
+    // This script includes:
+    // - dialogue
+    // - stage directions
+    // - camera angles
+    // - slurs processed
     public string[] chatGPTOutputLines;
 
     // Voice tracks.
@@ -35,6 +43,7 @@ public class RickAndMortyScene
     public string[] voiceTracks;
 
     // Generated dimensions and characters.
+    // NOTE: not nullable.
     public AIArtStuff aiArt;
 
     public RickAndMortyScene(
@@ -76,6 +85,7 @@ public class RickAndMortyScene
         string sceneFilePath = $"{basePath}/scene.json";
         string voiceTracksDir = $"{basePath}/voice-tracks";
         string aiCharacterDir = $"{basePath}/characters";
+        string aiHeadDirName = $"{basePath}/heads3d";
         string aiDimensionDir = $"{basePath}/dimensions";
 
         // Make a new directory.
@@ -100,8 +110,9 @@ public class RickAndMortyScene
             string filename = $"clip_{i}.wav";
             Debug.Log($"writing clip #{i} to disk {filename}");
 
-            // Save the file as a .ogg to the saved-scenes/ directory.
+            // Save the file as a .wav to the saved-scenes/ directory.
             byte[] wavData = WavUtility.ConvertAudioClipToWAV(clip);
+            if (clip.samples == 0) throw new Exception("failed to write clip, 0 samples");
             File.WriteAllBytes($"{voiceTracksDir}/{filename}", wavData);
 
             voiceTracks.Add(filename);
@@ -115,6 +126,16 @@ public class RickAndMortyScene
             string filename = $"character_0.png";
             File.WriteAllBytes($"{aiCharacterDir}/{filename}", pngData);
             aiArt.character.texturePath = filename;
+        }
+        if(aiArt.character?.head3d != null)
+        {
+            AIHead3D head3d = aiArt.character?.head3d;
+            // Copy the 3D head from the generations directory.
+            //  src: "local-image-gen/headshot/data/3d/dalai lama/7as7d7f8ds72"
+            // dest: "heads3d/7as7d7f8ds72/..."
+            string pathToGeneration = $"local-image-gen/headshot/data/3d/{head3d.characterKey}/{head3d.selectedGeneration}_mesh";
+            string outputPath = $"{aiHeadDirName}/{head3d.selectedGeneration}";
+            PathUtils.CopyDirectory(pathToGeneration, outputPath, true);
         }
         if (aiArt.dimension != null)
         {
@@ -164,6 +185,7 @@ public class RickAndMortyScene
         scene.ttsVoiceActingLines = new List<AudioClip>();
         foreach (string filename in scene.voiceTracks)
         {
+            Debug.Log($"reading audio clip {voiceTracksDir}/{filename}");
             byte[] wavData = File.ReadAllBytes($"{voiceTracksDir}/{filename}");
             AudioClip clip = WavUtility.ConvertWAVToAudioClip(wavData);
             scene.ttsVoiceActingLines.Add(clip);
@@ -176,6 +198,7 @@ public class RickAndMortyScene
             if (aiArt.character != null)
             {
                 // Load texture.
+                Debug.Log($"reading AI art character texture {aiCharacterDir}/{aiArt.character.texturePath}");
                 byte[] pngData = File.ReadAllBytes($"{aiCharacterDir}/{aiArt.character.texturePath}");
                 Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(pngData);
@@ -185,6 +208,7 @@ public class RickAndMortyScene
             if (aiArt.dimension != null)
             {
                 // Load texture.
+                Debug.Log($"reading AI art dimension texture {aiCharacterDir}/{aiArt.dimension.texturePath}");
                 byte[] pngData = File.ReadAllBytes($"{aiDimensionDir}/{aiArt.dimension.texturePath}");
                 Texture2D tex = new Texture2D(2, 2);
                 tex.LoadImage(pngData);
@@ -199,7 +223,9 @@ public class RickAndMortyScene
 
 public class AIArtStuff
 {
+    // Nullable
     public AIDimension dimension;
+    // Nullable
     public AICharacter character;
 
     public AIArtStuff() { }
@@ -222,6 +248,7 @@ public class AICharacter
     public string characterName;
     public string prompt;
 
+    // Nullable
     public AIHead3D head3d;
 
     [System.NonSerialized]

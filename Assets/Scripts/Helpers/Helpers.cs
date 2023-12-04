@@ -104,6 +104,7 @@ public static class WavUtility
 
 public static class PathUtils
 {
+    // Returns a list of directory/folder names inside `directoryPath`.
     public static string[] GetSubDirs(string directoryPath)
     {
         //string directoryPath = "local-image-gen/headshot/data/3d/";
@@ -118,6 +119,43 @@ public static class PathUtils
 
         return dirs.ToArray();
     }
+
+    public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+    {
+        // Get information about the source directory
+        var dir = new DirectoryInfo(sourceDir);
+
+        // Check if the source directory exists
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+        // Cache directories before we start copying
+        DirectoryInfo[] dirs = dir.GetDirectories();
+
+        // Create the destination directory
+        Directory.CreateDirectory(destinationDir);
+
+        bool overwrite = true;
+
+        // Get the files in the source directory and copy to the destination directory
+        foreach (FileInfo file in dir.GetFiles("*"))
+        {
+            string targetFilePath = Path.Combine(destinationDir, file.Name);
+            Debug.Log($"copy {file.Name}");
+            File.Copy(file.FullName, targetFilePath, overwrite);
+        }
+
+        // If recursive and copying subdirectories, recursively call this method
+        if (recursive)
+        {
+            foreach (DirectoryInfo subDir in dirs)
+            {
+                string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                CopyDirectory(subDir.FullName, newDestinationDir, true);
+            }
+        }
+    }
+
 }
 
 

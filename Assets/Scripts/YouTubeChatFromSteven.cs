@@ -220,9 +220,12 @@ public class YouTubeChatFromSteven : MonoBehaviour
     public void ClearVotes()
     {
         voteSuggestions = new List<string>();
-        characterVotes = new int[4];
     }
 
+    public void ClearCharacterVotes()
+    {
+        characterVotes = new int[4];
+    }
     public int[] CountCharacterVotes()
     {
         return characterVotes;

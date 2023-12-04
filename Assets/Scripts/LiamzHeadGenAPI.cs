@@ -8,19 +8,15 @@ using System.Text;
 
 public class LiamzHeadGenAPI : MonoBehaviour
 {
-    public static async Task<AICharacter> GenerateAICharacter(string characterName)
+    public static async Task<AIHead3D> GenerateAIHead3D(string characterName)
     {
         CharacterHeadsGenerateResponse res = await GenerateHead(characterName);
 
-        AICharacter aiCharacter = new AICharacter();
-        aiCharacter.characterName = characterName;
-        aiCharacter.head3d = new AIHead3D();
-        aiCharacter.head3d.generationIds = res.generation_ids;
-        aiCharacter.head3d.characterKey = characterName;
-        //aiCharacter.prompt = prompt;
-        //aiCharacter.texture = fullTexture;
+        AIHead3D head3d = new AIHead3D();
+        head3d.generationIds = res.generation_ids;
+        head3d.characterKey = characterName;
 
-        return aiCharacter;
+        return head3d;
     }
 
 

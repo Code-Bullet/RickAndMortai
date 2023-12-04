@@ -74,11 +74,29 @@ public class CharacterVotingChamber : MonoBehaviour
     }
 
     
-    public async Task<CharacterVoteResults> RunVote(int timeToVoteMilliseconds)
+    public async Task<CharacterVoteResults> RunVote(YouTubeChatFromSteven chat, int timeToVoteMilliseconds)
     {
         isActive = true;
 
-        await Task.Delay(timeToVoteMilliseconds);
+        // Loop until vote done.
+        int elapsed = 0;
+        int step = 500;
+
+        while(elapsed < timeToVoteMilliseconds)
+        {
+            // Add votes from chat to current tallies.
+            int[] charVotes = chat.CountCharacterVotes();
+            for(int i = 0; i < 4; i++)
+            {
+                this.results.tallies[i] += charVotes[i];
+            }
+            chat.ClearCharacterVotes();
+
+            // Sleep.
+            await Task.Delay(step);
+            elapsed += step;
+        }
+        
 
         var results = this.results;
         this.results = null;

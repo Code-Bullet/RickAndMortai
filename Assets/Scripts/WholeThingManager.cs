@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class TopicVoteResults
 {
@@ -151,8 +152,6 @@ public class WholeThingManager : MonoBehaviour
         openAICameraDirector.Init();
 
         SetUI(null);
-        
-
 
         // TestingShit();
     }
@@ -164,10 +163,21 @@ public class WholeThingManager : MonoBehaviour
         sceneDirector.ResetStuff();
         bool testWorkflow = true;
 
-        if(testWorkflow)
+        if (testWorkflow)
         {
             // ID10T
-            await testWorkflow3();
+
+            //RickAndMortyScene scene = RickAndMortyScene.ReadFromDir("scene-samaltman");
+            //scene.WriteToDir();
+            //await RunScene(scene);
+            //return;
+
+            //var scene = RickAndMortyScene.ReadFromDir("scene-17d82f91-bafb-5a4b-4341-b39baedc1c01");
+            //scene.WriteToDir();
+            //await RunScene(scene);
+
+            await testWorkflow4();
+            //await testWorkflow3();
             //await testWorkflow2();
             //await testWorkflow1();
         }
@@ -255,10 +265,9 @@ public class WholeThingManager : MonoBehaviour
         characterVotingChamber.stageCamera.enabled = true;
 
         characterVotingChamber.Setup(characterName, generationIds);
-        CharacterVoteResults results = await characterVotingChamber.RunVote(timeToVoteMilliseconds);        
+        CharacterVoteResults results = await characterVotingChamber.RunVote(youTubeChat, timeToVoteMilliseconds);
 
         characterVotingChamber.stageCamera.enabled = false;
-        // TODO
 
         SetUI(null);
         return results;
@@ -470,7 +479,7 @@ public class WholeThingManager : MonoBehaviour
             if (i > 0) Debug.Log("scene done");
             dialogBox.text = "";
 
-            
+
             // Run a vote.
             TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
             // Add the chosen topic to the blacklist so it doesnt play again
@@ -544,8 +553,24 @@ public class WholeThingManager : MonoBehaviour
         // 2. Play scene.
         //
         SetUI(episodeStuffUI);
+
+        // TODO: it'd be cool to play scenes without the censored stuff.
+        // but this messes up the syncing of the voice tracks
+        // leaving this here for now
+
+        //string[] script = scene.chatGPTRawOutput
+        //    .Split("\n")
+        //    .Where((val) => val.Trim().Length > 0)
+        //    .ToList().ToArray();
+
+        //if(usePhonicSlurDetection || useChatgptSlurDetection)
+        //{
+        //    script = scene.chatGPTOutputLines;
+        //}
+
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
-        //SetUI(null);
+
+        SetUI(null);
 
 
         //
@@ -563,6 +588,97 @@ public class WholeThingManager : MonoBehaviour
     // GetCharacters - "[rick walks to morty]  returns chacters 1 rick, character 2 morty.
 
 
+
+    // Takes a script and adds camera shots to it.
+    public async Task<string[]> GenerateCameraShots(string script)
+    {
+        // Call ChatGPT with the script
+        // It returns a response which is the script with camera directions added to it.
+        // We have to process this script since it isn't perfect.
+        string response = await openAICameraDirector.EnterPromptAndGetResponse(script);
+        char[] delims = new[] { '\r', '\n' };
+        string[] scriptWithCameraShotsUnprocessed = response.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+
+        // ok so now we have 2 scripts 1 with camera angles and 1 without, sometimes the one without removes lines and shit, so we cant
+        // just use that we have to merge the two
+        List<string> combinedList = script.Split(delims).ToList();
+
+        int checkedIndexOnCombinedList = 0;
+        //length -1 because we dont care if a camera instruciton is at the end of the list
+        for (int i = 0; i < scriptWithCameraShotsUnprocessed.Length - 1; i++)
+        {
+            string lineWeChecking = scriptWithCameraShotsUnprocessed[i];
+            //if this bitch is a camera command
+            if (lineWeChecking.Contains("{") && !lineWeChecking.Contains(":"))
+            {
+
+                // then we get the instuction after this one and find it in the original array.
+                string nextInstruction = scriptWithCameraShotsUnprocessed[i + 1];
+
+                // dont start at 0 so if 2 lines are the same we dont insert it again
+                for (int j = checkedIndexOnCombinedList; j < combinedList.Count; j++)
+                {
+                    // Clean strings by removing special characters, spaces, and converting to lowercase
+
+                    string cleanedString1 = Regex.Replace(combinedList[j], "[^a-zA-Z0-9]", "").ToLower();
+                    string cleanedString2 = Regex.Replace(nextInstruction, "[^a-zA-Z0-9]", "").ToLower();
+                    //match found
+                    if (cleanedString1 == cleanedString2)
+                    {
+                        // add the instruction in before j
+                        combinedList.Insert(j, lineWeChecking);
+
+                        // move the checked index forward so we dont add another line before this.
+                        // its +2 becauses we inserted an item which increases the index by 1 and then we want to move the pointer to the next instuction
+                        checkedIndexOnCombinedList = j + 2;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+
+        // ok now check for entering portals, only 2 shots actually look good so change it to either wide shot, or tracking shot behind.
+        for (int i = 1; i < combinedList.Count; i++)
+        {
+            string lineWeChecking = combinedList[i];
+            if (lineWeChecking.Contains("[") && lineWeChecking.ToLower().Contains("portal to"))
+            {
+                string previousLine = combinedList[i - 1];
+                if (!previousLine.Contains("{"))
+                {
+                    combinedList.Insert(i, "{Wide Shot}");
+                    i += 1;
+                    continue;
+                }
+                else if (!previousLine.ToLower().Contains("wide shot"))
+                {
+                    //if the previous shot isnt a wide shot then add a tracking shot behind.
+                    combinedList[i - 1] = "{Tracking shot, Morty, behind}";
+                    continue;
+                }
+            }
+        }
+
+        string[] scriptWithCameraShotsProcessed = combinedList.ToArray();
+
+        Debug.Log("original: \n " + string.Join("\n", script));
+        Debug.Log("Chatgpt camera angles: \n " + string.Join("\n", scriptWithCameraShotsUnprocessed));
+        Debug.Log("Combined: \n " + string.Join("\n", scriptWithCameraShotsProcessed));
+
+        return scriptWithCameraShotsProcessed;
+    }
+
+    //public async Task GenerateVoiceTracks()
+    //{
+    //    // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
+    //    List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
+    //    List<string>[] dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLinesWithSwearing, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
+    //    List<string> voiceModelUUIDs = dialogInfoWithSwearing[0];
+    //    List<string> characterNames = dialogInfoWithSwearing[1];
+    //    List<string> textsToSpeak = dialogInfoWithSwearing[2];
+    //}
 
     // this is the main bitch of the program. a bunch of calling other scripts to get each element of the scene.
     // basically this turns an input prompt into a list of lines of dialog + stage directions, and a list of audio files for the tts.
@@ -850,7 +966,6 @@ public class WholeThingManager : MonoBehaviour
 
 
         // Start both tasks in parallel
-        // var aiArtTask = replicateAPI.GenerateAndSetTexturesForCharacter(defaultGuy, nameOfAiGeneratedCharacter);
         Task<AIArtStuff> aiArtTask = null;
         if (useAiArt)
         {
@@ -866,24 +981,14 @@ public class WholeThingManager : MonoBehaviour
         {
             ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(textsToSpeak, voiceModelUUIDs, characterNames, textField, creatingScene);
             allConcurrentTasks.Add(ttsVoiceActingTask);
-
         }
 
-        Task<string> CameraShotsChatGPTTask = null;
+        Task<string[]> CameraShotsChatGPTTask = null;
         if (usingChatGptCameraShots)
         {
-            string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
-            CameraShotsChatGPTTask = openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
-            // string cameraChatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(outputLinesReMerged);
-            // // string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
-            // char[] delims = new[] { '\r', '\n' };
-            // string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
-            // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
+            CameraShotsChatGPTTask = GenerateCameraShots(chatGPTOutput);
             allConcurrentTasks.Add(CameraShotsChatGPTTask);
-
         }
-
-
 
 
         Debug.Log("start await");
@@ -907,92 +1012,15 @@ public class WholeThingManager : MonoBehaviour
         // }
 
         Debug.Log("finish await");
-        //retrieve the result of ttsVoiceActingTask after awaiting it
 
         if (usingChatGptCameraShots)
         {
-
-            string cameraChatGPTOutput = CameraShotsChatGPTTask.Result;
-            char[] delims = new[] { '\r', '\n' };
-            string[] outputLinesProcessedWithCameraShots = cameraChatGPTOutput.Split(delims, StringSplitOptions.RemoveEmptyEntries);
-
-            // ok so now we have 2 scripts 1 with camera angles and 1 without, sometimes the one without removes lines and shit, so we cant
-            // just use that we have to merge them
-
-
-            List<string> combinedList = chatGPTOutputLines.ToList();
-
-            int checkedIndexOnCombinedList = 0;
-            //length -1 because we dont care if a camera instruciton is at the end of the list
-            for (int i = 0; i < outputLinesProcessedWithCameraShots.Length - 1; i++)
-            {
-                string lineWeChecking = outputLinesProcessedWithCameraShots[i];
-                //if this bitch is a camera command
-                if (lineWeChecking.Contains("{") && !lineWeChecking.Contains(":"))
-                {
-
-                    // then we get the instuction after this one and find it in the original array.
-                    string nextInstruction = outputLinesProcessedWithCameraShots[i + 1];
-
-                    // dont start at 0 so if 2 lines are the same we dont insert it again
-                    for (int j = checkedIndexOnCombinedList; j < combinedList.Count; j++)
-                    {
-                        // Clean strings by removing special characters, spaces, and converting to lowercase
-
-                        string cleanedString1 = Regex.Replace(combinedList[j], "[^a-zA-Z0-9]", "").ToLower();
-                        string cleanedString2 = Regex.Replace(nextInstruction, "[^a-zA-Z0-9]", "").ToLower();
-                        //match found
-                        if (cleanedString1 == cleanedString2)
-                        {
-                            // add the instruction in before j
-                            combinedList.Insert(j, lineWeChecking);
-
-                            // move the checked index forward so we dont add another line before this.
-                            // its +2 becauses we inserted an item which increases the index by 1 and then we want to move the pointer to the next instuction
-                            checkedIndexOnCombinedList = j + 2;
-                            break;
-                        }
-                    }
-                }
-
-            }
-
-
-            // ok now check for entering portals, only 2 shots actually look good so change it to either wide shot, or tracking shot behind.
-            for (int i = 1; i < combinedList.Count; i++)
-            {
-                string lineWeChecking = combinedList[i];
-                if (lineWeChecking.Contains("[") && lineWeChecking.ToLower().Contains("portal to"))
-                {
-                    string previousLine = combinedList[i - 1];
-                    if (!previousLine.Contains("{"))
-                    {
-                        combinedList.Insert(i, "{Wide Shot}");
-                        i += 1;
-                        continue;
-                    }
-                    else if (!previousLine.ToLower().Contains("wide shot"))
-                    {
-                        //if the previous shot isnt a wide shot then add a tracking shot behind.
-                        combinedList[i - 1] = "{Tracking shot, Morty, behind}";
-                        continue;
-                    }
-                }
-            }
-
-            string outputLinesReMerged = string.Join("\n", chatGPTOutputLines);
-
-            Debug.Log("original: \n " + string.Join("\n", chatGPTOutputLines));
-            Debug.Log("Chatgpt camer angles: \n " + string.Join("\n", outputLinesProcessedWithCameraShots));
-            Debug.Log("Combined: \n " + string.Join("\n", combinedList.ToArray()));
-
-            chatGPTOutputLines = combinedList.ToArray();
+            chatGPTOutputLines = await CameraShotsChatGPTTask;
             chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
-
-            // chatGPTOutputLines = outputLinesProcessedWithCameraShots;
         }
 
 
+        //retrieve the result of ttsVoiceActingTask after awaiting it
         List<AudioClip> ttsVoiceActingOrdered = new List<AudioClip>();
         if (isThisSceneUsingVoiceActing)
         {
@@ -1136,11 +1164,11 @@ public class WholeThingManager : MonoBehaviour
 
         // 2. Generate 3d head character.
         Debug.Log("Generating 3d character");
-        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
+        Task<AIHead3D> aiHead3dTask = LiamzHeadGenAPI.GenerateAIHead3D(scene.aiArt.character.characterName);
 
         int expectedTimeSecs = 60 + 60 + 60 + 60 + 30; // 4m30s
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        while (!characterGenTask.IsCompleted)
+        while (!aiHead3dTask.IsCompleted)
         {
             double progress = stopwatch.Elapsed.TotalSeconds / expectedTimeSecs;
             progress = Math.Round(progress * 100, 2);
@@ -1150,20 +1178,18 @@ public class WholeThingManager : MonoBehaviour
             await Task.Delay(1000);
         }
 
-        AICharacter aiCharacterRes = await characterGenTask;
+        AIHead3D aiHead3d = await aiHead3dTask;
 
         // 3. Run vote on character.
-        scene.aiArt.character.characterName = aiCharacterRes.characterName;
-        scene.aiArt.character.head3d = aiCharacterRes.head3d;
+        scene.aiArt.character.head3d = aiHead3d;
         var voteResults = await RunCharacterVote(
-            aiCharacterRes.characterName,
-            aiCharacterRes.head3d.generationIds,
+            aiHead3d.characterKey,
+            aiHead3d.generationIds,
             10000
         );
 
         // 4. Render scene with selected character.
-        scene.aiArt.character.head3d.generationIds = aiCharacterRes.head3d.generationIds;
-        scene.aiArt.character.head3d.characterKey = aiCharacterRes.characterName;
+        scene.aiArt.character.head3d = aiHead3d;
         scene.aiArt.character.head3d.selectedGeneration = voteResults.selectedGeneration;
         scene.WriteToDir(); // write with new 3d head data.
 
@@ -1179,7 +1205,8 @@ public class WholeThingManager : MonoBehaviour
 
     // Test 3: run the main loop with 3d character scenes generating in the background.
     // This tests:
-    // - 
+    // - running 3d scene gen in the background while also playing a current scene
+    // - "lazy loading" a character scene into the mix
     private async Task testWorkflow3()
     {
         // PRODUCT 3:
@@ -1192,7 +1219,8 @@ public class WholeThingManager : MonoBehaviour
         // 7. And then finally, play the scene.
 
         // The scene generating in the background.
-        Task<RickAndMortyScene> nextSceneTask = mockCreateScene(RickAndMortyScene.ReadFromDir("scene-trump-3d"), 30000);
+        //Task<RickAndMortyScene> nextSceneTask = mockCreateScene(RickAndMortyScene.ReadFromDir("scene-sadam-hussein"), 30000);
+        Task<RickAndMortyScene> nextSceneTask = CreateScene("rick and morty talk to a random famous person", "me", "random", "me", usingVoiceActing);
 
         // Ok now in the background:
         // Sometimes we run a vote and then fork it into 2d and 3d
@@ -1203,6 +1231,8 @@ public class WholeThingManager : MonoBehaviour
 
         for (int i = 0; i < 1000; i++)
         {
+            Debug.Log($"workflow3 iteration i={i}");
+
             // Run a vote.
             TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
 
@@ -1224,45 +1254,62 @@ public class WholeThingManager : MonoBehaviour
                 //string[] scenesToRerun = PathUtils.GetSubDirs("saved-scenes/");
 
                 reruns.AddRange(new RickAndMortyScene[] {
-                    RickAndMortyScene.ReadFromDir("scene-sadam-hussein"),
-                    RickAndMortyScene.ReadFromDir("scene-trump-3d"),
+                    //RickAndMortyScene.ReadFromDir("scene-sadam-hussein"),
+                    //RickAndMortyScene.ReadFromDir("scene-trump-3d"),
                     RickAndMortyScene.ReadFromDir("scene-samaltman"),
-                    RickAndMortyScene.ReadFromDir("scene-da00c9d5-7789-517d-4116-a3a280308daf")
+                    //RickAndMortyScene.ReadFromDir("scene-da00c9d5-7789-517d-4116-a3a280308daf")
                 });
 
                 int j = 0;
-
-                while(!item3dSceneTask.IsCompleted)
+                while (!item3dSceneTask.IsCompleted)
                 {
+                    Debug.Log($"workflow3 iteration j={j}");
                     int rerunIdx = j % reruns.Count;
                     Debug.Log($"playing rerun #{j}, iteration {rerunIdx}");
                     await RunScene(reruns[rerunIdx]);
                     j++;
                 }
 
+
+                // While we are generating the 3d scene, which can take a while (7mins)
+                // we run the normal loop:
+                // - play scene 0 (rerun)
+                // - vote on new topic for scene 1
+                // - create scene 1
+                // - play scene 1
+                // - create scene 2 based on topic vote
+                // - play scene 2
+                //await RunScene(reruns[0]);
+                //Task<RickAndMortyScene> nextSceneTask2 = CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+                //while (!item3dSceneTask.IsCompleted)
+                //{
+                //    var topicVoteResults2 = await RunTopicVote(nextSceneTask2, 30f);
+
+                //    // Add the chosen topic to the blacklist so it doesnt play again
+                //    youTubeChat.AddToBlacklist(voteResults.topic);
+
+                //    // Get the next scene.
+                //    RickAndMortyScene scene = await nextSceneTask2;
+
+                //    // Background: generate next scene.
+                //    nextSceneTask2 = CreateScene(
+                //        topicVoteResults2.topic,
+                //        topicVoteResults2.author,
+                //        topicVoteResults2.backupTopic,
+                //        topicVoteResults2.backupAuthor,
+                //        usingVoiceActing
+                //    );
+
+                //    // Foreground: play scene.
+                //    await RunScene(scene);
+                //}
+
+
                 // Once the 3d scene task is completed, we check if it was successful, and if it was,
                 // we play it.
-                if(item3dSceneTask.IsCompletedSuccessfully)
+                if (item3dSceneTask.IsCompletedSuccessfully)
                 {
-                    PlayItem3DCharacterScene item = await item3dSceneTask;
-                    RickAndMortyScene scene = item.scene;
-                    AICharacter character = item.character;
-
-                    // Run vote on character.
-                    scene.aiArt.character.head3d = character.head3d;
-                    var characterVoteResults = await RunCharacterVote(
-                        character.characterName,
-                        character.head3d.generationIds,
-                        10000
-                    );
-
-                    // Save winning character.
-                    scene.aiArt.character.head3d.generationIds = character.head3d.generationIds;
-                    scene.aiArt.character.head3d.characterKey = character.characterName;
-                    scene.aiArt.character.head3d.selectedGeneration = characterVoteResults.selectedGeneration;
-                    scene.WriteToDir(); // write with new 3d head data.
-
-                    // Background: create next scene.
+                    // Background: create next 2d scene.
                     nextSceneTask = CreateScene(
                         voteResults.topic,
                         voteResults.author,
@@ -1271,7 +1318,29 @@ public class WholeThingManager : MonoBehaviour
                         usingVoiceActing
                     );
 
-                    // Foreground: play 3d scene.
+                    // 
+                    // Forground:
+                    //
+
+                    PlayItem3DCharacterScene item = await item3dSceneTask;
+                    RickAndMortyScene scene = item.scene;
+                    AIHead3D head3d = item.head3d;
+
+                    // Run vote on character.
+                    scene.aiArt.character.head3d = head3d;
+                    var characterVoteResults = await RunCharacterVote(
+                        head3d.characterKey,
+                        head3d.generationIds,
+                        10000
+                    );
+
+                    // Save winning character.
+                    //save3dHeadAssetsToScene(scene, item.head3d, characterVoteResults);
+                    scene.aiArt.character.head3d = item.head3d;
+                    scene.aiArt.character.head3d.selectedGeneration = characterVoteResults.selectedGeneration;
+                    scene.WriteToDir(); // write with new 3d head data.
+
+                    // Play 3d scene.
                     await RunScene(scene);
                 } else
                 {
@@ -1310,17 +1379,22 @@ public class WholeThingManager : MonoBehaviour
     
     async Task<PlayItem3DCharacterScene> MakeScene3d(RickAndMortyScene scene)
     {
-        AICharacter character = await Make3dCharacter(scene);
+        AIHead3D head3d = await Make3dCharacter(scene);
         PlayItem3DCharacterScene item3dScene = new PlayItem3DCharacterScene();
-        item3dScene.character = character;
+        item3dScene.head3d = head3d;
         item3dScene.scene = scene;
         return item3dScene;
     }
 
-    // Make a 3d character version of a rickandmorty scene with 2d ai character.
-    async Task<AICharacter> Make3dCharacter(RickAndMortyScene scene)
+    // Make a 3d character version of a rickandmorty scene with a 2d ai character.
+    async Task<AIHead3D> Make3dCharacter(RickAndMortyScene scene)
     {
-        Task<AICharacter> characterGenTask = LiamzHeadGenAPI.GenerateAICharacter(scene.aiArt.character.characterName);
+        if(scene.aiArt == null || scene.aiArt.character == null)
+        {
+            throw new Exception("can't make 3d character, RickAndMortyScene doesn't have any AI character");
+        }
+
+        Task<AIHead3D> characterGenTask = LiamzHeadGenAPI.GenerateAIHead3D(scene.aiArt.character.characterName);
 
         int expectedTimeSecs = 60 * 7; // 7m
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -1335,6 +1409,58 @@ public class WholeThingManager : MonoBehaviour
         }
 
         return await characterGenTask;
+    }
+
+    private async Task testWorkflow4()
+    {
+        List<string> _3dScenes = new List<string>();
+
+        // List all of the scenes in saved-scenes/
+        foreach(string dir in PathUtils.GetSubDirs("saved-scenes/"))
+        {
+            // Load the scene.json
+            string data = File.ReadAllText($"saved-scenes/{dir}/scene.json");
+            var scene = JsonConvert.DeserializeObject<RickAndMortyScene>(data);
+
+            if(scene.aiArt.character != null)
+            {
+                if(scene.aiArt.character.head3d != null)
+                {
+                    _3dScenes.Add(dir);
+                }
+            }
+        }
+
+        Debug.Log($"found {_3dScenes.Count} 3d scenes to play");
+
+        //int i = 0;
+        //foreach(string sceneId in _3dScenes)
+        //{
+        //    Debug.Log($"regen scene {i}");
+        //    i++;
+
+        //    RickAndMortyScene scene = RickAndMortyScene.ReadFromDir(sceneId);
+        //    Debug.Log("adding camera shots to scene");
+        //    string[] scriptWithCameraShots = await GenerateCameraShots(scene.chatGPTRawOutput);
+        //    Debug.Log("script with \n\n" + string.Join("\n", scriptWithCameraShots));
+        //    scene.chatGPTOutputLines = scriptWithCameraShots;
+        //    scene.WriteToDir();
+        //}
+
+        int i = 0;
+        foreach (string sceneId in _3dScenes)
+        {
+            Debug.Log($"play regen scene {i}");
+            i++;
+
+            //RickAndMortyScene scene = RickAndMortyScene.ReadFromDir("scene-6ddab2bc-2fb9-1ed8-3140-dfc7dc323f19");
+            RickAndMortyScene scene = RickAndMortyScene.ReadFromDir(sceneId);
+
+            if (i == 2)
+            {
+                await RunScene(scene);
+            }
+        }
     }
 }
 
@@ -1381,6 +1507,6 @@ class PlayItem { }
 
 class PlayItem3DCharacterScene : PlayItem
 {
-    public AICharacter character;
+    public AIHead3D head3d;
     public RickAndMortyScene scene;
 }

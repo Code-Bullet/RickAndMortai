@@ -95,20 +95,35 @@ public class SceneDirector : MonoBehaviour
         // these bastards keep moving
         currentDimension = Garage;
 
+        // Reset camera to main camera.
         currentDimension.actualCamera.SetActive(true);
         currentDimension.virtualCamera.SetActive(true);
 
+        // Make sure Rick and Morty are rendered.
         RickRenderer.SetActive(true);
         MortyRenderer.SetActive(true);
 
+        // Teleport our main characters to the current dimension.
         rick.TeleportTo(currentDimension.portalLocation.transform.position);
         morty.TeleportTo(currentDimension.portalLocation.transform.position);
 
+        // Get them walking to their places on stage - this adds a little bit of nice "animation" to the scene setup.
         rick.MoveTowardsPosition(currentDimension.centerStage1.gameObject.transform.position, 1f);
-        rick.LookAtTarget(currentDimension.actualCamera.gameObject);
-
         morty.MoveTowardsPosition(currentDimension.centerStage2.gameObject.transform.position, 1f);
+
+        // Get them looking at each other.
+        rick.LookAtTarget(currentDimension.actualCamera.gameObject);
         morty.LookAtTarget(currentDimension.actualCamera.gameObject);
+
+
+
+        // Reset the other NPC's (lol)
+        foreach(CharacterInfo npc in characterList)
+        {
+            // Reset their position to the initial place they were when we booted up.
+            npc.characterController.TeleportTo(npc.initialPosition);
+        }
+
 
         cameraShotManager.ChangeCameraShot("{wide shot}");
     }
