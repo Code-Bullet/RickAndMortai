@@ -7,6 +7,29 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public struct DialogueInfo
+{
+    public List<string> voiceModelUUIDs;
+    public List<string> characterNames;
+    public List<string> textsToSpeak;
+
+    // Additional info.
+    //
+
+    // The edited script, where bad lines are converted to narration lines.
+    public string[] script;
+    public string nameOfAiGeneratedCharacter;
+    public string nameOfAiGeneratedDimension;
+}
+
+//public List<CharacterDialogue> characterDialogues;
+//struct CharacterDialogue
+//{
+//    public string voiceModelUUID;
+//    public string characterName;
+//    public string textToSpeak;
+//}
+
 // this is the script that actually acts out the scene. so itll move characters around and play tts audio files and shit.
 public class SceneDirector : MonoBehaviour
 {
@@ -482,19 +505,24 @@ public class SceneDirector : MonoBehaviour
     // like [rick and morty start fighting shrek] thats not a thing we can do so i just get the narrator to read it out.
 
     // this is also where we identify that ai images we need to generate. thats the reference string inputs
-    public List<string>[] ProcessDialogFromLines(ref string[] outputLines, ref string nameOfAiGeneratedCharacter, ref string nameOfAiGeneratedDimension)
+    public DialogueInfo ProcessDialogFromLines(string[] script)
     {
+        // Copy string[] to editedScript.
+        string[] editedScript = new string[script.Length];
+        for (int i = 0; i < script.Length; i++) editedScript[i] = String.Copy(script[i]);
 
 
-        var voiceModelUUIDs = new List<string>();
-        var characterNames = new List<string>();
-        var textsToSpeak = new List<string>();
+        DialogueInfo info = new DialogueInfo();
+
+        List<string> voiceModelUUIDs = new List<string>();
+        List<string> characterNames = new List<string>();
+        List<string> textsToSpeak = new List<string>();
 
 
 
-        for (int i = 0; i < outputLines.Length; i++)
+        for (int i = 0; i < script.Length; i++)
         {
-            string line = outputLines[i];
+            string line = script[i];
 
             string lowerLine = line.ToLower();
 
@@ -511,7 +539,7 @@ public class SceneDirector : MonoBehaviour
                     if (talkingCharacter == defaultGuy)
                     {
                         Debug.Log("found character " + defaultGuy.name);
-                        nameOfAiGeneratedCharacter = defaultGuy.name;
+                        info.nameOfAiGeneratedCharacter = defaultGuy.name;
                     }
 
                     voiceModelUUIDs.Add(talkingCharacter.fakeYouUUID);
@@ -590,16 +618,16 @@ public class SceneDirector : MonoBehaviour
                                 // Extract the part of the string after "portal to"
                                 string destination = lowerLine.Substring(index + "portal to ".Length);
                                 // remove final ]
-                                nameOfAiGeneratedDimension = destination.Substring(0, destination.Length - 1);
+                                info.nameOfAiGeneratedDimension = destination.Substring(0, destination.Length - 1);
                             }
                             else
                             {
                                 // idk how it can not have "portal to" in it but in that case just chuck the whole bitch in the ai generated thing.
-                                nameOfAiGeneratedDimension = lowerLine;
+                                info.nameOfAiGeneratedDimension = lowerLine;
 
                             }
 
-                            Debug.Log("found dimension: " + nameOfAiGeneratedDimension);
+                            Debug.Log("found dimension: " + info.nameOfAiGeneratedDimension);
                         }
 
 
@@ -613,15 +641,19 @@ public class SceneDirector : MonoBehaviour
                 // if you got to this one then this means that its an invalid action, 
                 // we will convert it to a narration line.
                 string newline = "Narrator: " + line.Replace("[", "").Replace("]", "");
-                outputLines[i] = newline;
+                editedScript[i] = newline;
                 // now that weve reset the new line re run it and it should be detected as dialog.
                 i -= 1;
                 continue;
             }
         }
 
-        return new List<string>[] { voiceModelUUIDs, characterNames, textsToSpeak };
+        info.voiceModelUUIDs = voiceModelUUIDs;
+        info.characterNames = characterNames;
+        info.textsToSpeak = textsToSpeak;
+        info.script = editedScript;
 
+        return info;
     }
 
 

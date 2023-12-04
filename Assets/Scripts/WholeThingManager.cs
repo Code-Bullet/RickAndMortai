@@ -670,16 +670,6 @@ public class WholeThingManager : MonoBehaviour
         return scriptWithCameraShotsProcessed;
     }
 
-    //public async Task GenerateVoiceTracks()
-    //{
-    //    // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-    //    List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
-    //    List<string>[] dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLinesWithSwearing, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
-    //    List<string> voiceModelUUIDs = dialogInfoWithSwearing[0];
-    //    List<string> characterNames = dialogInfoWithSwearing[1];
-    //    List<string> textsToSpeak = dialogInfoWithSwearing[2];
-    //}
-
     // this is the main bitch of the program. a bunch of calling other scripts to get each element of the scene.
     // basically this turns an input prompt into a list of lines of dialog + stage directions, and a list of audio files for the tts.
     public async Task<RickAndMortyScene> CreateScene(string prompt, string promptAuthor, string backupPrompt, string backupPromptAuthor, bool isThisSceneUsingVoiceActing)
@@ -781,26 +771,6 @@ public class WholeThingManager : MonoBehaviour
             }
             else
             {
-                // // add camera angles
-                // if (usingChatGptCameraShots)
-                // {
-                //     textField.text = creatingScene + " --- " + "Adding Camera Angles";
-
-                //     chatGPTOutput = await openAICameraDirector.EnterPromptAndGetResponse(chatGPTOutput);
-                //     openAICameraDirector.Clear();
-
-
-                //     // chatGPTOutput = "Narrator: " + initialPrompt + "\n" + "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
-
-                //     string str2 = AIController.OutputString;
-                //     chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str2);
-                //     AIController.OutputString = str2;
-
-                // }
-
-
-
-
                 textField.text = creatingScene + " --- " + "Detecting Slurs...";
 
 
@@ -901,71 +871,34 @@ public class WholeThingManager : MonoBehaviour
 
         //if (generateCustomScript)
         //{
-        //    //chatGPTOutput = @"Narrator: Liam and Sia talk about lesbian swimming pools
-        //    //Spongebob: hey sia, what's the deal with sponge baths
-        //    //Morty: for the purposes of this script, I am liam
-        //    //Morty: I don't know sia!
-        //    //";
-
-
-        //    chatGPTOutput = @"
-        //    {Wide shot}
-        //    Rick: I gotta get to that coffee shop before they close Morty
-        //    [Rick and Morty enter the portal to an Amsterdam coffee shop]
-        //    Dutch Man: hallo, wil je een junko?
-        //    Morty: ummmmmm. ja. ik zoek...
-        //    Morty: rick I'm not sure what weed to get. they all have weird names...like gorilla glue? why would gorillas need glue
-        //    Rick: it's a metaphor morty, a beautiful european metaphor. just go with it
-        //    Rick: hi I'd like the albert heinous headfucker tripel de luxe
-        //    Dutch Man: zeker man
-        //    Narrator: four hours and twenty minutes later
-        //    [Rick and Morty enter the portal to the Garage]
-        //    Rick: oh man I really shouldn't have eaten those stroopwaffels
-        //    Morty: Pakker wat je pakken kan
-        //    Rick: what did you say to me you lil shit?";
-            
-
-        //    //chatGPTOutput = @"Narrator: Rick and morty talk to LLaMa69 about getting funding for a startup
-        //    //        {Close up Rick}
-        //    //        Rick: morty! come over here, grandpa needs your help grifting venture capitalists's
-        //    //        Rick: with a chat g p t wrapper aye eye startup
-        //    //        Morty: aw rick, this sounds like a lot of work
-        //    //        Morty: can't we just build a crypto startup and sit on the money?
-        //    //        Rick: no Morty, we have to build Aye Gee Eye. I have to beat Sam Altman and reclaim the valley from twink CEE EE OHS's
-        //    //        Morty: don't you think that OpenAI has a real moat...you know...compared to our React app
-        //    //        Rick: shut up morty, you don't anything about frontend. now where did grandpa leave his ritalin
-        //    //        Rick: it's time to deployyyyyyyy!!!";
-
+        //    chatGPTOutput = @"";
         //    promptAuthor = "LLaMa69";
-
+        //
         //    // Trim any extraneous space from the string.
         //    chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
         //}
 
-
         chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
 
 
-        string nameOfAiGeneratedCharacter = null;
-        string nameOfAiGeneratedDimension = null;
-
         Debug.Log("sceneDirector.ProcessDialogFromLines");
         // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-        List<string>[] dialogInfo = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLines, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
-        List<string>[] dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(ref chatGPTOutputLinesWithSwearing, ref nameOfAiGeneratedCharacter, ref nameOfAiGeneratedDimension);
-        List<string> voiceModelUUIDs = dialogInfoWithSwearing[0];
-        List<string> characterNames = dialogInfoWithSwearing[1];
-        List<string> textsToSpeak = dialogInfoWithSwearing[2];
-
+        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
+        DialogueInfo dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(chatGPTOutputLinesWithSwearing);
 
         Debug.Log("ai generated names for stuff");
+        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
+        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
         Debug.Log(nameOfAiGeneratedCharacter);
         Debug.Log(nameOfAiGeneratedDimension);
 
         List<Task> allConcurrentTasks = new List<Task>();
 
+        // Start tasks in parallel
 
-        // Start both tasks in parallel
+        //-------------------------------------------------
+
+        // 1. AI art - start.
         Task<AIArtStuff> aiArtTask = null;
         if (useAiArt)
         {
@@ -973,16 +906,7 @@ public class WholeThingManager : MonoBehaviour
             allConcurrentTasks.Add(aiArtTask);
         }
 
-        textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
-        Debug.Log(creatingScene + " --- " + "Generating FakeYou TTS...");
-
-        Task<List<AudioClip>> ttsVoiceActingTask = null;
-        if (isThisSceneUsingVoiceActing)
-        {
-            ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(textsToSpeak, voiceModelUUIDs, characterNames, textField, creatingScene);
-            allConcurrentTasks.Add(ttsVoiceActingTask);
-        }
-
+        // 2. Camera shots - start.
         Task<string[]> CameraShotsChatGPTTask = null;
         if (usingChatGptCameraShots)
         {
@@ -990,7 +914,25 @@ public class WholeThingManager : MonoBehaviour
             allConcurrentTasks.Add(CameraShotsChatGPTTask);
         }
 
+        textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
+        Debug.Log(creatingScene + " --- " + "Generating FakeYou TTS...");
 
+        // 3. Voice acting - start.
+        Task<List<AudioClip>> ttsVoiceActingTask = null;
+        if (isThisSceneUsingVoiceActing)
+        {
+            ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(
+                dialogInfo.textsToSpeak,
+                dialogInfo.voiceModelUUIDs,
+                dialogInfo.characterNames,
+                textField,
+                creatingScene
+            );
+            allConcurrentTasks.Add(ttsVoiceActingTask);
+        }
+
+
+        // Await all tasks being done.
         Debug.Log("start await");
         if (allConcurrentTasks.Count > 0)
         {
@@ -998,54 +940,34 @@ public class WholeThingManager : MonoBehaviour
         }
 
 
-        // if (aiArtTask != null && ttsVoiceActingTask != null)
-        // {
-        //     await Task.WhenAll(aiArtTask, ttsVoiceActingTask);
-        // }
-        // else if (aiArtTask != null)
-        // {
-        //     await Task.WhenAll(aiArtTask);
-        // }
-        // else if (ttsVoiceActingTask != null)
-        // {
-        //     await Task.WhenAll(ttsVoiceActingTask);
-        // }
-
         Debug.Log("finish await");
 
-        if (usingChatGptCameraShots)
+        // 1. AI art (2d) - done.
+        AIArtStuff aiArtStuff = new AIArtStuff();
+        if (useAiArt)
         {
-            chatGPTOutputLines = await CameraShotsChatGPTTask;
-            chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
+            aiArtStuff = await aiArtTask;
         }
 
-
-        //retrieve the result of ttsVoiceActingTask after awaiting it
+        // 2. Voice acting - done.
         List<AudioClip> ttsVoiceActingOrdered = new List<AudioClip>();
         if (isThisSceneUsingVoiceActing)
         {
             ttsVoiceActingOrdered = ttsVoiceActingTask.Result;
         }
 
+        // 3. Camera shots - done.
+        if (usingChatGptCameraShots)
+        {
+            chatGPTOutputLines = await CameraShotsChatGPTTask;
+            chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
+        }
+
         //-------------------------------------------------
 
-        // await replicateAPI.GenerateAndSetTexturesForCharacter(defaultGuy, nameOfAiGeneratedCharacter);
-
-
-
-        // textField.text = creatingScene + " --- " + "Generating FakeYou TTS...";
-        // // generate text to speech voice acting based on dialog	
-        // List<AudioClip> ttsVoiceActingOrdered = null;
-        // if (isThisSceneUsingVoiceActing)
-        // {
-        //     ttsVoiceActingOrdered = await fakeYouAPIManager.GenerateTTS(textsToSpeak, voiceModelUUIDs, characterNames, textField, creatingScene);
-        // }
         textField.text = creatingScene + " --- " + "Done :)";
 
         Debug.Log("done creating scene");
-
-        AIArtStuff aiArtStuff = new AIArtStuff();
-        if (useAiArt) aiArtStuff = await aiArtTask;
 
         RickAndMortyScene scene = new RickAndMortyScene(
             null,
