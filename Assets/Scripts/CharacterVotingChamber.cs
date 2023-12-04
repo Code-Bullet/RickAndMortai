@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 public class CharacterVoteResults
 {
+    public string characterKey = "";
     public string selectedGeneration = "";
     public string[] options = new string[4];
     public int[] tallies = new int[4];
+    public long createdAt;
 }
 
 public class CharacterVotingChamber : MonoBehaviour
@@ -48,8 +50,10 @@ public class CharacterVotingChamber : MonoBehaviour
     public void Setup(string characterName, string[] generationIds)
     {
         this.results = new CharacterVoteResults();
+        this.results.characterKey = characterName;
         this.results.options = generationIds;
         this.results.tallies = new int[4];
+        this.results.createdAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         // Set the current camera to focus on this scene.
         // Load the 3d objects into all the character controllers.

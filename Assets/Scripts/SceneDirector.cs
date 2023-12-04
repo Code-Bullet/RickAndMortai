@@ -160,7 +160,6 @@ public class SceneDirector : MonoBehaviour
 
         int audioClipIndex = 0;
 
-
         foreach (string line in outputLines)
         {
             Debug.Log("Running " + line);
@@ -511,6 +510,8 @@ public class SceneDirector : MonoBehaviour
         string[] editedScript = new string[script.Length];
         for (int i = 0; i < script.Length; i++) editedScript[i] = String.Copy(script[i]);
 
+        Debug.Log($"original: \n{string.Join("\n", script)}");
+        
 
         DialogueInfo info = new DialogueInfo();
 
@@ -520,9 +521,9 @@ public class SceneDirector : MonoBehaviour
 
 
 
-        for (int i = 0; i < script.Length; i++)
+        for (int i = 0; i < editedScript.Length; i++)
         {
-            string line = script[i];
+            string line = editedScript[i];
 
             string lowerLine = line.ToLower();
 
@@ -652,6 +653,10 @@ public class SceneDirector : MonoBehaviour
         info.characterNames = characterNames;
         info.textsToSpeak = textsToSpeak;
         info.script = editedScript;
+
+
+        //Debug.Log($"new script: \n{string.Join("\n", script)}");
+        Debug.Log($"new script: \n{string.Join("\n", info.script)}");
 
         return info;
     }

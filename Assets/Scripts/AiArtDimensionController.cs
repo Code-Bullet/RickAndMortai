@@ -11,8 +11,6 @@ public class AiArtDimensionController : MonoBehaviour
 
     public void Prepare(AIDimension aiDimension)
     {
-        if (aiDimension == null) return;
-
         dimensionBackgroundPlaneRenderer.material.mainTexture = aiDimension.texture;
     }
 

@@ -75,10 +75,10 @@ public class RickAndMortyScene
         this.aiArt = aiArt;
     }
 
-    public void WriteToDir()
+    public void WriteToDir(string sceneId = null)
     {
         // 1. Create the directory.
-        string sceneId = $"scene-{this.id}";
+        if(sceneId == null) sceneId = $"scene-{this.id}";
 
         // Combine the directory path and file name
         string basePath = $"saved-scenes/{sceneId}/";
@@ -113,6 +113,7 @@ public class RickAndMortyScene
             // Save the file as a .wav to the saved-scenes/ directory.
             byte[] wavData = WavUtility.ConvertAudioClipToWAV(clip);
             if (clip.samples == 0) throw new Exception("failed to write clip, 0 samples");
+            if (clip.length < 0.1) throw new Exception("failed to write clip, length seems too short");
             File.WriteAllBytes($"{voiceTracksDir}/{filename}", wavData);
 
             voiceTracks.Add(filename);
@@ -152,7 +153,7 @@ public class RickAndMortyScene
 
             // Write the JSON data to the file
             File.WriteAllText(sceneFilePath, json);
-            Debug.Log("JSON data saved to " + basePath);
+            Debug.Log("JSON data saved to " + sceneFilePath);
         }
         catch (Exception e)
         {

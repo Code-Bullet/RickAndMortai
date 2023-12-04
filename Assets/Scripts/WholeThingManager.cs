@@ -20,6 +20,81 @@ public class TopicVoteResults
     public string backupAuthor;
 }
 
+public class CharacterVotesData
+{
+    public static string characterVotesFilePath = "character-votes.json";
+    public CharacterVoteResults[] voteResults = new CharacterVoteResults[] { };
+
+    public static CharacterVotesData ReadFromDisk()
+    {
+        if(!File.Exists(characterVotesFilePath))
+        {
+            throw new Exception("character-votes.json not found");
+        }
+        string data = File.ReadAllText(characterVotesFilePath);
+        var x = JsonConvert.DeserializeObject<CharacterVotesData>(data);
+        return x;
+    }
+
+    public void WriteToDisk()
+    {
+        string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        File.WriteAllText(characterVotesFilePath, json);
+    }
+}
+
+public class Lookup3dHeads
+{
+    public Dictionary<string, string> selectedGenerations;
+
+    public CharacterVotesData votes;
+
+    public AIHead3D GetForCharacter(string characterKey)
+    {
+        if (!selectedGenerations.ContainsKey(characterKey)) return null;
+
+        AIHead3D aiHead = new AIHead3D();
+        aiHead.characterKey = characterKey;
+        aiHead.selectedGeneration = selectedGenerations[characterKey];
+        aiHead.generationIds = new string[] { selectedGenerations[characterKey] };
+        return aiHead;
+    }
+
+    public static Lookup3dHeads Load()
+    {
+        Lookup3dHeads x = new Lookup3dHeads();
+        x.votes = CharacterVotesData.ReadFromDisk();
+        Debug.Log(x.votes.voteResults);
+        x.selectedGenerations = new Dictionary<string, string>();
+
+        List<string> _3dScenes = new List<string>();
+
+        foreach(var res in x.votes.voteResults)
+        {
+            x.selectedGenerations[res.characterKey] = res.selectedGeneration;
+        }
+
+        // List all of the scenes in saved-scenes/
+        //foreach (string dir in PathUtils.GetSubDirs("saved-scenes/"))
+        //{
+        //    if (!File.Exists($"saved-scenes/{dir}/scene.json")) continue;
+
+        //    // Load the scene.json
+        //    string data = File.ReadAllText($"saved-scenes/{dir}/scene.json");
+        //    var scene = JsonConvert.DeserializeObject<RickAndMortyScene>(data);
+
+        //    if (scene.aiArt.character != null)
+        //    {
+        //        var character = scene.aiArt.character;
+        //        if (character.head3d == null) continue;
+        //        if (character.head3d.selectedGeneration.Length == 0) continue;
+        //        x.selectedGenerations[character.characterName] = character.head3d.selectedGeneration;
+        //    }
+        //}
+
+        return x;
+    }
+}
 
 // this is the big daddy script that controls everything
 // basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
@@ -100,6 +175,8 @@ public class WholeThingManager : MonoBehaviour
     public GameObject charVotingUI;
     public GameObject episodeStuffUI;
 
+    private Lookup3dHeads lookup3dHeads;
+
     public void SetUI(GameObject ui)
     {
         // Hide all UI's.
@@ -128,15 +205,7 @@ public class WholeThingManager : MonoBehaviour
             string jsonText = File.ReadAllText(configFilePath);
             this.config = GlobalConfigData.CreateFromJSON(jsonText);
         }
-    }
-
-
-
-    // Start -> MainLoop -> RunScene(currentScene)
-    //                      -> sceneDirector.PlayScene
-    //                   -> CreateScene
-    //                      this.nextScene = blah...
-    //                                 
+    }       
 
 
     void Awake()
@@ -153,10 +222,17 @@ public class WholeThingManager : MonoBehaviour
 
         SetUI(null);
 
+        lookup3dHeads = Lookup3dHeads.Load();
+
+        Debug.Log("lookup 3d heads cache:");
+        foreach (var kvp in lookup3dHeads.selectedGenerations)
+        {
+            Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
+        }
+
+
         // TestingShit();
     }
-
-
 
     async void Start()
     {
@@ -176,7 +252,23 @@ public class WholeThingManager : MonoBehaviour
             //scene.WriteToDir();
             //await RunScene(scene);
 
-            await testWorkflow4();
+            //var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
+            //var scene = await CreateScene("rick and morty go see the dalai lama about testiucular torsion", "me", "banana", "me", usingVoiceActing);
+
+            var scene = RickAndMortyScene.ReadFromDir("scene-dalai-lama");
+
+            //DialogueInfo dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(scene.chatGPTOutputLines);
+            //scene.chatGPTOutputLines = dialogInfoWithSwearing.script;
+            //Debug.Log($"dialogInfoWithSwearing \n{string.Join("\n", dialogInfoWithSwearing.script)}");
+            //Debug.Log($"scene.chatGPTOutputLines \n{string.Join("\n", scene.chatGPTOutputLines)}");
+
+            //scene.chatGPTOutputLines = dialogInfoWithSwearing.script;
+
+            //scene.WriteToDir("scene-dalai-lama");
+
+            await RunScene(scene);
+
+            //await testWorkflow4();
             //await testWorkflow3();
             //await testWorkflow2();
             //await testWorkflow1();
@@ -518,7 +610,23 @@ public class WholeThingManager : MonoBehaviour
         // 
         // 1. Prepare.
         //
-        if (scene.aiArt.character?.head3d != null)
+
+        // If we have an AI character, check if we can reuse a 3D head generated for it.
+        if(scene.aiArt?.character != null)
+        {
+            string characterName = scene.aiArt?.character.characterName;
+            Debug.Log($"detected ai character: {characterName}");
+
+            AIHead3D head = lookup3dHeads.GetForCharacter(characterName);
+            if (head != null)
+            {
+                Debug.Log($"reusing AI head for character {characterName}");
+                scene.aiArt.character.head3d = head;
+            }
+        }
+
+        // 2d/3d character loader:
+        if (scene.aiArt.character?.head3d != null) // Detect: 3D character
         {
             Debug.Log("using AI head");
 
@@ -539,14 +647,18 @@ public class WholeThingManager : MonoBehaviour
                 scene.aiArt.character.head3d.selectedGeneration
             );
         }
-        else
+        else if (scene.aiArt.character != null) // Detect: 2D character
         {
             sceneDirector.use3DGuy = false;
             aiArtCharacter.Prepare(scene.aiArt.character);
         }
 
-        aiArtDimension.Prepare(scene.aiArt.dimension);
-        aiArtCharacter.Prepare(scene.aiArt.character);
+
+        // Detect: AI art dimension.
+        if (scene.aiArt.dimension != null)
+        {
+            aiArtDimension.Prepare(scene.aiArt.dimension);
+        }
 
 
         //
@@ -586,8 +698,6 @@ public class WholeThingManager : MonoBehaviour
     // GetWhosTalking (string line) -> string characterName, bool isGeneratedCharacter?
     // ParseStageDirections -> (string? generatedDimension)
     // GetCharacters - "[rick walks to morty]  returns chacters 1 rick, character 2 morty.
-
-
 
     // Takes a script and adds camera shots to it.
     public async Task<string[]> GenerateCameraShots(string script)
@@ -683,6 +793,7 @@ public class WholeThingManager : MonoBehaviour
         string creatingScene = "";
         bool foundGoodPrompt = false;
 
+        generate:
         while (!foundGoodPrompt)
         {
 
@@ -883,14 +994,23 @@ public class WholeThingManager : MonoBehaviour
 
         Debug.Log("sceneDirector.ProcessDialogFromLines");
         // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
+        //DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
         DialogueInfo dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(chatGPTOutputLinesWithSwearing);
 
         Debug.Log("ai generated names for stuff");
-        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
-        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
+        string nameOfAiGeneratedCharacter = dialogInfoWithSwearing.nameOfAiGeneratedCharacter;
+        string nameOfAiGeneratedDimension = dialogInfoWithSwearing.nameOfAiGeneratedDimension;
         Debug.Log(nameOfAiGeneratedCharacter);
         Debug.Log(nameOfAiGeneratedDimension);
+
+        bool forceAiCharacter = true;
+        if (forceAiCharacter)
+        {
+            if (nameOfAiGeneratedCharacter == null)
+            {
+                goto generate;
+            }
+        }
 
         List<Task> allConcurrentTasks = new List<Task>();
 
@@ -922,9 +1042,9 @@ public class WholeThingManager : MonoBehaviour
         if (isThisSceneUsingVoiceActing)
         {
             ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(
-                dialogInfo.textsToSpeak,
-                dialogInfo.voiceModelUUIDs,
-                dialogInfo.characterNames,
+                dialogInfoWithSwearing.textsToSpeak,
+                dialogInfoWithSwearing.voiceModelUUIDs,
+                dialogInfoWithSwearing.characterNames,
                 textField,
                 creatingScene
             );
@@ -1356,7 +1476,7 @@ public class WholeThingManager : MonoBehaviour
         Debug.Log($"found {_3dScenes.Count} 3d scenes to play");
 
         //int i = 0;
-        //foreach(string sceneId in _3dScenes)
+        //foreach (string sceneId in _3dScenes)
         //{
         //    Debug.Log($"regen scene {i}");
         //    i++;
