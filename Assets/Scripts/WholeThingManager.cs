@@ -96,10 +96,55 @@ public class Lookup3dHeads
     }
 }
 
+#if UNITY_EDITOR
+[CustomEditor(typeof(WholeThingManager))]
+public class DropdownExampleEditor : Editor
+{
+    private SerializedProperty runModeIndex;
+
+    private void OnEnable()
+    {
+        runModeIndex = serializedObject.FindProperty("runModeIndex");
+    }
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+
+        // Dropdown for different run modes.
+        EditorGUILayout.LabelField("Select an option:");
+        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
+        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
+
+        serializedObject.ApplyModifiedProperties();
+
+        DrawDefaultInspector();
+    }
+}
+#endif
+
+
+
+
 // this is the big daddy script that controls everything
 // basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
 public class WholeThingManager : MonoBehaviour
 {
+    private static string RUN_MAIN_LOOP = "Run main loop";
+    private static string GENERATE_CUSTOM_SCRIPT = "Generate custom script";
+    private static string REPLAY_OLD_SCENE = "Replay old scene";
+    private static string TEST_WORKFLOWS = "Test workflows";
+
+    public static string[] RUN_MODE_OPTIONS = new string[] {
+        RUN_MAIN_LOOP,
+        GENERATE_CUSTOM_SCRIPT,
+        REPLAY_OLD_SCENE,
+        TEST_WORKFLOWS
+    };
+
+    [Range(0, 3)]
+    public int runModeIndex = 0;
+
     public static WholeThingManager Singleton;
     public OpenAISlurDetector slurDetectorChatGPT;
     public SlurDetectorEvan slurDetectorPhonic;
@@ -112,8 +157,6 @@ public class WholeThingManager : MonoBehaviour
     public CharacterVotingChamber characterVotingChamber;
 
     public bool usingVoiceActing = true;
-    public bool generateCustomScript = false;
-    public bool replayOldScene = true;
     public string oldSceneID = "scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff";
 
     public float wordsPerMinute = 250;
@@ -176,6 +219,7 @@ public class WholeThingManager : MonoBehaviour
     public GameObject episodeStuffUI;
 
     private Lookup3dHeads lookup3dHeads;
+    private bool forceAiCharacter = false;
 
     public void SetUI(GameObject ui)
     {
@@ -230,6 +274,8 @@ public class WholeThingManager : MonoBehaviour
             Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
         }
 
+        // Disbale some shit for performance
+        characterVotingChamber.gameObject.SetActive(false);
 
         // TestingShit();
     }
@@ -237,7 +283,13 @@ public class WholeThingManager : MonoBehaviour
     async void Start()
     {
         sceneDirector.ResetStuff();
-        bool testWorkflow = true;
+
+        string runMode = RUN_MODE_OPTIONS[runModeIndex];
+
+        bool generateCustomScript = runMode == GENERATE_CUSTOM_SCRIPT;
+        bool testWorkflow = runMode == TEST_WORKFLOWS;
+        bool replayOldScene = runMode == REPLAY_OLD_SCENE;
+        bool runMainLoop = runMode == RUN_MAIN_LOOP;
 
         if (testWorkflow)
         {
@@ -253,9 +305,14 @@ public class WholeThingManager : MonoBehaviour
             //await RunScene(scene);
 
             //var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
-            //var scene = await CreateScene("rick and morty go see the dalai lama about testiucular torsion", "me", "banana", "me", usingVoiceActing);
 
-            var scene = RickAndMortyScene.ReadFromDir("scene-dalai-lama");
+            // NOTE(liamz): okay this is the ONE time I'm gonna use globals
+            forceAiCharacter = true;
+            //var scene = await CreateScene("rick and morty go see the dalai lama about peace", "me", "banana", "me", usingVoiceActing);
+            var scene = RickAndMortyScene.ReadFromDir("scene-8c2cc0a2-f188-b5b6-1c93-0b0fdd4a6331");
+            forceAiCharacter = false;
+
+            //var scene = RickAndMortyScene.ReadFromDir("scene-dalai-lama");
 
             //DialogueInfo dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(scene.chatGPTOutputLines);
             //scene.chatGPTOutputLines = dialogInfoWithSwearing.script;
@@ -273,7 +330,7 @@ public class WholeThingManager : MonoBehaviour
             //await testWorkflow2();
             //await testWorkflow1();
         }
-        else if (this.generateCustomScript)
+        else if (generateCustomScript)
         {
             enableOrDisableVotingUI(false);
 
@@ -285,7 +342,7 @@ public class WholeThingManager : MonoBehaviour
 
             return;
         }
-        else if (this.replayOldScene)
+        else if (replayOldScene)
         {
             enableOrDisableVotingUI(false);
 
@@ -352,6 +409,8 @@ public class WholeThingManager : MonoBehaviour
 
     private async Task<CharacterVoteResults> RunCharacterVote(string characterName, string[] generationIds, int timeToVoteMilliseconds)
     {
+        characterVotingChamber.gameObject.SetActive(true);
+
         SetUI(charVotingUI);
 
         characterVotingChamber.stageCamera.enabled = true;
@@ -362,6 +421,9 @@ public class WholeThingManager : MonoBehaviour
         characterVotingChamber.stageCamera.enabled = false;
 
         SetUI(null);
+
+        characterVotingChamber.gameObject.SetActive(false);
+
         return results;
     }
 
@@ -782,14 +844,22 @@ public class WholeThingManager : MonoBehaviour
 
     // this is the main bitch of the program. a bunch of calling other scripts to get each element of the scene.
     // basically this turns an input prompt into a list of lines of dialog + stage directions, and a list of audio files for the tts.
-    public async Task<RickAndMortyScene> CreateScene(string prompt, string promptAuthor, string backupPrompt, string backupPromptAuthor, bool isThisSceneUsingVoiceActing)
+    public async Task<RickAndMortyScene> CreateScene(
+        string prompt,
+        string promptAuthor,
+        string backupPrompt,
+        string backupPromptAuthor,
+        bool isThisSceneUsingVoiceActing
+    )
     {
         Debug.Log("CreateScene");
 
         string initialPrompt = "";
+
+        // the raw chatGPT output
         string chatGPTOutput = "";
+        // the processed lines of the script
         string[] chatGPTOutputLines = null;
-        string[] chatGPTOutputLinesWithSwearing = null;
         string creatingScene = "";
         bool foundGoodPrompt = false;
 
@@ -953,6 +1023,39 @@ public class WholeThingManager : MonoBehaviour
             }
         }
 
+        //if (generateCustomScript)
+        //{
+        //    chatGPTOutput = @"";
+        //    promptAuthor = "LLaMa69";
+        //
+        //    // Trim any extraneous space from the string.
+        //    chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
+        //}
+
+        chatGPTOutputLines = Utils.AddSwearing(chatGPTOutputLines);
+
+        Debug.Log("sceneDirector.ProcessDialogFromLines");
+        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
+        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
+        chatGPTOutputLines = dialogInfo.chatGPTOutputLines;
+
+        Debug.Log("ai generated names for stuff");
+        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
+        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
+        Debug.Log(nameOfAiGeneratedCharacter);
+        Debug.Log(nameOfAiGeneratedDimension);
+
+        if (forceAiCharacter)
+        {
+            if (nameOfAiGeneratedCharacter == null)
+            {
+                await Task.Delay(400);
+                Debug.Log("didn't get AI character, looping");
+                goto generate;
+            }
+        }
+
+
         try
         {
             // Get the current date and time	
@@ -980,37 +1083,10 @@ public class WholeThingManager : MonoBehaviour
 
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
 
-        //if (generateCustomScript)
-        //{
-        //    chatGPTOutput = @"";
-        //    promptAuthor = "LLaMa69";
-        //
-        //    // Trim any extraneous space from the string.
-        //    chatGPTOutputLines = chatGPTOutput.Split("\n").Select(line => line.Trim()).ToArray();
-        //}
-
-        chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
 
 
-        Debug.Log("sceneDirector.ProcessDialogFromLines");
-        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-        //DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
-        DialogueInfo dialogInfoWithSwearing = sceneDirector.ProcessDialogFromLines(chatGPTOutputLinesWithSwearing);
 
-        Debug.Log("ai generated names for stuff");
-        string nameOfAiGeneratedCharacter = dialogInfoWithSwearing.nameOfAiGeneratedCharacter;
-        string nameOfAiGeneratedDimension = dialogInfoWithSwearing.nameOfAiGeneratedDimension;
-        Debug.Log(nameOfAiGeneratedCharacter);
-        Debug.Log(nameOfAiGeneratedDimension);
 
-        bool forceAiCharacter = true;
-        if (forceAiCharacter)
-        {
-            if (nameOfAiGeneratedCharacter == null)
-            {
-                goto generate;
-            }
-        }
 
         List<Task> allConcurrentTasks = new List<Task>();
 
@@ -1030,7 +1106,7 @@ public class WholeThingManager : MonoBehaviour
         Task<string[]> CameraShotsChatGPTTask = null;
         if (usingChatGptCameraShots)
         {
-            CameraShotsChatGPTTask = GenerateCameraShots(chatGPTOutput);
+            CameraShotsChatGPTTask = GenerateCameraShots(string.Join("\n", chatGPTOutputLines));
             allConcurrentTasks.Add(CameraShotsChatGPTTask);
         }
 
@@ -1042,9 +1118,9 @@ public class WholeThingManager : MonoBehaviour
         if (isThisSceneUsingVoiceActing)
         {
             ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(
-                dialogInfoWithSwearing.textsToSpeak,
-                dialogInfoWithSwearing.voiceModelUUIDs,
-                dialogInfoWithSwearing.characterNames,
+                dialogInfo.textsToSpeak,
+                dialogInfo.voiceModelUUIDs,
+                dialogInfo.characterNames,
                 textField,
                 creatingScene
             );
@@ -1080,7 +1156,6 @@ public class WholeThingManager : MonoBehaviour
         if (usingChatGptCameraShots)
         {
             chatGPTOutputLines = await CameraShotsChatGPTTask;
-            chatGPTOutputLinesWithSwearing = Utils.AddSwearing(chatGPTOutputLines);
         }
 
         //-------------------------------------------------

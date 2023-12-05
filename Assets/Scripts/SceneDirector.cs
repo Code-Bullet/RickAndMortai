@@ -17,7 +17,7 @@ public struct DialogueInfo
     //
 
     // The edited script, where bad lines are converted to narration lines.
-    public string[] script;
+    public string[] chatGPTOutputLines;
     public string nameOfAiGeneratedCharacter;
     public string nameOfAiGeneratedDimension;
 }
@@ -507,8 +507,8 @@ public class SceneDirector : MonoBehaviour
     public DialogueInfo ProcessDialogFromLines(string[] script)
     {
         // Copy string[] to editedScript.
-        string[] editedScript = new string[script.Length];
-        for (int i = 0; i < script.Length; i++) editedScript[i] = String.Copy(script[i]);
+        //string[] editedScript = new string[script.Length];
+        //for (int i = 0; i < script.Length; i++) editedScript[i] = String.Copy(script[i]);
 
         Debug.Log($"original: \n{string.Join("\n", script)}");
         
@@ -521,9 +521,9 @@ public class SceneDirector : MonoBehaviour
 
 
 
-        for (int i = 0; i < editedScript.Length; i++)
+        for (int i = 0; i < script.Length; i++)
         {
-            string line = editedScript[i];
+            string line = script[i];
 
             string lowerLine = line.ToLower();
 
@@ -642,7 +642,7 @@ public class SceneDirector : MonoBehaviour
                 // if you got to this one then this means that its an invalid action, 
                 // we will convert it to a narration line.
                 string newline = "Narrator: " + line.Replace("[", "").Replace("]", "");
-                editedScript[i] = newline;
+                script[i] = newline;
                 // now that weve reset the new line re run it and it should be detected as dialog.
                 i -= 1;
                 continue;
@@ -652,11 +652,11 @@ public class SceneDirector : MonoBehaviour
         info.voiceModelUUIDs = voiceModelUUIDs;
         info.characterNames = characterNames;
         info.textsToSpeak = textsToSpeak;
-        info.script = editedScript;
+        info.chatGPTOutputLines = script;
 
 
         //Debug.Log($"new script: \n{string.Join("\n", script)}");
-        Debug.Log($"new script: \n{string.Join("\n", info.script)}");
+        Debug.Log($"new script: \n{string.Join("\n", info.chatGPTOutputLines)}");
 
         return info;
     }

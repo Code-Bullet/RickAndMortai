@@ -75,6 +75,10 @@ public class RickAndMortyScene
         this.aiArt = aiArt;
     }
 
+    /// <summary>
+    /// Writes to the saved scenes directory with `sceneId`
+    /// </summary>
+    /// <param name="sceneId"></param>
     public void WriteToDir(string sceneId = null)
     {
         // 1. Create the directory.
@@ -161,6 +165,10 @@ public class RickAndMortyScene
         }
     }
 
+    /// <summary>
+    /// Reads from the saved scenes directory with `sceneId`
+    /// </summary>
+    /// <param name="sceneId"></param>
     public static RickAndMortyScene ReadFromDir(string sceneId)
     {
         Debug.Log($"Reading scene from directory: {sceneId}");
