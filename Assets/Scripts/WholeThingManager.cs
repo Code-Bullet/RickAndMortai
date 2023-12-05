@@ -96,34 +96,6 @@ public class Lookup3dHeads
     }
 }
 
-#if UNITY_EDITOR
-[CustomEditor(typeof(WholeThingManager))]
-public class DropdownExampleEditor : Editor
-{
-    private SerializedProperty runModeIndex;
-
-    private void OnEnable()
-    {
-        runModeIndex = serializedObject.FindProperty("runModeIndex");
-    }
-
-    public override void OnInspectorGUI()
-    {
-        serializedObject.Update();
-
-        // Dropdown for different run modes.
-        EditorGUILayout.LabelField("Select an option:");
-        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
-        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
-
-        serializedObject.ApplyModifiedProperties();
-
-        DrawDefaultInspector();
-    }
-}
-#endif
-
-
 
 
 // this is the big daddy script that controls everything
@@ -307,10 +279,10 @@ public class WholeThingManager : MonoBehaviour
             //var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
 
             // NOTE(liamz): okay this is the ONE time I'm gonna use globals
-            forceAiCharacter = true;
-            //var scene = await CreateScene("rick and morty go see the dalai lama about peace", "me", "banana", "me", usingVoiceActing);
-            var scene = RickAndMortyScene.ReadFromDir("scene-8c2cc0a2-f188-b5b6-1c93-0b0fdd4a6331");
-            forceAiCharacter = false;
+            //forceAiCharacter = true;
+            ////var scene = await CreateScene("rick and morty go see the dalai lama about peace", "me", "banana", "me", usingVoiceActing);
+            //var scene = RickAndMortyScene.ReadFromDir("scene-8c2cc0a2-f188-b5b6-1c93-0b0fdd4a6331");
+            //forceAiCharacter = false;
 
             //var scene = RickAndMortyScene.ReadFromDir("scene-dalai-lama");
 
@@ -323,12 +295,12 @@ public class WholeThingManager : MonoBehaviour
 
             //scene.WriteToDir("scene-dalai-lama");
 
-            await RunScene(scene);
+            //await RunScene(scene);
 
             //await testWorkflow4();
             //await testWorkflow3();
             //await testWorkflow2();
-            //await testWorkflow1();
+            await testWorkflow1();
         }
         else if (generateCustomScript)
         {
@@ -1243,7 +1215,7 @@ public class WholeThingManager : MonoBehaviour
 
         // Show voting scene w/ custom timeout.
         Task mockNextSceneTask = Task.Delay(4000);
-        await RunTopicVote(mockNextSceneTask, 2f);
+        await RunTopicVote(mockNextSceneTask, 3f);
         Debug.Log("topic vote done");
 
         // Show character voting scene w/ custom timeout.
@@ -1251,15 +1223,15 @@ public class WholeThingManager : MonoBehaviour
             "sadam hussein",
             //new string[] { "fhnfrslb6zrrb7mr55pri5rvwi", "lhinfidbdsy3ay32qnedgwgskq", "nuedrilbhxjvyo5bhn7ndycjbu", "pejzlqlb2aviwzqvktw47nrntq" },
             AIHeadRigger.GetGenerationsForCharacter("sadam hussein"),
-            5000
+            10000
         );
         Debug.Log("char vote done");
 
 
-        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
-        scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
+        //var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        //scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
 
-        await RunScene(scene);
+        //await RunScene(scene);
     }
 
     // Test 2: create a scene with an AI character in it, generate the 3D AI character, run the character vote, and then play the scene
@@ -1589,11 +1561,35 @@ public class WholeThingManager : MonoBehaviour
 [CustomEditor(typeof(WholeThingManager))]
 public class RandomScript_Editor : Editor
 {
+    private SerializedProperty runModeIndex;
+
+
+    private void OnEnable()
+    {
+        runModeIndex = serializedObject.FindProperty("runModeIndex");
+    }
+
     public override void OnInspectorGUI()
     {
-        WholeThingManager script = (WholeThingManager)target;
+        WholeThingManager script = (WholeThingManager) target;
         EditorGUI.BeginChangeCheck();
         serializedObject.UpdateIfRequiredOrScript();
+
+
+
+
+        ///////
+        //serializedObject.Update();
+
+        // Dropdown for different run modes.
+        EditorGUILayout.LabelField("Select an option:");
+        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
+        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
+
+        serializedObject.ApplyModifiedProperties();
+
+
+
         SerializedProperty iterator = serializedObject.GetIterator();
         bool enterChildren = true;
         while (iterator.NextVisible(enterChildren))
@@ -1615,6 +1611,9 @@ public class RandomScript_Editor : Editor
 
         serializedObject.ApplyModifiedProperties();
         EditorGUI.EndChangeCheck();
+
+
+        DrawDefaultInspector();
     }
 }
 #endif
