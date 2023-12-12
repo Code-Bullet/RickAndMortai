@@ -735,7 +735,7 @@ public class WholeThingManager : MonoBehaviour
 
 
         // Setup ratings handler for episode.
-        youTubeChat.ClearEventsForAudienceRatingMessages();
+        youTubeChat.ClearAudienceRatingMsgs();
 
         // Update ratings bar over time.
         Coroutine audienceRatingRoutine = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController));
