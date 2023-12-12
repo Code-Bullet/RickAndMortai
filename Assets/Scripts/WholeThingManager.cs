@@ -22,11 +22,14 @@ public class TopicVoteResults
 
 public class CharacterVotesData
 {
-    public static string characterVotesFilePath = "character-votes.json";
+    public static string characterVotesFilePath = $"{WholeThingManager.Singleton.GetDataDir()}/character-votes.json";
+    
+
     public CharacterVoteResults[] voteResults = new CharacterVoteResults[] { };
 
     public static CharacterVotesData ReadFromDisk()
     {
+        Debug.Log(characterVotesFilePath);
         if(!File.Exists(characterVotesFilePath))
         {
             throw new Exception("character-votes.json not found");
@@ -193,6 +196,14 @@ public class WholeThingManager : MonoBehaviour
     private Lookup3dHeads lookup3dHeads;
     private bool forceAiCharacter = false;
 
+    public bool useProdData = false;
+    public string GetDataDir()
+    {
+        if(useProdData)
+            return "data-prod/";
+        return "data-test/";
+    }
+    
     public void SetUI(GameObject ui)
     {
         // Hide all UI's.
@@ -1340,7 +1351,7 @@ public class WholeThingManager : MonoBehaviour
 
                 // Foreground: play reruns.
                 List<RickAndMortyScene> reruns = new List<RickAndMortyScene>();
-                //string[] scenesToRerun = PathUtils.GetSubDirs("saved-scenes/");
+                //string[] scenesToRerun = PathUtils.GetSubDirs(f"{dataDir}/saved-scenes/");
 
                 reruns.AddRange(new RickAndMortyScene[] {
                     //RickAndMortyScene.ReadFromDir("scene-sadam-hussein"),
@@ -1505,10 +1516,10 @@ public class WholeThingManager : MonoBehaviour
         List<string> _3dScenes = new List<string>();
 
         // List all of the scenes in saved-scenes/
-        foreach(string dir in PathUtils.GetSubDirs("saved-scenes/"))
+        foreach(string dir in PathUtils.GetSubDirs($"data-test/saved-scenes/"))
         {
             // Load the scene.json
-            string data = File.ReadAllText($"saved-scenes/{dir}/scene.json");
+            string data = File.ReadAllText($"data-test/saved-scenes/{dir}/scene.json");
             var scene = JsonConvert.DeserializeObject<RickAndMortyScene>(data);
 
             if(scene.aiArt.character != null)

@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 
 public class RickAndMortyScene
 {
+
+
     public string id;
 
     // Title string / initial prompt.
@@ -85,7 +87,7 @@ public class RickAndMortyScene
         if(sceneId == null) sceneId = $"scene-{this.id}";
 
         // Combine the directory path and file name
-        string basePath = $"saved-scenes/{sceneId}/";
+        string basePath = $"{WholeThingManager.Singleton.GetDataDir()}/saved-scenes/{sceneId}/";
         string sceneFilePath = $"{basePath}/scene.json";
         string voiceTracksDir = $"{basePath}/voice-tracks";
         string aiCharacterDir = $"{basePath}/characters";
@@ -174,7 +176,7 @@ public class RickAndMortyScene
         Debug.Log($"Reading scene from directory: {sceneId}");
 
         // Combine the directory path and file name
-        string basePath = $"saved-scenes/{sceneId}/";
+        string basePath = $"{WholeThingManager.Singleton.GetDataDir()}/saved-scenes/{sceneId}/";
         string sceneFilePath = $"{basePath}/scene.json";
         string voiceTracksDir = $"{basePath}/voice-tracks";
         string aiCharacterDir = $"{basePath}/characters";
