@@ -1,3 +1,4 @@
+// const CHANNEL_ID = "UCGtZoW-xDId5E7OtnF0WgBA" // llama69's channel
 const CHANNEL_ID = "UCgzg_f5HC6EnY-9q5Px1Q-g" // This is code bullets day off channel
 // const CHANNEL_ID = "UCq6VFHwMzcMXbuKyG7SQYIg" // The channel id with the livestream for automated detection
 const LIVESTREAM_ID = "" // If you want to supply a specific id, that works, too. Otherwise leave this empty and let the automated detection work
@@ -82,6 +83,8 @@ async function getAuthorAndContents(message) {
         if (authorAndContents)
           toSend.push(authorAndContents)
       }
+
+      toSend.map(e => console.log(`${e.author}: ${e.text}`))
 
       // If we have anything to send, then send it on the specified port
       if (toSend.length > 0) {
