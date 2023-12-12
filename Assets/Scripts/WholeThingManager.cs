@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using Newtonsoft.Json;
+using static YouTubeChatFromSteven;
 
 public class TopicVoteResults
 {
@@ -78,12 +79,12 @@ public class Lookup3dHeads
         }
 
         // List all of the scenes in saved-scenes/
-        //foreach (string dir in PathUtils.GetSubDirs("saved-scenes/"))
+        //foreach (string dir in PathUtils.GetSubDirs($"data-test/saved-scenes/"))
         //{
-        //    if (!File.Exists($"saved-scenes/{dir}/scene.json")) continue;
+        //    if (!File.Exists($"data-test/saved-scenes/{dir}/scene.json")) continue;
 
         //    // Load the scene.json
-        //    string data = File.ReadAllText($"saved-scenes/{dir}/scene.json");
+        //    string data = File.ReadAllText($"data-test/saved-scenes/{dir}/scene.json");
         //    var scene = JsonConvert.DeserializeObject<RickAndMortyScene>(data);
 
         //    if (scene.aiArt.character != null)
@@ -192,9 +193,15 @@ public class WholeThingManager : MonoBehaviour
     public GameObject topicVotingUI;
     public GameObject charVotingUI;
     public GameObject episodeStuffUI;
+    public GameObject reactionBarUI;
+
+    public AudienceBarController audienceBarController;
 
     private Lookup3dHeads lookup3dHeads;
     private bool forceAiCharacter = false;
+
+    private float audienceRating_x1;
+    private float audienceRating_x2;
 
     public bool useProdData = false;
     public string GetDataDir()
@@ -248,7 +255,6 @@ public class WholeThingManager : MonoBehaviour
         openAICameraDirector.Init();
 
         SetUI(null);
-
         lookup3dHeads = Lookup3dHeads.Load();
 
         Debug.Log("lookup 3d heads cache:");
@@ -265,6 +271,9 @@ public class WholeThingManager : MonoBehaviour
 
     async void Start()
     {
+        //SetUI(reactionBarUI);
+        //return;
+
         sceneDirector.ResetStuff();
 
         string runMode = RUN_MODE_OPTIONS[runModeIndex];
@@ -647,17 +656,195 @@ public class WholeThingManager : MonoBehaviour
         }
     }
 
+    public float[] getAudienceRatings()
+    {
+        List<ChatMessage> msgs = youTubeChat.GetAudienceRatingMsgs();
+
+        int basedTally = 0;
+        int cringeTally = 0;
+        double ratio = 0;
+
+        // Update tally.
+        foreach (ChatMessage e in msgs)
+        {
+            string text = e.text.ToLower();
+            if (text.StartsWith("boo"))
+            {
+                cringeTally += 1;
+            }
+            if (text.StartsWith("pog"))
+            {
+                basedTally += 1;
+            }
+        }
+
+        Debug.Log($"based tally {cringeTally} {basedTally}");
+
+        // Calculate the new audience rating.
+        // 1. Sum ratio of based to cringe votes.
+        ratio = (basedTally + 1.0) / (cringeTally + 1.0);
+        // 2. Centre around 0.5.
+        ratio = ratio - 0.5;
+        // 3. Bound between 0 and 1
+        ratio = Math.Min(Math.Max(ratio, 0.0), 1.0);
+
+        float score1 = audienceBarController.val;
+        float score2 = Convert.ToSingle(ratio * 100);
+        Debug.Log($"based tally {ratio} {score2}");
+
+
+        // Update ratings bar over time.
+        //audienceBarController.SetVal(score);
+        //MainThreadDispatcher.Instance.Enqueue(() =>
+        //{
+        //    if (t != null) StopCoroutine(t);
+        //    t = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController, score1, score2));
+        //});
+
+        //audienceRating_x1 = score1;
+        //audienceRating_x2 = score2;
+        return new float[] { score1, score2 };
+    }
+
+    IEnumerator UpdateAudienceRatingOverTime(AudienceBarController bar)
+    {
+        float a = 0.5f;
+        float b = 0.5f;
+
+        while (true)
+        {
+
+            float elapsedTime = 0;
+            float timeToChange = 0.5f; // The time over which to change the text
+            while (elapsedTime < timeToChange)
+            {
+                Debug.Log("UpdateAudienceRatingOverTime");
+                elapsedTime += Time.deltaTime;
+
+                // Interpolate between initial and target votes
+                float a_ = Mathf.Lerp(a, b, elapsedTime / timeToChange);
+
+                bar.SetVal(a_);
+
+                yield return null;
+            }
+
+            // Make sure the final value is set accurately
+            bar.SetVal(b);
+
+            float[] g = getAudienceRatings();
+            a = g[0];
+            b = g[1];
+        }
+    }
+
     // this bad boy displays the title then runs the scene 
     public async Task RunScene(RickAndMortyScene scene)
     {
         currentlyRunningScene = true;
+
+
+        // Setup ratings handler for episode.
+        youTubeChat.ClearEventsForAudienceRatingMessages();
+
+        // Update ratings bar over time.
+        StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController));
+
+
+        Task updateAudienceRatings = Task.Run(async () => {
+            Coroutine t = null;
+            while(true)
+            {
+                //List<ChatMessage> msgs = youTubeChat.GetAudienceRatingMsgs();
+
+                //int basedTally = 0;
+                //int cringeTally = 0;
+                //double ratio = 0;
+
+                //// Update tally.
+                //foreach (ChatMessage e in msgs) {
+                //    string text = e.text.ToLower();
+                //    if (text.StartsWith("boo"))
+                //    {
+                //        cringeTally += 1;
+                //    }
+                //    if (text.StartsWith("pog"))
+                //    {
+                //        basedTally += 1;
+                //    }
+                //}
+
+                //Debug.Log($"based tally {cringeTally} {basedTally}");
+
+                //// Calculate the new audience rating.
+                //// 1. Sum ratio of based to cringe votes.
+                //ratio = (basedTally + 1.0) / (cringeTally + 1.0);
+                //// 2. Centre around 0.5.
+                //ratio = ratio - 0.5;
+                //// 3. Bound between 0 and 1
+                //ratio = Math.Min(Math.Max(ratio, 0.0), 1.0);
+
+                //float score1 = audienceBarController.val;
+                //float score2 = Convert.ToSingle(ratio * 100);
+                //Debug.Log($"based tally {ratio} {score2}");
+
+
+                //// Update ratings bar over time.
+                ////audienceBarController.SetVal(score);
+                ////MainThreadDispatcher.Instance.Enqueue(() =>
+                ////{
+                ////    if (t != null) StopCoroutine(t);
+                ////    t = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController, score1, score2));
+                ////});
+
+                //audienceRating_x1 = score1;
+                //audienceRating_x2 = score2;
+
+
+
+                // Wait interval
+                await Task.Delay(500);
+            }
+        });
+
+        //youTubeChat.OnAudienceRatingMessage += (sender, e) =>
+        //{
+        //    Debug.Log("audience rating call");
+        //    //Debug.Log($"rating msg {Time.frameCount}");
+
+        //    // Update tally.
+        //    string text = e.text.ToLower();
+        //    if (text.StartsWith("boo"))
+        //    {
+        //        cringeTally += 1;
+        //    }
+        //    if (text.StartsWith("pog"))
+        //    {
+        //        basedTally += 1;
+        //    }
+
+        //    Debug.Log($"based tally {cringeTally} {basedTally}");
+
+        //    // Calculate the new audience rating.
+        //    // 1. Sum ratio of based to cringe votes.
+        //    ratio = (basedTally + 1.0) / (cringeTally + 1.0);
+        //    // 2. Centre around 0.5.
+        //    ratio = ratio - 0.5;
+        //    // 3. Bound between 0 and 1
+        //    ratio = Math.Min(Math.Max(ratio, 0.0), 1.0);
+
+        //    Debug.Log($"based tally {ratio} {Convert.ToSingle(ratio * 100)}");
+
+        //    // Update ratings bar.
+        //    audienceBarController.SetVal(Convert.ToSingle(ratio * 100));
+        //};
 
         // 
         // 1. Prepare.
         //
 
         // If we have an AI character, check if we can reuse a 3D head generated for it.
-        if(scene.aiArt?.character != null)
+        if (scene.aiArt?.character != null)
         {
             string characterName = scene.aiArt?.character.characterName;
             Debug.Log($"detected ai character: {characterName}");

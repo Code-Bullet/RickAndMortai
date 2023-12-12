@@ -61,6 +61,16 @@ public class YouTubeChatFromSteven : MonoBehaviour
     public bool usingYoutubeChatStuff = true;
     private string saveFilePath = "Assets/topicSuggestions/topicSuggestions.txt";
 
+    private List<ChatMessage> audienceRatingMsgs = new List<ChatMessage>();
+
+    public delegate void OnAudienceRatingMessageHandler(object sender, ChatMessage e);
+    public event OnAudienceRatingMessageHandler OnAudienceRatingMessage;
+
+    public void ClearEventsForAudienceRatingMessages()
+    {
+        this.OnAudienceRatingMessage = null;
+    }
+
     void Start()
     {
         if (usingYoutubeChatStuff)
@@ -197,6 +207,19 @@ public class YouTubeChatFromSteven : MonoBehaviour
                         }
 
                     }
+                    else if (message.ToLower().StartsWith("pog") || message.ToLower().StartsWith("boo"))
+                    {
+                        Debug.Log("rating msg");
+                        audienceRatingMsgs.Add(chatMessage);
+
+                        //if (OnAudienceRatingMessage != null)
+                        //{
+                        //    Task.Run(() =>
+                        //    {
+                        //        OnAudienceRatingMessage(this, chatMessage);
+                        //    });
+                        //}
+                    }
                 }
 
                 resp.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
@@ -231,6 +254,14 @@ public class YouTubeChatFromSteven : MonoBehaviour
         return characterVotes;
     }
 
+    public List<ChatMessage> GetAudienceRatingMsgs()
+    {
+        return this.audienceRatingMsgs;
+    }
+    public void ClearAudienceRatingMsgs()
+    {
+        this.audienceRatingMsgs = new List<ChatMessage>();
+    }
 
     // counts votes and retuns a int array, which will look like [5,12,123] this means 5 votes for topic 1 ect.
     public int[] CountVotes()
