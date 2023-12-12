@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ public class AudienceBarController : MonoBehaviour
     public GameObject emojiiContainer;
     public Sprite[] reacts;
     public Image reactImg;
+    public bool showText;
+    public GameObject label;
 
     void Awake()
     {
@@ -22,7 +25,7 @@ public class AudienceBarController : MonoBehaviour
 
     public void SetVal(float x)
     {
-        Debug.Log($"SetVal {x}");
+        //Debug.Log($"SetVal {x}");
         val = x;
     }
 
@@ -37,17 +40,19 @@ public class AudienceBarController : MonoBehaviour
         t.offsetMax = new Vector2(-v, t.offsetMax.y);
     }
 
-    private void LateUpdate()
+    private void Update()
     {
+        // Fill the "meter".
         setFill(val / 100);
 
-        // emojii position
+        // Move the emoji to match the top of the meter.
         float ymin = 22.5f;
         float ymax = 156f;
         float y = ymin + (val / 100) * (ymax - ymin);
         var t = emojiiContainer.GetComponent<RectTransform>();
         t.localPosition = new Vector3(402.1f, y, t.position.z);
 
+        // Swap the bullet react face based on some thresholds (it's over 9000!!!!!).
         int i = 0;
 
         if (val <= 100) i = 4;
@@ -57,5 +62,16 @@ public class AudienceBarController : MonoBehaviour
         if (val <= 20) i = 0;
 
         reactImg.sprite = reacts[i];
+
+        // Update the text label.
+        if(label != null)
+        {
+            TMP_Text tm = label.GetComponentInChildren<TMP_Text>();
+            
+            if (tm != null)
+            {
+                tm.text = $"{Mathf.Floor(val)}%";
+            }
+        }
     }
 }
