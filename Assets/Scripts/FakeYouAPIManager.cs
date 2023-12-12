@@ -198,8 +198,11 @@ public class FakeYouAPIManager : MonoBehaviour
         try
         {
             // create the tts requests and wait until all the requests are confirmed.
+            Debug.Log("creating tts request tasks");
             List<Task> ttsTasks = CreateTTSRequestTasks(dialogues, characterUUIDS, textsToSay, characterStrings);
+            Debug.Log($"creating tts request tasks: num={ttsTasks.Count}");
             await Task.WhenAll(ttsTasks);
+            Debug.Log($"done tts reqs");
         }
         catch (Exception ex)
         {
@@ -207,6 +210,8 @@ public class FakeYouAPIManager : MonoBehaviour
             // Handle or log the exception as needed
         }
 
+
+        Debug.Log(99999);
         // i was planning on downloading all the shit at once but that broke everything for some reason
         // so thats why i commented it out
         List<Task> downloadTasks = new List<Task>();
@@ -214,6 +219,8 @@ public class FakeYouAPIManager : MonoBehaviour
         {
             updateText.text = updateTextStart + " --- " + "Generating FakeYou TTS " + 0 + "/" + _linesToSay.Count;
         }
+        Debug.Log(99999);
+
         // we go through each dialog and wait until its downloaded.
         // for (int i = 0; i < dialogues.Count; i++)
         // {
@@ -226,6 +233,7 @@ public class FakeYouAPIManager : MonoBehaviour
 
         // }
 
+        Debug.Log($"begin tts downloads");
 
         for (int i = 0; i < dialogues.Count; i++)
         {
@@ -238,7 +246,7 @@ public class FakeYouAPIManager : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error while downloading dialog for index {i}: {ex.Message}");
+                Debug.LogError($"Error while downloading dialog for index {i}: {ex.Message}\n{ex.StackTrace}");
                 try
                 {
                     if (!dialogues[i].failed)
@@ -248,13 +256,15 @@ public class FakeYouAPIManager : MonoBehaviour
                 }
                 catch (Exception ex2)
                 {
-                    Debug.LogError($"Error while downloading dialog for index {i}: {ex2.Message}");
+                    Debug.LogError($"Error while downloading dialog for index {i}: {ex2.Message} \n{ex2.StackTrace}");
                     // Handle or log the exception as needed
                 }
                 // Handle or log the exception as needed
             }
         }
         // await Task.WhenAll(downloadTasks);
+
+        Debug.Log(99999);
 
         return generatedAudioClips;
     }
@@ -444,8 +454,25 @@ public class FakeYouAPIManager : MonoBehaviour
         if (v.state == null || v.state.status == "pending" || v.state.status == "started" || v.state.status == "attempt_failed")
         {
             // if this hasent changed for like 50 attempts then we pull the plug. 
-            if (callNumber > 50)
+            if (callNumber > 30)
             {
+                // recurse by creating a new request
+                if (callNumber < 60)
+                {
+                    string newUuid = null;
+                    await CreateNewVoiceRequest(d, result => { newUuid = result; });
+
+                    if (!string.IsNullOrEmpty(newUuid))
+                    {
+                        d.uuid = newUuid;
+                        await DownloadDialogFromFakeYou(d, 30);  // Recursive call
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to create new voice request");
+                    }
+                }
+                
                 Debug.LogError("timed out on call so just use a burp here");
                 return;
             }

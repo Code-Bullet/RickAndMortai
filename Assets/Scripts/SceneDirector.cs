@@ -156,7 +156,7 @@ public class SceneDirector : MonoBehaviour
     // this function actually plas the scene
     public async Task PlayScene(string[] outputLines, List<AudioClip> voiceActingClips)
     {
-        //ResetStuff();
+        ResetStuff();
 
         int audioClipIndex = 0;
 

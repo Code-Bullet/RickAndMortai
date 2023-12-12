@@ -110,15 +110,17 @@ public class WholeThingManager : MonoBehaviour
     private static string GENERATE_CUSTOM_SCRIPT = "Generate custom script";
     private static string REPLAY_OLD_SCENE = "Replay old scene";
     private static string TEST_WORKFLOWS = "Test workflows";
+    private static string RUN_GENERATION_SERVER = "Run generation server";
 
     public static string[] RUN_MODE_OPTIONS = new string[] {
         RUN_MAIN_LOOP,
         GENERATE_CUSTOM_SCRIPT,
         REPLAY_OLD_SCENE,
-        TEST_WORKFLOWS
+        TEST_WORKFLOWS,
+        RUN_GENERATION_SERVER
     };
 
-    [Range(0, 3)]
+    [Range(0, 4)]
     public int runModeIndex = 0;
 
     public static WholeThingManager Singleton;
@@ -200,9 +202,6 @@ public class WholeThingManager : MonoBehaviour
     private Lookup3dHeads lookup3dHeads;
     private bool forceAiCharacter = false;
 
-    private float audienceRating_x1;
-    private float audienceRating_x2;
-
     public bool useProdData = false;
     public string GetDataDir()
     {
@@ -241,6 +240,8 @@ public class WholeThingManager : MonoBehaviour
         }
     }       
 
+
+    
 
     void Awake()
     {
@@ -282,6 +283,7 @@ public class WholeThingManager : MonoBehaviour
         bool testWorkflow = runMode == TEST_WORKFLOWS;
         bool replayOldScene = runMode == REPLAY_OLD_SCENE;
         bool runMainLoop = runMode == RUN_MAIN_LOOP;
+        bool runGenerationServer = runMode == RUN_GENERATION_SERVER;
 
         if (testWorkflow)
         {
@@ -352,6 +354,12 @@ public class WholeThingManager : MonoBehaviour
         else if (runMainLoop)
         {
             await MainLoop();
+        }
+        else if (runGenerationServer)
+        {
+            SetUI(null);
+            GenerationServer server = new GenerationServer(this, 8512);
+            await server.Serve();
         }
     }
 
@@ -726,6 +734,13 @@ public class WholeThingManager : MonoBehaviour
             a = g[0];
             b = g[1];
         }
+    }
+
+    public async Task RunAndRecord(RickAndMortyScene scene, string fname)
+    {
+        var x = VideoRecorder.Start(fname);
+        await RunScene(scene);
+        x.Stop();
     }
 
     // this bad boy displays the title then runs the scene 
@@ -1250,6 +1265,283 @@ public class WholeThingManager : MonoBehaviour
         scene.WriteToDir();
         return scene;
     }
+
+    public struct GenerateScriptResult
+    {
+        public string chatGPTOutput;
+        public string[] chatGPTOutputLines;
+
+        //public GenerateScriptResult(string chatGPTOutput, string[] chatGPTOutputLines)
+        //{
+        //    chatGPTOutput = chatGPTOutput;
+
+        //}
+
+    }
+
+    private async Task<GenerateScriptResult> GenerateScriptFromPrompt(string prompt, string promptAuthor)
+    {
+
+        string initialPrompt = "";
+
+        // the raw chatGPT output
+        string chatGPTOutput = "";
+        // the processed lines of the script
+        string[] chatGPTOutputLines = null;
+        bool foundGoodPrompt = false;
+
+        generateScript:
+        while (!foundGoodPrompt)
+        {
+
+            initialPrompt = prompt;
+
+            if (!useDefaultScript)
+            {
+                // chuck the prompt into chatgpt
+                chatGPTOutput = await AIController.EnterPromptAndGetResponse(prompt);
+            }
+            else
+            {
+
+                chatGPTOutput = defaultScript.text;
+                await Task.Delay(1000);
+            }
+
+
+
+            // add the title and author to the scene so the narrator speaks them
+            chatGPTOutput = "Narrator: " + initialPrompt + "\n" +
+                            "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
+
+
+            // this errases chatgpts memorty so it doesnt overload the max tokens cap
+            // dont worry about it
+            AIController.Clear();
+
+            // process the message into indavidual lines
+            string str = AIController.OutputString;
+            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+
+            AIController.OutputString = str;
+
+            // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
+            if (chatGPTOutputLines.Length < 10)
+            {
+                Debug.Log("oh no we cant do that");
+                goto generateScript;
+            }
+            else
+            {
+                if (useChatgptSlurDetection)
+                {
+                    string deslurredChatgptOutput = slurDetectorChatGPT.RemoveDirectSlurs(chatGPTOutput);
+                    // ask chatgpt to remove slurs because you guys are too creative	
+                    // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]	
+                    string detectedSlurs = await slurDetectorChatGPT.EnterPromptAndGetResponse(deslurredChatgptOutput);
+                    if (detectedSlurs.ToLower().Contains("no slurs detected"))
+                    {
+                        Debug.Log("Slur free yay " + deslurredChatgptOutput);
+                        // ok we good	
+                    }
+                    else
+                    {
+                        // get the slurs into an array	
+                        string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
+                        string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
+                        // if the shit is empty then that means something fucked up. 	
+                        // go to the backup prompt 	
+                        if (detectedSlurArrayFiltered.Length == 0)
+                        {
+                            Debug.Log("probably slurs so im not gonna risk it");
+                            goto generateScript;
+                        }
+                        else
+                        {
+                            Debug.Log("here be the slurs vvvvvv");
+                            foreach (string s in detectedSlurArrayFiltered)
+                            {
+                                Debug.Log(s);
+                            }
+                            foreach (string slur in detectedSlurArrayFiltered)
+                            {
+                                string pattern = Regex.Escape(slur);
+                                deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
+                            }
+                            chatGPTOutput = deslurredChatgptOutput;
+                            str = AIController.OutputString;
+                            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
+                            AIController.OutputString = str;
+                        }
+                    }
+                }
+
+                if (usePhonicSlurDetection)
+                {
+                    for (int i = 0; i < chatGPTOutputLines.Length; i++)
+                    {
+                        chatGPTOutputLines[i] = slurDetectorPhonic.RemoveSlurs(chatGPTOutputLines[i]);
+                    }
+
+                }
+
+                foundGoodPrompt = true;
+            }
+        }
+
+
+
+        Debug.Log("sceneDirector.ProcessDialogFromLines");
+        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
+        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
+        chatGPTOutputLines = dialogInfo.chatGPTOutputLines;
+
+        Debug.Log("ai generated names for stuff");
+        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
+        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
+        Debug.Log(nameOfAiGeneratedCharacter);
+        Debug.Log(nameOfAiGeneratedDimension);
+
+        if (forceAiCharacter)
+        {
+            if (nameOfAiGeneratedCharacter == null)
+            {
+                await Task.Delay(400);
+                Debug.Log("didn't get AI character, looping");
+                goto generateScript;
+            }
+        }
+
+
+
+        var res = new GenerateScriptResult();
+        res.chatGPTOutput = chatGPTOutput;
+        res.chatGPTOutputLines = chatGPTOutputLines;
+        return res;
+    }
+
+
+    public async Task<RickAndMortyScene> CreateSceneFromScript(
+        string script,
+        string promptAuthor,
+        bool isThisSceneUsingVoiceActing,
+        bool enableCameraShots
+    )
+    {
+        Debug.Log("CreateScene2");
+
+        string initialPrompt = "";
+        string[] chatGPTOutputLines = script.Split("\n").Select(line => line.Trim()).ToArray();
+
+
+
+        chatGPTOutputLines = Utils.AddSwearing(chatGPTOutputLines);
+
+        Debug.Log("sceneDirector.ProcessDialogFromLines");
+        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
+        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
+        chatGPTOutputLines = dialogInfo.chatGPTOutputLines;
+
+        Debug.Log("ai generated names for stuff");
+        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
+        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
+        Debug.Log(nameOfAiGeneratedCharacter);
+        Debug.Log(nameOfAiGeneratedDimension);
+
+
+        List<Task> allConcurrentTasks = new List<Task>();
+
+        // Start tasks in parallel
+
+        //-------------------------------------------------
+
+        // 1. AI art - start.
+        Task<AIArtStuff> aiArtTask = null;
+        if (useAiArt)
+        {
+            aiArtTask = replicateAPI.DoAllTheAiArtStuffForAScene(nameOfAiGeneratedCharacter, nameOfAiGeneratedDimension);
+            allConcurrentTasks.Add(aiArtTask);
+            Debug.Log("Task: AI art");
+        }
+
+        // 2. Camera shots - start.
+        Task<string[]> CameraShotsChatGPTTask = null;
+        if (enableCameraShots)
+        {
+            CameraShotsChatGPTTask = GenerateCameraShots(string.Join("\n", chatGPTOutputLines));
+            allConcurrentTasks.Add(CameraShotsChatGPTTask);
+            Debug.Log("Task: camera shots");
+        }
+
+
+        // 3. Voice acting - start.
+        Task<List<AudioClip>> ttsVoiceActingTask = null;
+        if (isThisSceneUsingVoiceActing)
+        {
+            ttsVoiceActingTask = fakeYouAPIManager.GenerateTTS(
+                dialogInfo.textsToSpeak,
+                dialogInfo.voiceModelUUIDs,
+                dialogInfo.characterNames,
+                null,
+                null
+            );
+            allConcurrentTasks.Add(ttsVoiceActingTask);
+            Debug.Log("Task: TTS voice acting tracks");
+        }
+
+
+        // Await all tasks being done.
+        Debug.Log("start await");
+        if (allConcurrentTasks.Count > 0)
+        {
+            await Task.WhenAll(allConcurrentTasks);
+        }
+
+
+        Debug.Log("finish await");
+
+        // 1. AI art (2d) - done.
+        AIArtStuff aiArtStuff = new AIArtStuff();
+        if (useAiArt)
+        {
+            aiArtStuff = await aiArtTask;
+        }
+
+        // 2. Voice acting - done.
+        List<AudioClip> ttsVoiceActingOrdered = new List<AudioClip>();
+        if (isThisSceneUsingVoiceActing)
+        {
+            ttsVoiceActingOrdered = ttsVoiceActingTask.Result;
+        }
+
+        // 3. Camera shots - done.
+        if (enableCameraShots)
+        {
+            chatGPTOutputLines = await CameraShotsChatGPTTask;
+        }
+
+        //-------------------------------------------------
+
+
+        Debug.Log("done creating scene");
+
+        RickAndMortyScene scene = new RickAndMortyScene(
+            null,
+            initialPrompt,
+            promptAuthor,
+            this.AIController.SystemMessage.text,
+            script,
+            chatGPTOutputLines,
+            ttsVoiceActingOrdered,
+            aiArtStuff
+        );
+
+
+        scene.WriteToDir();
+        return scene;
+    }
+
+
 
     bool AreStringsEqual(string s1, string s2)
     {
