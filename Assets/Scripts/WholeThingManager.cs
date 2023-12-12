@@ -656,6 +656,8 @@ public class WholeThingManager : MonoBehaviour
         }
     }
 
+    // Gets the audience rating by reading from the youtube stream
+    // Returns current rating and the next rating based on what we just read.
     public float[] getAudienceRatings()
     {
         List<ChatMessage> msgs = youTubeChat.GetAudienceRatingMsgs();
@@ -692,17 +694,6 @@ public class WholeThingManager : MonoBehaviour
         float score2 = Convert.ToSingle(ratio * 100);
         Debug.Log($"based tally {ratio} {score2}");
 
-
-        // Update ratings bar over time.
-        //audienceBarController.SetVal(score);
-        //MainThreadDispatcher.Instance.Enqueue(() =>
-        //{
-        //    if (t != null) StopCoroutine(t);
-        //    t = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController, score1, score2));
-        //});
-
-        //audienceRating_x1 = score1;
-        //audienceRating_x2 = score2;
         return new float[] { score1, score2 };
     }
 
@@ -713,7 +704,6 @@ public class WholeThingManager : MonoBehaviour
 
         while (true)
         {
-
             float elapsedTime = 0;
             float timeToChange = 0.5f; // The time over which to change the text
             while (elapsedTime < timeToChange)
@@ -748,96 +738,7 @@ public class WholeThingManager : MonoBehaviour
         youTubeChat.ClearEventsForAudienceRatingMessages();
 
         // Update ratings bar over time.
-        StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController));
-
-
-        Task updateAudienceRatings = Task.Run(async () => {
-            Coroutine t = null;
-            while(true)
-            {
-                //List<ChatMessage> msgs = youTubeChat.GetAudienceRatingMsgs();
-
-                //int basedTally = 0;
-                //int cringeTally = 0;
-                //double ratio = 0;
-
-                //// Update tally.
-                //foreach (ChatMessage e in msgs) {
-                //    string text = e.text.ToLower();
-                //    if (text.StartsWith("boo"))
-                //    {
-                //        cringeTally += 1;
-                //    }
-                //    if (text.StartsWith("pog"))
-                //    {
-                //        basedTally += 1;
-                //    }
-                //}
-
-                //Debug.Log($"based tally {cringeTally} {basedTally}");
-
-                //// Calculate the new audience rating.
-                //// 1. Sum ratio of based to cringe votes.
-                //ratio = (basedTally + 1.0) / (cringeTally + 1.0);
-                //// 2. Centre around 0.5.
-                //ratio = ratio - 0.5;
-                //// 3. Bound between 0 and 1
-                //ratio = Math.Min(Math.Max(ratio, 0.0), 1.0);
-
-                //float score1 = audienceBarController.val;
-                //float score2 = Convert.ToSingle(ratio * 100);
-                //Debug.Log($"based tally {ratio} {score2}");
-
-
-                //// Update ratings bar over time.
-                ////audienceBarController.SetVal(score);
-                ////MainThreadDispatcher.Instance.Enqueue(() =>
-                ////{
-                ////    if (t != null) StopCoroutine(t);
-                ////    t = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController, score1, score2));
-                ////});
-
-                //audienceRating_x1 = score1;
-                //audienceRating_x2 = score2;
-
-
-
-                // Wait interval
-                await Task.Delay(500);
-            }
-        });
-
-        //youTubeChat.OnAudienceRatingMessage += (sender, e) =>
-        //{
-        //    Debug.Log("audience rating call");
-        //    //Debug.Log($"rating msg {Time.frameCount}");
-
-        //    // Update tally.
-        //    string text = e.text.ToLower();
-        //    if (text.StartsWith("boo"))
-        //    {
-        //        cringeTally += 1;
-        //    }
-        //    if (text.StartsWith("pog"))
-        //    {
-        //        basedTally += 1;
-        //    }
-
-        //    Debug.Log($"based tally {cringeTally} {basedTally}");
-
-        //    // Calculate the new audience rating.
-        //    // 1. Sum ratio of based to cringe votes.
-        //    ratio = (basedTally + 1.0) / (cringeTally + 1.0);
-        //    // 2. Centre around 0.5.
-        //    ratio = ratio - 0.5;
-        //    // 3. Bound between 0 and 1
-        //    ratio = Math.Min(Math.Max(ratio, 0.0), 1.0);
-
-        //    Debug.Log($"based tally {ratio} {Convert.ToSingle(ratio * 100)}");
-
-        //    // Update ratings bar.
-        //    audienceBarController.SetVal(Convert.ToSingle(ratio * 100));
-        //};
+        Coroutine audienceRatingRoutine = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController));
 
         // 
         // 1. Prepare.
@@ -915,7 +816,7 @@ public class WholeThingManager : MonoBehaviour
         await sceneDirector.PlayScene(scene.chatGPTOutputLines, scene.ttsVoiceActingLines);
 
         SetUI(null);
-
+        StopCoroutine(audienceRatingRoutine);
 
         //
         // 3. Reset for next scene.

@@ -63,14 +63,6 @@ public class YouTubeChatFromSteven : MonoBehaviour
 
     private List<ChatMessage> audienceRatingMsgs = new List<ChatMessage>();
 
-    public delegate void OnAudienceRatingMessageHandler(object sender, ChatMessage e);
-    public event OnAudienceRatingMessageHandler OnAudienceRatingMessage;
-
-    public void ClearEventsForAudienceRatingMessages()
-    {
-        this.OnAudienceRatingMessage = null;
-    }
-
     void Start()
     {
         if (usingYoutubeChatStuff)
