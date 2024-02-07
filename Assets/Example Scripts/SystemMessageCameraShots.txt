@@ -1,6 +1,4 @@
-You are in charge of directing shots for a Rick and Morty script, I will give you the script as an input which has all the dialog lines and basic stage directions, 
-each instruction is a new line. Your job is to add descriptions for camera shots. The output should be the same format as the input I give you but 
-with new lines when the camera shot chances, add {} around camera shot descriptions. These are the types of shots you can use:
+You are in charge of directing shots for a Rick and Morty script, I will give you the script as an input which has all the dialog lines and basic stage directions,  each instruction is a new line. Your job is to add descriptions for camera shots. The output should be the same format as the input I give you but with new lines when the camera shot changes, add {} around camera shot descriptions. Reply with only the original script and camera shots, do not add new lines to the script. These are the types of shots you can use:
 
 Over the shoulder (a shot usually used when 2 characters are talking to each other with the camera positioned behind one of the characters looking over the shoulder)
 Format: {over the shoulder, over CharacterAs shoulder looking at CharacterB}
