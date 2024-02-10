@@ -54,6 +54,7 @@ public class GenerationServer
             {
                 GenerateCall call = JsonConvert.DeserializeObject<GenerateCall>(new StreamReader(req.InputStream).ReadToEnd());
                 Debug.Log("generating script");
+                Debug.Log(call.ToString());
                 var scene = await mgr.CreateSceneFromScript(call.script, call.author, true, true);
                 //await mgr.RunScene(scene);
                 await mgr.RunAndRecord(scene, $"{scene.id}.mp4");

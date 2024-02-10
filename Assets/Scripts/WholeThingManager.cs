@@ -123,6 +123,8 @@ public class WholeThingManager : MonoBehaviour
     [Range(0, 4)]
     public int runModeIndex = 0;
 
+    public string customScript;
+
     public static WholeThingManager Singleton;
     public OpenAISlurDetector slurDetectorChatGPT;
     public SlurDetectorEvan slurDetectorPhonic;
@@ -329,7 +331,7 @@ public class WholeThingManager : MonoBehaviour
             enableOrDisableVotingUI(false);
 
             Debug.Log("generating one custom scene then playing it");
-            var scene = await CreateScene(firstPrompt, "me", "banana", "me", usingVoiceActing);
+            var scene = await CreateSceneFromScript(customScript, "me", true, true);
 
             Debug.Log("rendering newly generated scene");
             await RunScene(scene);
@@ -1963,6 +1965,13 @@ public class RandomScript_Editor : Editor
     public override void OnInspectorGUI()
     {
         WholeThingManager script = (WholeThingManager) target;
+
+
+
+        EditorGUILayout.LabelField("Custom script");
+        script.customScript = EditorGUILayout.TextArea(script.customScript);
+
+
         EditorGUI.BeginChangeCheck();
         serializedObject.UpdateIfRequiredOrScript();
 
