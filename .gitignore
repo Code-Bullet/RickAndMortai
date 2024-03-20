@@ -82,5 +82,7 @@ OutputScripts/
 .vsconfig
 
 Research/
-data-prod
-data-test
+
+data/prod
+!data/test
+.env
