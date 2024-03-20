@@ -208,8 +208,8 @@ public class WholeThingManager : MonoBehaviour
     public string GetDataDir()
     {
         if(useProdData)
-            return "data-prod/";
-        return "data-test/";
+            return "data/prod/";
+        return "data/test/";
     }
     
     public void SetUI(GameObject ui)
