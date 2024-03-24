@@ -107,7 +107,7 @@ public static class PathUtils
     // Returns a list of directory/folder names inside `directoryPath`.
     public static string[] GetSubDirs(string directoryPath)
     {
-        //string directoryPath = "local-image-gen/headshot/data/3d/";
+        //string directoryPath = "3d-headshot-pipeline/headshot/data/3d/";
 
         // Glob all directories.
         List<string> dirs = new List<string>();

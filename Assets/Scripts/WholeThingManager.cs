@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using Newtonsoft.Json;
-using static YouTubeChatFromSteven;
+using static YoutubeLiveChatListener;
 
 public class TopicVoteResults
 {
@@ -132,7 +132,7 @@ public class WholeThingManager : MonoBehaviour
     public OpenAICameraDirector openAICameraDirector;
     public SceneDirector sceneDirector;
     public FakeYouAPIManager fakeYouAPIManager;
-    public YouTubeChatFromSteven youTubeChat;
+    public YoutubeLiveChatListener youtubeChat;
     public ReplicateAPI replicateAPI;
     public CharacterVotingChamber characterVotingChamber;
 
@@ -143,26 +143,41 @@ public class WholeThingManager : MonoBehaviour
 
     public bool currentlyRunningScene = false;
 
+    [HideInInspector]
     public TMP_Text textField;
+    [HideInInspector]
     public TMP_Text dialogBox;
 
 
 
-
+    [HideInInspector]
     public TMP_Text topicOption1;
+    [HideInInspector]
     public TMP_Text topic1Votes;
+    //[HideInInspector]
     public BarWidthController topic1Bar;
+    [HideInInspector]
     public TMP_Text topicOption2;
+    [HideInInspector]
     public TMP_Text topic2Votes;
+    //[HideInInspector]
     public BarWidthController topic2Bar;
+    [HideInInspector]
     public TMP_Text topicOption3;
+    [HideInInspector]
     public TMP_Text topic3Votes;
+    //[HideInInspector]
     public BarWidthController topic3Bar;
+    [HideInInspector]
     public TMP_Text topicTitleThing;
+    [HideInInspector]
     public TMP_Text titleText;
 
+    [HideInInspector]
     public GameObject bottomBarVotingInfoText;
+    [HideInInspector]
     public GameObject topBarDiscordPluf;
+
     public string firstPrompt = "Banana";
     public bool runMainLoop = true;
 
@@ -300,7 +315,7 @@ public class WholeThingManager : MonoBehaviour
             //scene.WriteToDir();
             //await RunScene(scene);
 
-            //var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
+            var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
 
             // NOTE(liamz): okay this is the ONE time I'm gonna use globals
             //forceAiCharacter = true;
@@ -324,7 +339,8 @@ public class WholeThingManager : MonoBehaviour
             //await testWorkflow4();
             //await testWorkflow3();
             //await testWorkflow2();
-            await testWorkflow1();
+            //await test_3dCharacterScene();
+            //await test_topicVoteCharacterVote();
         }
         else if (generateCustomScript)
         {
@@ -418,7 +434,7 @@ public class WholeThingManager : MonoBehaviour
         characterVotingChamber.stageCamera.enabled = true;
 
         characterVotingChamber.Setup(characterName, generationIds);
-        CharacterVoteResults results = await characterVotingChamber.RunVote(youTubeChat, timeToVoteMilliseconds);
+        CharacterVoteResults results = await characterVotingChamber.RunVote(youtubeChat, timeToVoteMilliseconds);
 
         characterVotingChamber.stageCamera.enabled = false;
 
@@ -450,7 +466,7 @@ public class WholeThingManager : MonoBehaviour
 
         // ok lets get the list of topics
         enableOrDisableVotingUI(true);
-        List<string> randomTopics = youTubeChat.GetRandomTopics();
+        List<string> randomTopics = youtubeChat.GetRandomTopics();
 
         if (randomTopics == null)
         {
@@ -481,9 +497,9 @@ public class WholeThingManager : MonoBehaviour
         topicOption3.text = randomTopics[2];
 
         // lets start the voting
-        youTubeChat.ClearVotes();
+        youtubeChat.ClearVotes();
         float voteTime = 0;
-        int[] voteNumbers = youTubeChat.CountVotes();
+        int[] voteNumbers = youtubeChat.CountVotes();
 
         topic1Bar.ResetBar();
         topic2Bar.ResetBar();
@@ -497,7 +513,7 @@ public class WholeThingManager : MonoBehaviour
         while (!nextSceneTask.IsCompleted || (voteTime < timeToVoteSeconds && waitForVoting))
         {
             //get the votes
-            voteNumbers = youTubeChat.CountVotes();
+            voteNumbers = youtubeChat.CountVotes();
 
 
             // this is for testing
@@ -639,7 +655,7 @@ public class WholeThingManager : MonoBehaviour
             // Run a vote.
             TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
             // Add the chosen topic to the blacklist so it doesnt play again
-            youTubeChat.AddToBlacklist(voteResults.topic);
+            youtubeChat.AddToBlacklist(voteResults.topic);
 
             // Get the next scene.
             RickAndMortyScene currentScene = await nextSceneTask;
@@ -670,7 +686,7 @@ public class WholeThingManager : MonoBehaviour
     // Returns current rating and the next rating based on what we just read.
     public float[] getAudienceRatings()
     {
-        List<ChatMessage> msgs = youTubeChat.GetAudienceRatingMsgs();
+        List<ChatMessage> msgs = youtubeChat.GetAudienceRatingMsgs();
 
         int basedTally = 0;
         int cringeTally = 0;
@@ -690,7 +706,7 @@ public class WholeThingManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"based tally {cringeTally} {basedTally}");
+        //Debug.Log($"based tally {cringeTally} {basedTally}");
 
         // Calculate the new audience rating.
         // 1. Sum ratio of based to cringe votes.
@@ -702,7 +718,7 @@ public class WholeThingManager : MonoBehaviour
 
         float score1 = audienceBarController.val;
         float score2 = Convert.ToSingle(ratio * 100);
-        Debug.Log($"based tally {ratio} {score2}");
+        //Debug.Log($"based tally {ratio} {score2}");
 
         return new float[] { score1, score2 };
     }
@@ -752,7 +768,7 @@ public class WholeThingManager : MonoBehaviour
 
 
         // Setup ratings handler for episode.
-        youTubeChat.ClearAudienceRatingMsgs();
+        youtubeChat.ClearAudienceRatingMsgs();
 
         // Update ratings bar over time.
         Coroutine audienceRatingRoutine = StartCoroutine(UpdateAudienceRatingOverTime(audienceBarController));
@@ -1033,7 +1049,7 @@ public class WholeThingManager : MonoBehaviour
                 prompt = backupPrompt;
                 promptAuthor = backupPromptAuthor;
                 initialPrompt = prompt;
-                youTubeChat.AddToBlacklist(backupPrompt);
+                youtubeChat.AddToBlacklist(backupPrompt);
                 // in the case of a double fail this be the chosen story
                 backupPrompt = "Generate a Random story";
                 backupPromptAuthor = "Me because you guys are nasty";
@@ -1068,7 +1084,7 @@ public class WholeThingManager : MonoBehaviour
                             prompt = backupPrompt;
                             promptAuthor = backupPromptAuthor;
                             initialPrompt = prompt;
-                            youTubeChat.AddToBlacklist(backupPrompt);
+                            youtubeChat.AddToBlacklist(backupPrompt);
                             // in the case of a double fail this be the chosen story	
                             backupPrompt = "Generate a Random story";
                             backupPromptAuthor = "Me because you guys are nasty";
@@ -1596,11 +1612,18 @@ public class WholeThingManager : MonoBehaviour
     //
     //
 
+    private async Task test_3dCharacterScene()
+    {
+        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        await RunScene(scene);
+
+    }
+
     // Test 1: Run a topic vote, run a character vote, sub the 3D character into a scene read from disk.
     // This tests:
     // - transitioning between the voting UI's
     // - the functionality of the character voting interface
-    private async Task testWorkflow1()
+    private async Task test_topicVoteCharacterVote()
     {
         // Run test main loop:
 
@@ -1621,10 +1644,11 @@ public class WholeThingManager : MonoBehaviour
         Debug.Log("char vote done");
 
 
-        //var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
-        //scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
+        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        scene.aiArt.character.head3d.characterKey = voteRes.characterKey;
+        scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
 
-        //await RunScene(scene);
+        await RunScene(scene);
     }
 
     // Test 2: create a scene with an AI character in it, generate the 3D AI character, run the character vote, and then play the scene
@@ -1633,7 +1657,7 @@ public class WholeThingManager : MonoBehaviour
     // - the integration with the 3d gen pipeline (also when it fails)
     // - the progress of the generation / async performance
     // - running a character vote on the newly downloaded characters
-    private async Task testWorkflow2()
+    private async Task test_generate3DCharacterRunVoteAndThenPlay()
     {
         // 1. Generate scene.
         //var scene = await CreateScene("rick talks to the dalai lama about testiucular torsion", "me", "banana", "me", usingVoiceActing);
@@ -1689,7 +1713,7 @@ public class WholeThingManager : MonoBehaviour
     // This tests:
     // - running 3d scene gen in the background while also playing a current scene
     // - "lazy loading" a character scene into the mix
-    private async Task testWorkflow3()
+    private async Task test_runMainLoopWith3DCharacters()
     {
         // PRODUCT 3:
         // 1. Run mock main loop.
@@ -1719,7 +1743,7 @@ public class WholeThingManager : MonoBehaviour
             TopicVoteResults voteResults = await RunTopicVote(nextSceneTask, 30f);
 
             // Add the chosen topic to the blacklist so it doesnt play again
-            youTubeChat.AddToBlacklist(voteResults.topic);
+            youtubeChat.AddToBlacklist(voteResults.topic);
 
             // Get the next scene.
             RickAndMortyScene currentScene = await nextSceneTask;
@@ -1768,7 +1792,7 @@ public class WholeThingManager : MonoBehaviour
                 //    var topicVoteResults2 = await RunTopicVote(nextSceneTask2, 30f);
 
                 //    // Add the chosen topic to the blacklist so it doesnt play again
-                //    youTubeChat.AddToBlacklist(voteResults.topic);
+                //    youtubeChat.AddToBlacklist(voteResults.topic);
 
                 //    // Get the next scene.
                 //    RickAndMortyScene scene = await nextSceneTask2;
@@ -1898,10 +1922,10 @@ public class WholeThingManager : MonoBehaviour
         List<string> _3dScenes = new List<string>();
 
         // List all of the scenes in saved-scenes/
-        foreach(string dir in PathUtils.GetSubDirs($"data-test/saved-scenes/"))
+        foreach(string dir in PathUtils.GetSubDirs($"data/test/saved-scenes/"))
         {
             // Load the scene.json
-            string data = File.ReadAllText($"data-test/saved-scenes/{dir}/scene.json");
+            string data = File.ReadAllText($"data/test/saved-scenes/{dir}/scene.json");
             var scene = JsonConvert.DeserializeObject<RickAndMortyScene>(data);
 
             if(scene.aiArt.character != null)
@@ -1977,10 +2001,6 @@ public class RandomScript_Editor : Editor
 
 
 
-
-        ///////
-        //serializedObject.Update();
-
         // Dropdown for different run modes.
         EditorGUILayout.LabelField("Select an option:");
         runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
@@ -2013,7 +2033,6 @@ public class RandomScript_Editor : Editor
         EditorGUI.EndChangeCheck();
 
 
-        DrawDefaultInspector();
     }
 }
 #endif
