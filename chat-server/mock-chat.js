@@ -56,10 +56,15 @@ class MessageGenerator {
         // let msgs = Array(3).fill(0).map(() => msgGen.generate("rating"))
         
         // Test: 100% based reaction.
-        const msgs = Array(3).fill(0).map(() => ({
+        let msgs = Array(3).fill(0).map(() => ({
             author: "satoshi",
             text: "pog"
         }))
+
+
+        // Test: 100% based reaction.
+        msgs = msgs.concat(Array(3).fill(0).map(() => msgGen.generate("charVote")))
+        msgs = msgs.concat(Array(3).fill(0).map(() => msgGen.generate("topicVote")))
 
         console.log(msgs)
 

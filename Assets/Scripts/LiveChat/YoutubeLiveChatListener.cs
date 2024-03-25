@@ -125,6 +125,18 @@ public class YoutubeLiveChatListener : MonoBehaviour
 
                 List<ChatMessage> messages = JsonConvert.DeserializeObject<List<ChatMessage>>(new StreamReader(req.InputStream).ReadToEnd());
 
+                // Append and save messages to disk.
+                string youtubeChatDataFilePath = $"{WholeThingManager.Singleton.GetDataDir()}/youtube-chat.jsonl";
+                // Read the file, append, write.
+                string jsonLines = "";
+                foreach (ChatMessage chatMessage in messages)
+                {
+                    jsonLines += JsonConvert.SerializeObject(chatMessage, Formatting.None) + "\n\r";
+                }
+                File.AppendAllText(youtubeChatDataFilePath, jsonLines);
+
+
+
                 foreach (ChatMessage chatMessage in messages)
                 {
                     string message = chatMessage.text;

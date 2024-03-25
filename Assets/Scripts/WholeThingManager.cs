@@ -25,7 +25,6 @@ public class CharacterVotesData
 {
     public static string characterVotesFilePath = $"{WholeThingManager.Singleton.GetDataDir()}/character-votes.json";
     
-
     public CharacterVoteResults[] voteResults = new CharacterVoteResults[] { };
 
     public static CharacterVotesData ReadFromDisk()
@@ -223,6 +222,9 @@ public class WholeThingManager : MonoBehaviour
     public bool forceAiCharacter = false;
 
     public bool useProdData = false;
+
+    private CharacterVotesData characterVotesData;
+
     public string GetDataDir()
     {
         if(useProdData)
@@ -277,6 +279,7 @@ public class WholeThingManager : MonoBehaviour
 
         SetUI(null);
         lookup3dHeads = Lookup3dHeads.Load();
+        characterVotesData = CharacterVotesData.ReadFromDisk();
 
         Debug.Log("lookup 3d heads cache:");
         foreach (var kvp in lookup3dHeads.selectedGenerations)
@@ -286,6 +289,9 @@ public class WholeThingManager : MonoBehaviour
 
         // Disbale some shit for performance
         characterVotingChamber.gameObject.SetActive(false);
+
+
+        
 
         // TestingShit();
     }
@@ -317,17 +323,22 @@ public class WholeThingManager : MonoBehaviour
             //scene.WriteToDir();
             //await RunScene(scene);
 
-            RickAndMortyScene scene;
-            if(customScript != "")
-            {
-                scene = await CreateSceneFromScript(customScript, "liam", true, true);
-            }
-            else { 
-                scene = await CreateScene(customScriptTopic, "liam", "", "", true);
-            }
-            scene.Write();
-            await RunScene(scene);
-            
+
+
+            await test_topicVoteCharacterVote();
+
+
+            //RickAndMortyScene scene;
+            //if(customScript != "")
+            //{
+            //    scene = await CreateSceneFromScript(customScript, "liam", true, true);
+            //}
+            //else { 
+            //    scene = await CreateScene(customScriptTopic, "liam", "", "", true);
+            //}
+            //scene.Write();
+            //await RunScene(scene);
+
 
             // NOTE(liamz): okay this is the ONE time I'm gonna use globals
             //forceAiCharacter = true;
@@ -352,7 +363,6 @@ public class WholeThingManager : MonoBehaviour
             //await testWorkflow3();
             //await testWorkflow2();
             //await test_3dCharacterScene();
-            //await test_topicVoteCharacterVote();
         }
         else if (generateCustomScript)
         {
@@ -448,6 +458,11 @@ public class WholeThingManager : MonoBehaviour
 
         characterVotingChamber.Setup(characterName, generationIds);
         CharacterVoteResults results = await characterVotingChamber.RunVote(youtubeChat, timeToVoteMilliseconds);
+
+        // Save character votes data.
+        Debug.Log($"Saving character votes data");
+        characterVotesData.voteResults = characterVotesData.voteResults.Append(results).ToArray();
+        characterVotesData.WriteToDisk();
 
         characterVotingChamber.stageCamera.enabled = false;
 
