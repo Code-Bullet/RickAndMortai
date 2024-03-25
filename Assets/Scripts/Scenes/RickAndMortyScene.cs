@@ -81,7 +81,7 @@ public class RickAndMortyScene
     /// Writes to the saved scenes directory with `sceneId`
     /// </summary>
     /// <param name="sceneId"></param>
-    public void WriteToDir(string sceneId = null)
+    public void Write(string sceneId = null)
     {
         // 1. Create the directory.
         if(sceneId == null) sceneId = $"scene-{this.id}";
@@ -89,6 +89,7 @@ public class RickAndMortyScene
         // Combine the directory path and file name
         string basePath = $"{WholeThingManager.Singleton.GetDataDir()}/saved-scenes/{sceneId}/";
         string sceneFilePath = $"{basePath}/scene.json";
+        string scriptFilePath = $"{basePath}/script.txt";
         string voiceTracksDir = $"{basePath}/voice-tracks";
         string aiCharacterDir = $"{basePath}/characters";
         string aiHeadDirName = $"{basePath}/heads3d";
@@ -160,6 +161,11 @@ public class RickAndMortyScene
             // Write the JSON data to the file
             File.WriteAllText(sceneFilePath, json);
             Debug.Log("JSON data saved to " + sceneFilePath);
+
+            // Write the script to a file.
+            string script = string.Join("\n", this.chatGPTOutputLines);
+            File.WriteAllText(scriptFilePath, script);
+            Debug.Log("Script saved to " + sceneFilePath);
         }
         catch (Exception e)
         {
@@ -171,7 +177,7 @@ public class RickAndMortyScene
     /// Reads from the saved scenes directory with `sceneId`
     /// </summary>
     /// <param name="sceneId"></param>
-    public static RickAndMortyScene ReadFromDir(string sceneId)
+    public static RickAndMortyScene Read(string sceneId)
     {
         Debug.Log($"Reading scene from directory: {sceneId}");
 

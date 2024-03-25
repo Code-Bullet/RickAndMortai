@@ -157,7 +157,7 @@ public class OpenAIController : AIController
             return null;
         }
 
-        inputPrompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
+        inputPrompt += $". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least {WholeThingManager.Singleton.minLinesDialog} lines of dialog.";
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.Role = ChatMessageRole.User;

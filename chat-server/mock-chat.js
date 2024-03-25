@@ -52,8 +52,15 @@ class MessageGenerator {
 
     // Main loop
     setInterval(async () => {
-        // let msgs = Array(3).fill(0).map(() => msgGen.generate("random"))
+        // Test: random reaction.
         let msgs = Array(3).fill(0).map(() => msgGen.generate("rating"))
+        
+        // Test: 100% based reaction.
+        // const msgs = Array(3).fill(0).map(() => ({
+        //     author: "satoshi",
+        //     text: "pog"
+        // }))
+
         console.log(msgs)
 
         fetch(`http://localhost:${PORT}`, {

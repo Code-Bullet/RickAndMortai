@@ -445,10 +445,10 @@ public class FakeYouAPIManager : MonoBehaviour
     {
         Debug.Log("Getting stuff from fake you, Attempt " + callNumber + ": " + d.text);
         var content = await _client.GetAsync($"https://api.fakeyou.com/tts/job/{d.uuid}");
-        Debug.Log("Attempt " + callNumber + ": " + d.text);
+        //Debug.Log("Attempt " + callNumber + ": " + d.text);
         var responseContent = await content.Content.ReadAsStringAsync();
         var v = JsonConvert.DeserializeObject<GetResponse>(responseContent);
-        Debug.Log("Attempt " + callNumber + ": " + responseContent);
+        //Debug.Log("Attempt " + callNumber + ": " + responseContent);
         // Debug.Log(responseContent);
 
         if (v.state == null || v.state.status == "pending" || v.state.status == "started" || v.state.status == "attempt_failed")

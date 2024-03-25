@@ -124,6 +124,9 @@ public class WholeThingManager : MonoBehaviour
     public int runModeIndex = 0;
 
     public string customScript;
+    public string customScriptTopic;
+    
+    public int minLinesDialog;
 
     public static WholeThingManager Singleton;
     public OpenAISlurDetector slurDetectorChatGPT;
@@ -217,7 +220,7 @@ public class WholeThingManager : MonoBehaviour
     public AudienceBarController audienceBarController;
 
     private Lookup3dHeads lookup3dHeads;
-    private bool forceAiCharacter = false;
+    public bool forceAiCharacter = false;
 
     public bool useProdData = false;
     public string GetDataDir()
@@ -289,8 +292,7 @@ public class WholeThingManager : MonoBehaviour
 
     async void Start()
     {
-        //SetUI(reactionBarUI);
-        //return;
+        SetUI(reactionBarUI);
 
         sceneDirector.ResetStuff();
 
@@ -315,7 +317,17 @@ public class WholeThingManager : MonoBehaviour
             //scene.WriteToDir();
             //await RunScene(scene);
 
-            var scene = await CreateScene("rick and morty talk about edward bernays propaganda theory", "liam", "", "", true);
+            RickAndMortyScene scene;
+            if(customScript != "")
+            {
+                scene = await CreateSceneFromScript(customScript, "liam", true, true);
+            }
+            else { 
+                scene = await CreateScene(customScriptTopic, "liam", "", "", true);
+            }
+            scene.Write();
+            await RunScene(scene);
+            
 
             // NOTE(liamz): okay this is the ONE time I'm gonna use globals
             //forceAiCharacter = true;
@@ -348,6 +360,7 @@ public class WholeThingManager : MonoBehaviour
 
             Debug.Log("generating one custom scene then playing it");
             var scene = await CreateSceneFromScript(customScript, "me", true, true);
+            scene.Write();
 
             Debug.Log("rendering newly generated scene");
             await RunScene(scene);
@@ -361,7 +374,7 @@ public class WholeThingManager : MonoBehaviour
             textField.text = "Re-running old scene...";
             //CreateScene(firstPrompt, "me", "banana", "me", false);
             Debug.Log("loaded old scene");
-            var scene = RickAndMortyScene.ReadFromDir(oldSceneID);
+            var scene = RickAndMortyScene.Read(oldSceneID);
             await RunScene(scene);
 
             //await RunScene(RickAndMortyScene.ReadFromDir("scene-0eb7fec2-e9ed-5a25-ebe8-771a38c2dcff"));
@@ -706,7 +719,7 @@ public class WholeThingManager : MonoBehaviour
             }
         }
 
-        //Debug.Log($"based tally {cringeTally} {basedTally}");
+        Debug.Log($"based tally {cringeTally} {basedTally}");
 
         // Calculate the new audience rating.
         // 1. Sum ratio of based to cringe votes.
@@ -975,24 +988,7 @@ public class WholeThingManager : MonoBehaviour
             creatingScene = "Currently Creating: " + prompt;
             textField.text = creatingScene + " --- " + "Generating script...";
 
-            // add some shit to the prompt
-            //prompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
-            // prompt += ". Rick and Morty are currently in " + sceneDirector.currentDimension.name + ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
-
-            if (!useDefaultScript)
-            {
-                // chuck the prompt into chatgpt
-
-                chatGPTOutput = await AIController.EnterPromptAndGetResponse(prompt);
-            }
-            else
-            {
-
-                chatGPTOutput = defaultScript.text;
-                await Task.Delay(1000);
-            }
-
-
+            chatGPTOutput = await AIController.EnterPromptAndGetResponse(prompt);
 
             // add the title and author to the scene so the narrator speaks them
             chatGPTOutput = "Narrator: " + initialPrompt + "\n" +
@@ -1011,35 +1007,6 @@ public class WholeThingManager : MonoBehaviour
             chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
             
             AIController.OutputString = str;
-            // if (!useDefaultScript)
-            // {
-            //     // save a text file
-            //     try
-            //     {
-            //         // Get the current date and time
-            //         string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-            //         // Create the full path for the file
-            //         string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPrompt}.txt";
-
-            //         // Create an empty file and close it immediately
-            //         using (FileStream fs = File.Create(path))
-            //         {
-            //             // Close the file immediately to allow subsequent write operations
-            //         }
-
-            //         // Write the string to the file
-            //         File.WriteAllText(path, chatGPTOutput);
-
-            //         // Log success
-            //         Debug.Log("Data saved successfully to: " + path);
-            //     }
-            //     catch (System.Exception e)
-            //     {
-            //         // Log any exceptions that occur
-            //         Debug.LogError("An error occurred while saving data: " + e.Message);
-            //     }
-            // }
 
 
             // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
@@ -1143,11 +1110,9 @@ public class WholeThingManager : MonoBehaviour
         DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
         chatGPTOutputLines = dialogInfo.chatGPTOutputLines;
 
-        Debug.Log("ai generated names for stuff");
         string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
         string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
-        Debug.Log(nameOfAiGeneratedCharacter);
-        Debug.Log(nameOfAiGeneratedDimension);
+        Debug.Log($"AI show elements:\nCharacter: {nameOfAiGeneratedCharacter}\nDimension: {nameOfAiGeneratedDimension}");
 
         if (forceAiCharacter)
         {
@@ -1159,37 +1124,7 @@ public class WholeThingManager : MonoBehaviour
             }
         }
 
-
-        try
-        {
-            // Get the current date and time	
-            string dateTimeString = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-            // remove the special characters because this fucks with file saving
-            string initialPromptWithNoSpecialCharacters = Regex.Replace(initialPrompt, @"[^a-zA-Z0-9\s]", "");
-            // Create the full path for the file	
-            string path = $"{Environment.CurrentDirectory}\\Assets\\Example Scripts\\OutputScripts\\{dateTimeString}_{initialPromptWithNoSpecialCharacters}.txt";
-            // Create an empty file and close it immediately	
-            using (FileStream fs = File.Create(path))
-            {
-                // Close the file immediately to allow subsequent write operations	
-            }
-            // Write the string to the file	
-            File.WriteAllText(path, chatGPTOutput);
-            // Log success	
-            Debug.Log("Data saved successfully to: " + path);
-        }
-        catch (System.Exception e)
-        {
-            // Log any exceptions that occur	
-            Debug.LogError("An error occurred while saving data: " + e.Message);
-        }
-
         textField.text = creatingScene + " --- " + "Detecting Dialog...";
-
-
-
-
 
 
         List<Task> allConcurrentTasks = new List<Task>();
@@ -1280,7 +1215,7 @@ public class WholeThingManager : MonoBehaviour
         );
 
 
-        scene.WriteToDir();
+        scene.Write();
         return scene;
     }
 
@@ -1288,154 +1223,6 @@ public class WholeThingManager : MonoBehaviour
     {
         public string chatGPTOutput;
         public string[] chatGPTOutputLines;
-
-        //public GenerateScriptResult(string chatGPTOutput, string[] chatGPTOutputLines)
-        //{
-        //    chatGPTOutput = chatGPTOutput;
-
-        //}
-
-    }
-
-    private async Task<GenerateScriptResult> GenerateScriptFromPrompt(string prompt, string promptAuthor)
-    {
-
-        string initialPrompt = "";
-
-        // the raw chatGPT output
-        string chatGPTOutput = "";
-        // the processed lines of the script
-        string[] chatGPTOutputLines = null;
-        bool foundGoodPrompt = false;
-
-        generateScript:
-        while (!foundGoodPrompt)
-        {
-
-            initialPrompt = prompt;
-
-            if (!useDefaultScript)
-            {
-                // chuck the prompt into chatgpt
-                chatGPTOutput = await AIController.EnterPromptAndGetResponse(prompt);
-            }
-            else
-            {
-
-                chatGPTOutput = defaultScript.text;
-                await Task.Delay(1000);
-            }
-
-
-
-            // add the title and author to the scene so the narrator speaks them
-            chatGPTOutput = "Narrator: " + initialPrompt + "\n" +
-                            "Narrator: Prompt By: " + promptAuthor + "\n" + chatGPTOutput;
-
-
-            // this errases chatgpts memorty so it doesnt overload the max tokens cap
-            // dont worry about it
-            AIController.Clear();
-
-            // process the message into indavidual lines
-            string str = AIController.OutputString;
-            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
-
-            AIController.OutputString = str;
-
-            // if the number of lines is less that 10 this means that chatgpt was like "WAAAAAA i cant do that"
-            if (chatGPTOutputLines.Length < 10)
-            {
-                Debug.Log("oh no we cant do that");
-                goto generateScript;
-            }
-            else
-            {
-                if (useChatgptSlurDetection)
-                {
-                    string deslurredChatgptOutput = slurDetectorChatGPT.RemoveDirectSlurs(chatGPTOutput);
-                    // ask chatgpt to remove slurs because you guys are too creative	
-                    // this will return all the slurs in square brackets e.g. [Nword][Nword but spelt slightly different]	
-                    string detectedSlurs = await slurDetectorChatGPT.EnterPromptAndGetResponse(deslurredChatgptOutput);
-                    if (detectedSlurs.ToLower().Contains("no slurs detected"))
-                    {
-                        Debug.Log("Slur free yay " + deslurredChatgptOutput);
-                        // ok we good	
-                    }
-                    else
-                    {
-                        // get the slurs into an array	
-                        string[] detectedSlurArray = Regex.Split(detectedSlurs, @"\[|\]");
-                        string[] detectedSlurArrayFiltered = System.Array.FindAll(detectedSlurArray, s => !string.IsNullOrEmpty(s));
-                        // if the shit is empty then that means something fucked up. 	
-                        // go to the backup prompt 	
-                        if (detectedSlurArrayFiltered.Length == 0)
-                        {
-                            Debug.Log("probably slurs so im not gonna risk it");
-                            goto generateScript;
-                        }
-                        else
-                        {
-                            Debug.Log("here be the slurs vvvvvv");
-                            foreach (string s in detectedSlurArrayFiltered)
-                            {
-                                Debug.Log(s);
-                            }
-                            foreach (string slur in detectedSlurArrayFiltered)
-                            {
-                                string pattern = Regex.Escape(slur);
-                                deslurredChatgptOutput = Regex.Replace(deslurredChatgptOutput, pattern, "nope", RegexOptions.IgnoreCase);
-                            }
-                            chatGPTOutput = deslurredChatgptOutput;
-                            str = AIController.OutputString;
-                            chatGPTOutputLines = Utils.ProcessOutputIntoStringArray(chatGPTOutput, ref str);
-                            AIController.OutputString = str;
-                        }
-                    }
-                }
-
-                if (usePhonicSlurDetection)
-                {
-                    for (int i = 0; i < chatGPTOutputLines.Length; i++)
-                    {
-                        chatGPTOutputLines[i] = slurDetectorPhonic.RemoveSlurs(chatGPTOutputLines[i]);
-                    }
-
-                }
-
-                foundGoodPrompt = true;
-            }
-        }
-
-
-
-        Debug.Log("sceneDirector.ProcessDialogFromLines");
-        // extract the dialog info from the output lines this includes the voiceModelUUIDs, the character names, and the text that they speak.	
-        DialogueInfo dialogInfo = sceneDirector.ProcessDialogFromLines(chatGPTOutputLines);
-        chatGPTOutputLines = dialogInfo.chatGPTOutputLines;
-
-        Debug.Log("ai generated names for stuff");
-        string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
-        string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
-        Debug.Log(nameOfAiGeneratedCharacter);
-        Debug.Log(nameOfAiGeneratedDimension);
-
-        if (forceAiCharacter)
-        {
-            if (nameOfAiGeneratedCharacter == null)
-            {
-                await Task.Delay(400);
-                Debug.Log("didn't get AI character, looping");
-                goto generateScript;
-            }
-        }
-
-
-
-        var res = new GenerateScriptResult();
-        res.chatGPTOutput = chatGPTOutput;
-        res.chatGPTOutputLines = chatGPTOutputLines;
-        return res;
     }
 
 
@@ -1463,9 +1250,7 @@ public class WholeThingManager : MonoBehaviour
         Debug.Log("ai generated names for stuff");
         string nameOfAiGeneratedCharacter = dialogInfo.nameOfAiGeneratedCharacter;
         string nameOfAiGeneratedDimension = dialogInfo.nameOfAiGeneratedDimension;
-        Debug.Log(nameOfAiGeneratedCharacter);
-        Debug.Log(nameOfAiGeneratedDimension);
-
+        Debug.Log($"AI show elements:\nCharacter: {nameOfAiGeneratedCharacter}\nDimension: {nameOfAiGeneratedDimension}");
 
         List<Task> allConcurrentTasks = new List<Task>();
 
@@ -1555,7 +1340,7 @@ public class WholeThingManager : MonoBehaviour
         );
 
 
-        scene.WriteToDir();
+        scene.Write();
         return scene;
     }
 
@@ -1614,7 +1399,7 @@ public class WholeThingManager : MonoBehaviour
 
     private async Task test_3dCharacterScene()
     {
-        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        var scene = RickAndMortyScene.Read("scene-sadam-hussein");
         await RunScene(scene);
 
     }
@@ -1644,7 +1429,7 @@ public class WholeThingManager : MonoBehaviour
         Debug.Log("char vote done");
 
 
-        var scene = RickAndMortyScene.ReadFromDir("scene-sadam-hussein");
+        var scene = RickAndMortyScene.Read("scene-sadam-hussein");
         scene.aiArt.character.head3d.characterKey = voteRes.characterKey;
         scene.aiArt.character.head3d.selectedGeneration = voteRes.selectedGeneration;
 
@@ -1664,7 +1449,7 @@ public class WholeThingManager : MonoBehaviour
         //Debug.Log($"saved scene {scene.id}");
         //scene.WriteToDir();
         //var scene = RickAndMortyScene.ReadFromDir("scene-trump-3d");
-        var scene = RickAndMortyScene.ReadFromDir("scene-dccfd02c-4634-c038-0de1-f09687854ebd");
+        var scene = RickAndMortyScene.Read("scene-dccfd02c-4634-c038-0de1-f09687854ebd");
 
         if (scene.aiArt.character == null) throw new Exception("No AI art character wtf???");
 
@@ -1697,7 +1482,7 @@ public class WholeThingManager : MonoBehaviour
         // 4. Render scene with selected character.
         scene.aiArt.character.head3d = aiHead3d;
         scene.aiArt.character.head3d.selectedGeneration = voteResults.selectedGeneration;
-        scene.WriteToDir(); // write with new 3d head data.
+        scene.Write(); // write with new 3d head data.
 
         await RunScene(scene);
     }
@@ -1762,7 +1547,7 @@ public class WholeThingManager : MonoBehaviour
                 reruns.AddRange(new RickAndMortyScene[] {
                     //RickAndMortyScene.ReadFromDir("scene-sadam-hussein"),
                     //RickAndMortyScene.ReadFromDir("scene-trump-3d"),
-                    RickAndMortyScene.ReadFromDir("scene-samaltman"),
+                    RickAndMortyScene.Read("scene-samaltman"),
                     //RickAndMortyScene.ReadFromDir("scene-da00c9d5-7789-517d-4116-a3a280308daf")
                 });
 
@@ -1844,7 +1629,7 @@ public class WholeThingManager : MonoBehaviour
                     //save3dHeadAssetsToScene(scene, item.head3d, characterVoteResults);
                     scene.aiArt.character.head3d = item.head3d;
                     scene.aiArt.character.head3d.selectedGeneration = characterVoteResults.selectedGeneration;
-                    scene.WriteToDir(); // write with new 3d head data.
+                    scene.Write(); // write with new 3d head data.
 
                     // Play 3d scene.
                     await RunScene(scene);
@@ -1960,7 +1745,7 @@ public class WholeThingManager : MonoBehaviour
             i++;
 
             //RickAndMortyScene scene = RickAndMortyScene.ReadFromDir("scene-6ddab2bc-2fb9-1ed8-3140-dfc7dc323f19");
-            RickAndMortyScene scene = RickAndMortyScene.ReadFromDir(sceneId);
+            RickAndMortyScene scene = RickAndMortyScene.Read(sceneId);
 
             if (i == 2)
             {
@@ -1990,21 +1775,39 @@ public class RandomScript_Editor : Editor
     {
         WholeThingManager script = (WholeThingManager) target;
 
+        
+        // Dropdown for different run modes.
+        EditorGUILayout.LabelField("Select an option:");
+        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
+        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
 
+
+        /*
+               //string runModeValue = RunModeOptions.RUN_MODE_OPTIONS[runModeIndex.intValue];
+        //if(runModeValue == RunModeOptions.REPLAY_OLD_SCENE)
+        //{
+        //    EditorGUILayout.LabelField("Replay scene ID:");
+        //    script.oldSceneID = EditorGUILayout.TextArea(script.oldSceneID);
+        //}
+        //else if(runModeValue == RunModeOptions.GENERATE_CUSTOM_SCRIPT || runModeValue == RunModeOptions.TEST_WORKFLOWS)
+        //{
+        //    EditorGUILayout.LabelField("Custom script");
+        //    script.customScript = EditorGUILayout.TextArea(script.customScript);
+        //    EditorGUILayout.LabelField("Custom script topic");
+        //    script.customScriptTopic = EditorGUILayout.TextArea(script.customScriptTopic);
+        //}
+         */
 
         EditorGUILayout.LabelField("Custom script");
         script.customScript = EditorGUILayout.TextArea(script.customScript);
+        EditorGUILayout.LabelField("Custom script topic");
+        script.customScriptTopic = EditorGUILayout.TextArea(script.customScriptTopic);
 
 
         EditorGUI.BeginChangeCheck();
         serializedObject.UpdateIfRequiredOrScript();
 
 
-
-        // Dropdown for different run modes.
-        EditorGUILayout.LabelField("Select an option:");
-        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
-        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
 
         serializedObject.ApplyModifiedProperties();
 

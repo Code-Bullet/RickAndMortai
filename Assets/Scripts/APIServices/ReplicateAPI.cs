@@ -37,7 +37,7 @@ public class ReplicateAPI : MonoBehaviour
         if (nameOfCharacter != null)
         {
             string prompt = $"2 close up images of {nameOfCharacter}'s face, 1 profile image and 1 looking front on, plain background";
-            Texture2D fullTexture = await GetTextureFromPrompt(prompt, 512, 256, 0.92f, "https://i.imgur.com/3fm0Z0o.png");
+            Texture2D fullTexture = await GetTextureFromPrompt(prompt, 512, 256, 0.92f, "https://github.com/liamzebedee/3d-headshot-pipeline/blob/main/headshot/data/inputs-2d/2heads.png?raw=true");
 
             AICharacter aiCharacter = new AICharacter();
             aiCharacter.characterName = nameOfCharacter;
