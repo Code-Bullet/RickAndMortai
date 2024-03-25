@@ -53,13 +53,13 @@ class MessageGenerator {
     // Main loop
     setInterval(async () => {
         // Test: random reaction.
-        let msgs = Array(3).fill(0).map(() => msgGen.generate("rating"))
+        // let msgs = Array(3).fill(0).map(() => msgGen.generate("rating"))
         
         // Test: 100% based reaction.
-        // const msgs = Array(3).fill(0).map(() => ({
-        //     author: "satoshi",
-        //     text: "pog"
-        // }))
+        const msgs = Array(3).fill(0).map(() => ({
+            author: "satoshi",
+            text: "pog"
+        }))
 
         console.log(msgs)
 
