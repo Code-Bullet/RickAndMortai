@@ -1,0 +1,66 @@
+{
+  "voteResults": [
+    {
+      "characterKey": "dalai lama",
+      "selectedGeneration": "3csoztlbicopsgph6nxjfmntji",
+      "options": [
+        "3csoztlbicopsgph6nxjfmntji"
+      ],
+      "tallies": [
+        5
+      ],
+      "createdAt": 0
+    },
+    {
+      "characterKey": "sadam hussein",
+      "selectedGeneration": "rul7hflbd5raadwk5k2nc7azkq",
+      "options": [
+        "6v2sq4tbz4pmwxrvhqidonsxwm",
+        "psrafl3bty24wp2742yj76jxii",
+        "rul7hflbd5raadwk5k2nc7azkq",
+        "ys5zq5lbymynlb2eu4q4dd5kwm"
+      ],
+      "tallies": [
+        10,
+        10,
+        15,
+        10
+      ],
+      "createdAt": 1711346269
+    },
+    {
+      "characterKey": "sadam hussein",
+      "selectedGeneration": "psrafl3bty24wp2742yj76jxii",
+      "options": [
+        "6v2sq4tbz4pmwxrvhqidonsxwm",
+        "psrafl3bty24wp2742yj76jxii",
+        "rul7hflbd5raadwk5k2nc7azkq",
+        "ys5zq5lbymynlb2eu4q4dd5kwm"
+      ],
+      "tallies": [
+        2,
+        8,
+        0,
+        0
+      ],
+      "createdAt": 1711346531
+    },
+    {
+      "characterKey": "sadam hussein",
+      "selectedGeneration": "6v2sq4tbz4pmwxrvhqidonsxwm",
+      "options": [
+        "6v2sq4tbz4pmwxrvhqidonsxwm",
+        "psrafl3bty24wp2742yj76jxii",
+        "rul7hflbd5raadwk5k2nc7azkq",
+        "ys5zq5lbymynlb2eu4q4dd5kwm"
+      ],
+      "tallies": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "createdAt": 1711347320
+    }
+  ]
+}

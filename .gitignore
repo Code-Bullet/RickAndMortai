@@ -1,3 +1,6 @@
+GenerationServer/
+BigLezForever/
+
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
@@ -71,8 +74,18 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Configuration.
+/[Aa]ssets/config.json*
+
+/[Aa]ssets/Liam'z Experiments
 
 node_modules/
 
 OutputScripts/
 .vsconfig
+
+Research/
+
+data/prod
+!data/test
+.env

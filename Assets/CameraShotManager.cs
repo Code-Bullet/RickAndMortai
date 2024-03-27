@@ -63,6 +63,13 @@ public class CameraShotManager : MonoBehaviour
         lastCameraSwitchTime = Time.time;
     }
 
+    // Reset the camera to a good state.
+    // For this, we assume {wide shot}
+    public void Reset()
+    {
+        SetVirtualCamera(sceneDirector.currentDimension.virtualCamera);
+    }
+
 
     // input should be a single line. e.g. {Close Up, Rick}
     public void ChangeCameraShot(string cameraShotDescription)

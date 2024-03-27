@@ -94,16 +94,13 @@ public class OpenAIController : AIController
 
     public int maxTokens = 2000;
 
-
-
-
     public override void Init()
     {
         // this is the system message. its probably shit but it kinda works
 
 
         // This line gets your API key (and could be slightly different on Mac/Linux)
-        string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
+        string key = WholeThingManager.Singleton.config.OPENAI_API_KEY;
         if (string.IsNullOrEmpty(key))
         {
             Debug.LogError("OPEN AI KEY NOT FOUND");
@@ -151,6 +148,8 @@ public class OpenAIController : AIController
     // ok this is the actual interaction with chatgpt.
     public override async Task<string> EnterPromptAndGetResponse(string inputPrompt)
     {
+        Console.WriteLine(string.Format("chatgpt prompt={0}", inputPrompt));
+
         // Don't submit empty messages
         if (inputPrompt.Length < 1)
         {
@@ -158,7 +157,7 @@ public class OpenAIController : AIController
             return null;
         }
 
-        inputPrompt += ". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least 30 lines of dialog.";
+        inputPrompt += $". Make sure to use light profanity like frick, shoot and crap. Scripts should have at least {WholeThingManager.Singleton.minLinesDialog} lines of dialog.";
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.Role = ChatMessageRole.User;
