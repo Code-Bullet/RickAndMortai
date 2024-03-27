@@ -165,6 +165,12 @@ public class SceneDirector : MonoBehaviour
 
         int audioClipIndex = 0;
 
+        // Preload all audio clips for performance reasons.
+        foreach (AudioClip clip in voiceActingClips)
+        {
+            clip.LoadAudioData();
+        }
+
         foreach (string line in outputLines)
         {
             Debug.Log($"Line: \"{line}\"");
@@ -172,7 +178,7 @@ public class SceneDirector : MonoBehaviour
             int numWords = line.Split(' ').Length;
 
 
-            // if its an action instruction
+            // STAGE DIRECTION.
             if (line.Contains('[') && !line.Contains(":"))
             {
 
@@ -219,102 +225,96 @@ public class SceneDirector : MonoBehaviour
                 }
 
             }
+            // CAMERA DIRECTION.
             else if (line.Contains('{') && !line.Contains(":"))
             {
                 Debug.Log("camera instruction: " + line);
                 // if camera instruction 
                 cameraShotManager.ChangeCameraShot(line);
             }
+            // DIALOG.
             else
             {
                 Debug.Log("Dialog instruction: " + line);
 
+                if (voiceActingClips != null && audioClipIndex >= voiceActingClips.Count) continue;
 
-                if (voiceActingClips != null && audioClipIndex >= voiceActingClips.Count)
+                CharacterInfo talkingCharacter = GetWhosTalking(lowerLine);
+                if (talkingCharacter == null) continue;
+
+
+
+                Debug.Log(line);
+
+                // if the character is the narrator then theres no character to animate and shit. so just play the audio
+                if (talkingCharacter.name == "narrator")
                 {
+
+                    // display title
+                    if (voiceActingClips != null && (audioClipIndex == 0 || audioClipIndex == 1))
+                    {
+                        textField.text = "";
+                        // await ProcessDialogFromLines(outputLines);
+                        titleText.text = line.Substring(talkingCharacter.name.Length + 2);
+                        titleText.gameObject.SetActive(true);
+                        if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                        else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
+                        titleText.gameObject.SetActive(false);
+
+                    }
+                    else
+                    {
+                        textField.text = line;
+                        if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                        else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
+                    }
+
                     continue;
                 }
 
-
-
-                CharacterInfo talkingCharacter = GetWhosTalking(lowerLine);
-                if (talkingCharacter != null)
+                // if the character hasnt yet talked add them to the target group
+                if (!talkingCharacter.hasTalkedThisDimension)
                 {
-
-                    Debug.Log(line);
-                    // if the character is the narrator then theres no character to animate and shit. so just play the audio
-                    if (talkingCharacter.name == "narrator")
+                    // if the character is not in this dimension currently and its not rick or morty teleport them to this dimension
+                    if (talkingCharacter.dimension != currentDimension && talkingCharacter != characterList[0] && talkingCharacter != characterList[1])
                     {
-
-                        // display title
-                        if (voiceActingClips != null && (audioClipIndex == 0 || audioClipIndex == 1))
-                        {
-                            textField.text = "";
-                            // await ProcessDialogFromLines(outputLines);
-                            titleText.text = line.Substring(talkingCharacter.name.Length + 2);
-                            titleText.gameObject.SetActive(true);
-                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
-                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
-                            titleText.gameObject.SetActive(false);
-
-                        }
-                        else
-                        {
-                            textField.text = line;
-                            if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
-                            else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
-                        }
-
-                        continue;
+                        // teleport them in
+                        talkingCharacter.characterController.TeleportTo(currentDimension.portalLocation.transform.position);
+                        talkingCharacter.dimension = currentDimension;
+                        // have them walk to rick
+                        await CharacterWalksToCharacter(talkingCharacter.characterController, rick);
                     }
-
-                    // if the character hasnt yet talked add them to the target group
-                    if (!talkingCharacter.hasTalkedThisDimension)
-                    {
-                        // if the character is not in this dimension currently and its not rick or morty teleport them to this dimension
-                        if (talkingCharacter.dimension != currentDimension && talkingCharacter != characterList[0] && talkingCharacter != characterList[1])
-                        {
-                            // teleport them in
-                            talkingCharacter.characterController.TeleportTo(currentDimension.portalLocation.transform.position);
-                            talkingCharacter.dimension = currentDimension;
-                            // have them walk to rick
-                            await CharacterWalksToCharacter(talkingCharacter.characterController, rick);
-                        }
-                        AddCharacterTargetGroup(talkingCharacter);
-                        talkingCharacter.hasTalkedThisDimension = true;
-                    }
-
-
-                    talkingCharacter.characterController.StartTalking();
-                    
-
-                    //every other character turns towards talking character
-                    foreach (CharacterInfo characterInfo in characterList)
-                    {
-                        if (characterInfo != talkingCharacter)
-                        {
-                            characterInfo.characterController.LookAtTarget(talkingCharacter.cameraTarget);
-                        }
-                    }
-
-                    // if rick it talking then burpify the audio
-                    if (voiceActingClips != null && talkingCharacter.name == "rick")
-                    {
-                        voiceActingClips[audioClipIndex] = burpifier.Burpify(voiceActingClips[audioClipIndex]);
-                    }
-
-
-                    //actually play the audio
-                    textField.text = line;
-                    if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
-                    else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
-
-                    Debug.Log(5);
-                    //we done
-                    talkingCharacter.characterController.StopTalking();
-
+                    AddCharacterTargetGroup(talkingCharacter);
+                    talkingCharacter.hasTalkedThisDimension = true;
                 }
 
+
+                talkingCharacter.characterController.StartTalking();
+
+
+                //every other character turns towards talking character
+                foreach (CharacterInfo characterInfo in characterList)
+                {
+                    if (characterInfo != talkingCharacter)
+                    {
+                        characterInfo.characterController.LookAtTarget(talkingCharacter.cameraTarget);
+                    }
+                }
+
+                // if rick it talking then burpify the audio
+                if (voiceActingClips != null && talkingCharacter.name == "rick")
+                {
+                    voiceActingClips[audioClipIndex] = burpifier.Burpify(voiceActingClips[audioClipIndex]);
+                }
+
+
+                //actually play the audio
+                textField.text = line;
+                if (WholeThingManager.Singleton.usingVoiceActing) audioClipIndex = await PlayAudioClipAtIndex(voiceActingClips, audioClipIndex);
+                else await Task.Delay(Mathf.FloorToInt(numWords / WholeThingManager.Singleton.wordsPerMinute * 60000) + 500);
+
+                //we done
+                talkingCharacter.characterController.StopTalking();
             }
         }
 
@@ -487,9 +487,18 @@ public class SceneDirector : MonoBehaviour
             audioSource.clip = voiceActingClips[audioClipIndex];
             audioSource.Play();
 
-            // have the max delay be 30 seconds
-            int maxDelay = Mathf.Min((int)(1000 * voiceActingClips[audioClipIndex].length), 20 * 1000);
-            await Task.Delay(maxDelay);
+            // AudioSource.Play does not allow us to wait on an audio clip completing.
+            // So instead we loop in a coroutine.
+            // This is a robust way of checking if the clip is done playing, because the AudioClip.length is not granular enough (measured by second)
+            // and also there could be lag due to FPS clipping.
+            while(audioSource.isPlaying)
+            {
+                await Task.Delay(5);
+            }
+
+            // Playing is done.
+
+
             audioClipIndex++;
         }
         else

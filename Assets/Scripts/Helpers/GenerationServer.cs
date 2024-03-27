@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Net;
 using Newtonsoft.Json;
 using System.IO;
+using System;
 
 public class GenerationServer
 {
@@ -47,33 +48,55 @@ public class GenerationServer
             HttpListenerRequest req = ctx.Request;
             HttpListenerResponse resp = ctx.Response;
 
-            // Parse.
-            string path = req.Url.AbsolutePath.ToLower();
+            resp.AppendHeader("Access-Control-Allow-Origin", "*");
+            resp.AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
+            resp.AddHeader("Access-Control-Allow-Methods", "GET, POST");
+            resp.AddHeader("Access-Control-Max-Age", "1728000");
 
-            if (path == "/scenes/generate")
+            if (req.HttpMethod == "OPTIONS")
             {
-                GenerateCall call = JsonConvert.DeserializeObject<GenerateCall>(new StreamReader(req.InputStream).ReadToEnd());
-                Debug.Log("generating script");
-                Debug.Log(call.ToString());
-                var scene = await mgr.CreateSceneFromScript(call.script, call.author, true, true);
-                //await mgr.RunScene(scene);
-                await mgr.RunAndRecord(scene, $"{scene.id}.mp4");
-
-
-                // Respond.
-                var jsonResponse = new { sceneId = scene.id };
-                string jsonResponseString = JsonConvert.SerializeObject(jsonResponse);
-
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(jsonResponseString);
-                resp.ContentType = "application/json"; // Set content type as JSON
-                resp.ContentLength64 = buffer.Length;
-                Stream output = resp.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                resp.Close();
+                continue;
             }
 
+            try
+            {
+                // Parse.
+                string path = req.Url.AbsolutePath.ToLower();
 
-            resp.Close();
+                if (path == "/scenes/generate")
+                {
+                    GenerateCall call = JsonConvert.DeserializeObject<GenerateCall>(new StreamReader(req.InputStream).ReadToEnd());
+                    Debug.Log("generating script");
+                    Debug.Log(call.ToString());
+                    var scene = await mgr.CreateSceneFromScript(call.script, call.author, true, true);
+                    //await mgr.RunScene(scene);
+                    await mgr.RunAndRecord(scene, $"{scene.id}.mp4");
+
+
+                    // Respond.
+                    var jsonResponse = new { sceneId = scene.id };
+                    string jsonResponseString = JsonConvert.SerializeObject(jsonResponse);
+
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(jsonResponseString);
+                    resp.ContentType = "application/json"; // Set content type as JSON
+                    resp.ContentLength64 = buffer.Length;
+                    Stream output = resp.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+                    output.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.LogError(ex);
+                resp.StatusCode = 500;
+                resp.StatusDescription = $"Internal server error: {ex.ToString()}";
+            }
+            finally
+            {
+                resp.Close();
+            }
+            
         }
 
         listener.Stop();

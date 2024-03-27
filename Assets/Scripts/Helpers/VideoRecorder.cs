@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Recorder;
 using UnityEditor.Recorder.Input;
@@ -31,7 +32,6 @@ public class VideoRecorder
         var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
         videoRecorder.name = "My Video Recorder";
         videoRecorder.Enabled = true;
-        videoRecorder.VideoBitRateMode = VideoBitrateMode.High;
 
         videoRecorder.ImageInputSettings = new GameViewInputSettings
         {
@@ -42,10 +42,12 @@ public class VideoRecorder
         };
 
         videoRecorder.AudioInputSettings.PreserveAudio = true;
-        videoRecorder.OutputFile = fname;
+        videoRecorder.OutputFile = $"GenerationServer/{fname}";
 
         controllerSettings.AddRecorderSettings(videoRecorder);
-        controllerSettings.FrameRate = 60;
+        controllerSettings.FrameRate = 30;
+        // Don't skip.
+        //Time.captureFramerate = 30;
 
         RecorderOptions.VerboseMode = true;
         TestRecorderController.PrepareRecording();

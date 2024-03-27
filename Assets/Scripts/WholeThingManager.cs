@@ -99,25 +99,29 @@ public class Lookup3dHeads
     }
 }
 
-
-
-// this is the big daddy script that controls everything
-// basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
-public class WholeThingManager : MonoBehaviour
+public class RunModes
 {
-    private static string RUN_MAIN_LOOP = "Run main loop";
-    private static string GENERATE_CUSTOM_SCRIPT = "Generate custom script";
-    private static string REPLAY_OLD_SCENE = "Replay old scene";
-    private static string TEST_WORKFLOWS = "Test workflows";
-    private static string RUN_GENERATION_SERVER = "Run generation server";
 
-    public static string[] RUN_MODE_OPTIONS = new string[] {
+    public static string RUN_MAIN_LOOP = "Run main loop";
+    public static string GENERATE_CUSTOM_SCRIPT = "Generate custom script";
+    public static string REPLAY_OLD_SCENE = "Replay old scene";
+    public static string TEST_WORKFLOWS = "Test workflows";
+    public static string RUN_GENERATION_SERVER = "Run generation server";
+
+    public static string[] OPTIONS = new string[] {
         RUN_MAIN_LOOP,
         GENERATE_CUSTOM_SCRIPT,
         REPLAY_OLD_SCENE,
         TEST_WORKFLOWS,
         RUN_GENERATION_SERVER
     };
+}
+
+
+// this is the big daddy script that controls everything
+// basically has a async function that continuously collects suggestions from chat, creates scenes and plays scenes. 
+public class WholeThingManager : MonoBehaviour
+{
 
     [Range(0, 4)]
     public int runModeIndex = 0;
@@ -302,13 +306,13 @@ public class WholeThingManager : MonoBehaviour
 
         sceneDirector.ResetStuff();
 
-        string runMode = RUN_MODE_OPTIONS[runModeIndex];
+        string runMode = RunModes.OPTIONS[runModeIndex];
 
-        bool generateCustomScript = runMode == GENERATE_CUSTOM_SCRIPT;
-        bool testWorkflow = runMode == TEST_WORKFLOWS;
-        bool replayOldScene = runMode == REPLAY_OLD_SCENE;
-        bool runMainLoop = runMode == RUN_MAIN_LOOP;
-        bool runGenerationServer = runMode == RUN_GENERATION_SERVER;
+        bool generateCustomScript = runMode == RunModes.GENERATE_CUSTOM_SCRIPT;
+        bool testWorkflow = runMode == RunModes.TEST_WORKFLOWS;
+        bool replayOldScene = runMode == RunModes.REPLAY_OLD_SCENE;
+        bool runMainLoop = runMode == RunModes.RUN_MAIN_LOOP;
+        bool runGenerationServer = runMode == RunModes.RUN_GENERATION_SERVER;
 
         if (testWorkflow)
         {
@@ -325,19 +329,20 @@ public class WholeThingManager : MonoBehaviour
 
 
 
-            await test_topicVoteCharacterVote();
+            //await test_topicVoteCharacterVote();
 
 
-            //RickAndMortyScene scene;
-            //if(customScript != "")
-            //{
-            //    scene = await CreateSceneFromScript(customScript, "liam", true, true);
-            //}
-            //else { 
-            //    scene = await CreateScene(customScriptTopic, "liam", "", "", true);
-            //}
-            //scene.Write();
-            //await RunScene(scene);
+            RickAndMortyScene scene;
+            if(customScript != "")
+            {
+                scene = await CreateSceneFromScript(customScript, "liam", true, true);
+            }
+            else
+            {
+                scene = await CreateScene(customScriptTopic, "liam", "", "", true);
+            }
+            scene.Write();
+            await RunScene(scene);
 
 
             // NOTE(liamz): okay this is the ONE time I'm gonna use globals
@@ -1793,38 +1798,33 @@ public class RandomScript_Editor : Editor
         
         // Dropdown for different run modes.
         EditorGUILayout.LabelField("Select an option:");
-        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, WholeThingManager.RUN_MODE_OPTIONS);
-        EditorGUILayout.LabelField("Run mode: " + WholeThingManager.RUN_MODE_OPTIONS[runModeIndex.intValue]);
+        runModeIndex.intValue = EditorGUILayout.Popup(runModeIndex.intValue, RunModes.OPTIONS);
+        //EditorGUILayout.LabelField("Run mode: " + RunModes.OPTIONS[runModeIndex.intValue]);
 
+        List<string> hiddenFields = new List<string>();
+        hiddenFields.Add("runModeIndex");
 
-        /*
-               //string runModeValue = RunModeOptions.RUN_MODE_OPTIONS[runModeIndex.intValue];
-        //if(runModeValue == RunModeOptions.REPLAY_OLD_SCENE)
-        //{
-        //    EditorGUILayout.LabelField("Replay scene ID:");
-        //    script.oldSceneID = EditorGUILayout.TextArea(script.oldSceneID);
-        //}
-        //else if(runModeValue == RunModeOptions.GENERATE_CUSTOM_SCRIPT || runModeValue == RunModeOptions.TEST_WORKFLOWS)
-        //{
-        //    EditorGUILayout.LabelField("Custom script");
-        //    script.customScript = EditorGUILayout.TextArea(script.customScript);
-        //    EditorGUILayout.LabelField("Custom script topic");
-        //    script.customScriptTopic = EditorGUILayout.TextArea(script.customScriptTopic);
-        //}
-         */
-
-        EditorGUILayout.LabelField("Custom script");
-        script.customScript = EditorGUILayout.TextArea(script.customScript);
-        EditorGUILayout.LabelField("Custom script topic");
-        script.customScriptTopic = EditorGUILayout.TextArea(script.customScriptTopic);
-
+        string runModeValue = RunModes.OPTIONS[runModeIndex.intValue];
+        if (runModeValue == RunModes.REPLAY_OLD_SCENE)
+        {
+            EditorGUILayout.LabelField("Replay scene ID:");
+            script.oldSceneID = EditorGUILayout.TextArea(script.oldSceneID);
+            hiddenFields.Add("oldSceneId");
+        }
+        else if (runModeValue == RunModes.GENERATE_CUSTOM_SCRIPT || runModeValue == RunModes.TEST_WORKFLOWS)
+        {
+            EditorGUILayout.LabelField("Custom script");
+            script.customScript = EditorGUILayout.TextArea(script.customScript);
+            hiddenFields.Add("customScript");
+            EditorGUILayout.LabelField("Custom script topic");
+            script.customScriptTopic = EditorGUILayout.TextArea(script.customScriptTopic);
+            hiddenFields.Add("customScriptTopic");
+        }
 
         EditorGUI.BeginChangeCheck();
-        serializedObject.UpdateIfRequiredOrScript();
 
-
-
-        serializedObject.ApplyModifiedProperties();
+        //serializedObject.UpdateIfRequiredOrScript();
+        //serializedObject.ApplyModifiedProperties();
 
 
 
@@ -1837,6 +1837,10 @@ public class RandomScript_Editor : Editor
                 if (iterator.name == "wordsPerMinute")
                 {
                     if (!script.usingVoiceActing) script.wordsPerMinute = EditorGUILayout.FloatField("Words Per Minute", script.wordsPerMinute);
+                }
+                else if (hiddenFields.Contains(iterator.name))
+                {
+                    continue;
                 }
                 else
                 {
